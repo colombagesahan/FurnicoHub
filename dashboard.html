@@ -229,7 +229,18 @@
         }
     });
 
-    function login() { auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()); }
+    // 1. REPLACED LOGIN (Fixes the 404 Error)
+function login() { 
+    auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+        .catch((error) => {
+            alert("Login Failed: " + error.message);
+        });
+}
+
+// 2. KEEP LOGOUT (This is correct)
+function logout() { 
+    auth.signOut(); 
+}
     function logout() { auth.signOut(); }
 
     async function loadData() {
