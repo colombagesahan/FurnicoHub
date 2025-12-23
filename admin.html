@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FurnicoHub Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <style>body{font-family:sans-serif; padding:20px;} .req{border:1px solid #ccc; padding:15px; margin-bottom:10px;}</style>
+</head>
+<body>
+    <h1>Verification Requests</h1>
+    <div id="list"></div>
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        db.collection('admin_requests').onSnapshot(snap => {
+            document.getElementById('list').innerHTML = snap.docs.map(d => {
+                const r = d.data();
+                return `
+                <div class="req">
+                    <h3>${r.shopName}</h3>
+                    <a href="${r.doc}" target="_blank">View Doc</a> | <a href="${r.slip}" target="_blank">View Slip</a><br><br>
+                    <button onclick="approve('${d.id}', '${r.uid}')">Approve</button>
+                    <button onclick="reject('${d.id}')">Reject</button>
+                </div>`;
+            }).join('');
+        });
+
+        function approve(reqId, uid) {
+            if(confirm("Approve?")) {
+                db.collection('users').doc(uid).update({verified: true});
+                db.collection('admin_requests').doc(reqId).delete();
+            }
+        }
+        function reject(reqId) {
+            if(confirm("Reject?")) db.collection('admin_requests').doc(reqId).delete();
+        }
+    </script>
+</body>
+</html>
