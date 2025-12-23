@@ -24,15 +24,14 @@
 
     <style>
         :root {
-            /* --- IMPROVED COLOR PALETTE --- */
+            /* --- COLOR PALETTE --- */
             --primary: #4E342E;        /* Mahogany */
-            --primary-light: #8D6E63;  /* Lighter Brown */
-            --accent: #FF7043;         /* Vibrant Orange for Actions */
-            --bg-body: #FDFBF7;        /* Warm White */
+            --primary-light: #8D6E63;
+            --accent: #FF7043;         
+            --bg-body: #FDFBF7;
             --surface: #FFFFFF;
             --text: #3E2723;
             --green: #4CAF50;
-            --green-light: #E8F5E9;
             --red: #E53935;
             --gold: #FFC107;
             
@@ -45,17 +44,21 @@
 
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg-body); color: var(--text); padding-bottom: 80px; font-size: 14px; }
+        a { text-decoration: none; color: inherit; }
         
         /* UTILS */
         .hidden { display: none !important; }
         .flex { display: flex; align-items: center; gap: 10px; }
-        .center { align-items: center; justify-content: center; }
         .space-between { justify-content: space-between; }
         .col { flex-direction: column; }
+        .center { text-align: center; }
         .bold { font-weight: 700; }
-        .text-center { text-align: center; }
         .w-100 { width: 100%; }
-        .mt-2 { margin-top: 15px; } .mb-2 { margin-bottom: 15px; }
+        .mb-1 { margin-bottom: 10px; }
+        .mt-1 { margin-top: 10px; }
+        .text-primary { color: var(--primary); }
+        .text-green { color: var(--green); }
+        .text-red { color: var(--red); }
 
         /* COMPONENTS */
         .btn {
@@ -63,12 +66,12 @@
             background: var(--primary); color: white; font-weight: 600;
             cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
             font-size: 0.9rem; transition: 0.2s; margin-bottom: 10px;
-            box-shadow: 0 4px 10px rgba(78, 52, 46, 0.2);
+            box-shadow: 0 4px 10px rgba(78, 52, 46, 0.2); text-decoration: none;
         }
         .btn:active { transform: scale(0.97); }
-        .btn-accent { background: var(--accent); color: white; }
         .btn-green { background: var(--green); color: white; }
         .btn-red { background: var(--red); color: white; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; margin: 0; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); box-shadow: none; }
 
         .card {
@@ -83,15 +86,14 @@
             width: 100%; padding: 12px; border: 2px solid #E0E0E0; border-radius: 12px;
             font-family: var(--font); font-size: 0.95rem; background: #FAFAFA; transition: 0.3s;
         }
-        .input-group input:focus { border-color: var(--primary); background: #fff; }
-        .input-group input:disabled { background: #F5F5F5; color: #999; border-color: #EEE; }
+        /* Fix for Color Input */
+        input[type="color"] { height: 50px; padding: 2px; cursor: pointer; border-radius: 8px; }
 
         /* FILE UPLOAD */
         .upload-box {
             border: 2px dashed #BCAAA4; border-radius: 12px; padding: 20px;
             text-align: center; cursor: pointer; background: #FAFAFA; position: relative; transition: 0.3s;
         }
-        .upload-box:hover { background: #fff; border-color: var(--accent); }
         .upload-box img { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; display: none; margin-top: 5px; }
 
         /* LOGIN SCREEN */
@@ -148,9 +150,11 @@
             .btn { font-size: 0.8rem; padding: 10px; }
             .nav-brand { font-size: 1rem; }
             .stat-grid { grid-template-columns: 1fr !important; }
+            .day-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .day-row input, .day-row select { width: 100%; }
         }
 
-        /* EXTRA STYLES */
+        /* STATUS & GRID */
         .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
         .st-verified { background: var(--green-light); color: var(--green); border: 1px solid var(--green); }
         .st-pending { background: #FFF3E0; color: #E65100; border: 1px solid #FFCC80; }
@@ -163,6 +167,12 @@
         .toggle-opt { padding: 6px 16px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #777; transition: 0.2s; }
         .toggle-opt.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
+        .day-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .date-chip { display: inline-flex; align-items: center; background: #FFEBEE; padding: 5px 10px; border-radius: 20px; margin: 2px; font-size: 0.8rem; color: #C62828; }
+        
+        /* Category Header in Feed */
+        .cat-header { grid-column: 1 / -1; font-weight: 800; color: var(--primary); margin: 20px 0 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+
         @keyframes slideUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
     </style>
 </head>
@@ -173,7 +183,7 @@
         <div class="card" style="width: 100%; max-width: 350px; text-align: center; padding: 40px 25px;">
             <img src="logo.png" style="width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 4px solid var(--primary); margin-bottom: 20px;">
             <h2 style="color:var(--primary); margin-bottom: 5px;">Seller Portal</h2>
-            <p style="color:#666; margin-bottom: 30px; line-height: 1.5;">Manage your furniture shop, inventory, and orders in one place.</p>
+            <p style="color:#666; margin-bottom: 30px; line-height: 1.5;">Manage your furniture shop, inventory, and orders.</p>
             <button class="btn" onclick="login()"><i class="fa-brands fa-google"></i> Login with Google</button>
             <a href="index.html" class="btn btn-outline" style="margin-top: 10px;">Back to Marketplace</a>
         </div>
@@ -217,11 +227,19 @@
     let shopReviews = [];
     let currentTab = 'Dashboard';
     let tempImages = [null, null, null]; 
-    let discountType = 'amount'; // 'amount' or 'percent'
+    let discountType = 'amount';
+    let marketItems = []; // For Marketplace search
 
-    // --- TABS ---
+    // --- CONFIG DATA ---
+    const CATEGORIES = [
+        "Living Room", "Bedroom", "Dining Room", "Kitchen", 
+        "Bathroom", "Study Room", "Kids Room", "Baby Room", 
+        "Outdoor & Garden", "Office", "Other"
+    ];
+
     const TABS = [
-        { id: 'Dashboard', icon: 'fa-calculator' }, 
+        { id: 'Dashboard', icon: 'fa-chart-pie' }, // New Home
+        { id: 'Smart POS', icon: 'fa-calculator' }, // Renamed
         { id: 'Marketplace', icon: 'fa-store' },    
         { id: 'Profile', icon: 'fa-user-gear' },     
         { id: 'Get Verified', icon: 'fa-certificate' }, 
@@ -257,7 +275,17 @@
             shopData = doc.data();
             currentTab = shopData.profileCompleted ? 'Dashboard' : 'Profile';
         } else {
-            shopData = { role: 'seller', profileCompleted: false, isVerified: false, products: [], isOpen: false };
+            // Default Data Structure
+            shopData = { 
+                role: 'seller', 
+                profileCompleted: false, 
+                isVerified: false, 
+                products: [], 
+                isOpen: false, 
+                emergencyClose: false, 
+                schedule: {},
+                specialDates: [] 
+            };
             await db.collection('users').doc(user.uid).set(shopData);
             currentTab = 'Profile';
         }
@@ -265,16 +293,14 @@
         // Listeners
         db.collection('users').doc(user.uid).collection('orders').orderBy('time', 'desc').onSnapshot(snap => {
             const newOrders = snap.docs.map(d => ({id:d.id, ...d.data()}));
-            if (newOrders.length > shopOrders.length && shopOrders.length > 0) {
-                alert("🔔 New Order Received!");
-            }
+            if (newOrders.length > shopOrders.length && shopOrders.length > 0) alert("🔔 New Order Received!");
             shopOrders = newOrders;
             if(currentTab === 'Orders' || currentTab === 'Dashboard') renderContent();
         });
 
         db.collection('users').doc(user.uid).collection('reviews').onSnapshot(snap => {
             shopReviews = snap.docs.map(d => ({id:d.id, ...d.data()}));
-            if(currentTab === 'Reviews') renderContent();
+            if(currentTab === 'Reviews' || currentTab === 'Dashboard') renderContent();
         });
 
         renderTabs();
@@ -305,7 +331,8 @@
         c.innerHTML = '';
         
         switch(currentTab) {
-            case 'Dashboard': renderPOS(c); break;
+            case 'Dashboard': renderHome(c); break;
+            case 'Smart POS': renderPOS(c); break;
             case 'Marketplace': renderMarketplace(c); break;
             case 'Profile': renderProfile(c); break;
             case 'Get Verified': renderVerify(c); break;
@@ -318,7 +345,86 @@
         }
     }
 
-    // --- 1) DASHBOARD / SMART POS ---
+    // --- 1) DASHBOARD (NEW HOME) ---
+    function renderHome(div) {
+        const today = new Date().toISOString().split('T')[0];
+        const todaysOrders = shopOrders.filter(o => o.time.startsWith(today)).length;
+        const pendingReviews = shopReviews.filter(r => r.status !== 'published').length;
+        const unreadMsgs = 0; // Placeholder
+        const isOpen = !shopData.emergencyClose && (shopData.isOpen || false); 
+        
+        // Group Products
+        const prodCounts = {};
+        (shopData.products || []).forEach(p => { prodCounts[p.category] = (prodCounts[p.category] || 0) + 1; });
+        const prodHtml = Object.keys(prodCounts).map(cat => `<div class="flex space-between" style="border-bottom:1px solid #eee; padding:5px 0;"><span>${cat}</span><b>${prodCounts[cat]}</b></div>`).join('');
+
+        // Webpage Link
+        const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+        const url = `${window.location.origin}${path}/shop.html?id=${user.uid}`;
+
+        div.innerHTML = `
+            <!-- Time Widget -->
+            <div class="card flex space-between" style="background:var(--primary); color:white; border:none;">
+                <div id="live-clock" style="font-size:1.2rem; font-weight:bold;">Loading...</div>
+                <div style="font-size:0.9rem;">${new Date().toDateString()}</div>
+            </div>
+
+            <!-- Status Widget -->
+            <div class="card flex space-between" style="border-left:5px solid ${isOpen?'var(--green)':'var(--red)'}">
+                <div>
+                    <h3 style="margin:0; color:${isOpen?'var(--green)':'var(--red)'}">${isOpen ? 'Your shop is Open' : 'Your shop is Closed'}</h3>
+                    <small style="color:#777;">Based on schedule & emergency status</small>
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="switchTab('Open/Close')">Edit</button>
+            </div>
+
+            <!-- Webpage Widget -->
+            <div class="card">
+                <div class="flex space-between">
+                    <b>Public Webpage</b>
+                    <button class="btn btn-sm btn-outline" onclick="switchTab('My Webpage')">Edit</button>
+                </div>
+                <a href="${url}" target="_blank" class="btn btn-accent mt-1" style="width:100%;">See Your Webpage</a>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stat-grid">
+                <div class="stat-card" style="border-bottom:4px solid var(--primary);">
+                    <h2>${todaysOrders}</h2>
+                    <small>Orders Today</small>
+                    <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Orders')">See</button>
+                </div>
+                <div class="stat-card" style="border-bottom:4px solid var(--gold);">
+                    <h2>${unreadMsgs}</h2>
+                    <small>New Messages</small>
+                    <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Messages')">See</button>
+                </div>
+                <div class="stat-card" style="border-bottom:4px solid var(--green);">
+                    <h2>${shopReviews.length}</h2>
+                    <small>${pendingReviews} Pending Reviews</small>
+                    <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Reviews')">See</button>
+                </div>
+            </div>
+
+            <!-- Products Overview -->
+            <div class="card">
+                <div class="flex space-between mb-1">
+                    <h3>Products (${(shopData.products||[]).length})</h3>
+                    <button class="btn btn-sm btn-outline" onclick="switchTab('Products')">Edit</button>
+                </div>
+                ${prodHtml || '<p style="color:#999;">No products added.</p>'}
+            </div>
+        `;
+        
+        // Clock Logic
+        if(window.clockInterval) clearInterval(window.clockInterval);
+        window.clockInterval = setInterval(() => {
+            const el = document.getElementById('live-clock');
+            if(el) el.innerText = new Date().toLocaleTimeString();
+        }, 1000);
+    }
+
+    // --- 2) SMART POS (Renamed) ---
     function renderPOS(div) {
         div.innerHTML = `
             <div class="card">
@@ -352,7 +458,7 @@
     
     function setDiscType(type) {
         discountType = type;
-        renderPOS(document.getElementById('content-area')); // Re-render to update UI
+        renderPOS(document.getElementById('content-area')); 
         calcPos();
     }
 
@@ -361,13 +467,8 @@
         const price = parseInt(val) || 0;
         const discVal = parseInt(document.getElementById('pos-disc').value) || 0;
         let final = 0;
-
-        if (discountType === 'amount') {
-            final = price - discVal;
-        } else {
-            final = price - (price * (discVal / 100));
-        }
-        
+        if (discountType === 'amount') final = price - discVal;
+        else final = price - (price * (discVal / 100));
         document.getElementById('pos-total').innerText = "Rs. " + Math.max(0, final);
     }
 
@@ -375,64 +476,86 @@
         const [price, name] = document.getElementById('pos-item').value.split('|');
         if(name === 'Select') return;
         const total = document.getElementById('pos-total').innerText;
-        const date = new Date().toLocaleDateString();
-        
         const w = window.open('','','width=300,height=500');
         w.document.write(`
             <body style="font-family:monospace; text-align:center; padding:10px;">
                 <h3>${shopData.shopName}</h3>
-                <p>${shopData.address}<br>${shopData.phone1}</p>
-                <hr style="border-top:1px dashed #000">
-                <p style="text-align:left">Date: ${date}</p>
-                <table style="width:100%"><tr><td>${name}</td><td align="right">${price}</td></tr></table>
-                <p style="text-align:right">Total: ${total}</p>
+                <p>Date: ${new Date().toLocaleDateString()}</p>
                 <hr>
-                <p>Thank You!</p>
+                <p>${name}: ${price}</p>
+                <h3>Total: ${total}</h3>
                 <script>window.print();<\/script>
             </body>
         `);
     }
 
-    // --- 2) MARKETPLACE ---
+    // --- 3) MARKETPLACE ---
     async function renderMarketplace(div) {
-        div.innerHTML = `<div class="card"><h3>Marketplace Feed</h3><input placeholder="Search..." onkeyup="filterFeed(this.value)" class="w-100" style="padding:10px; border-radius:10px; border:1px solid #ccc;"></div><div id="feed-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:15px;">Loading...</div>`;
+        div.innerHTML = `
+            <div class="card">
+                <h3>Marketplace Feed</h3>
+                <div class="flex mt-1">
+                    <input id="search-shop" placeholder="Search Shop Name..." class="w-100" onkeyup="filterFeed()">
+                    <input id="search-prod" placeholder="Search Product Name..." class="w-100" onkeyup="filterFeed()">
+                </div>
+            </div>
+            <div id="feed-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:15px;">Loading...</div>
+        `;
+        
         const snap = await db.collection('users').where('role', '==', 'seller').get();
         let items = [];
         snap.forEach(doc => {
             const d = doc.data();
-            if(d.products) d.products.forEach(p => items.push({...p, seller: d.shopName, logo: d.logo, verified: d.isVerified}));
+            if(d.products) d.products.forEach(p => items.push({...p, seller: d.shopName, logo: d.logo, verified: d.isVerified, sellerId: doc.id}));
         });
         window.marketItems = items;
-        filterFeed('');
+        filterFeed();
     }
 
-    window.filterFeed = function(q) {
+    window.filterFeed = function() {
+        const sShop = document.getElementById('search-shop').value.toLowerCase();
+        const sProd = document.getElementById('search-prod').value.toLowerCase();
         const grid = document.getElementById('feed-grid');
-        const term = q.toLowerCase();
-        const filtered = window.marketItems.filter(i => i.name.toLowerCase().includes(term));
-        grid.innerHTML = filtered.map(i => `
-            <div class="card" style="padding:0; overflow:hidden;">
-                <img src="${i.images[0]}" style="width:100%; height:120px; object-fit:cover;">
-                <div style="padding:10px;">
-                    <div class="bold">${i.name}</div>
-                    <div style="color:var(--primary);">Rs. ${i.price}</div>
-                    <div style="font-size:0.75rem; color:#777; margin-top:5px;">${i.seller}</div>
-                </div>
-            </div>
-        `).join('');
+        
+        let filtered = window.marketItems.filter(i => 
+            (sShop === "" || i.seller.toLowerCase().includes(sShop)) &&
+            (sProd === "" || i.name.toLowerCase().includes(sProd))
+        );
+
+        // Group by Category
+        const grouped = {};
+        filtered.forEach(i => {
+            if(!grouped[i.category]) grouped[i.category] = [];
+            grouped[i.category].push(i);
+        });
+
+        let html = '';
+        Object.keys(grouped).forEach(cat => {
+            html += `<div class="cat-header">${cat}</div>`;
+            grouped[cat].forEach(i => {
+                html += `
+                <div class="card" style="padding:0; overflow:hidden; cursor:pointer;" onclick="window.open('shop.html?id=${i.sellerId}','_blank')">
+                    <img src="${i.images[0]}" style="width:100%; height:120px; object-fit:cover;">
+                    <div style="padding:10px;">
+                        <div class="bold">${i.name}</div>
+                        <div class="text-primary">Rs. ${i.price}</div>
+                        <div style="font-size:0.75rem; color:#777; margin-top:5px;">${i.seller}</div>
+                    </div>
+                </div>`;
+            });
+        });
+        grid.innerHTML = html || '<p class="text-center w-100">No items found.</p>';
     }
 
-    // --- 3) PROFILE ---
+    // --- 4) PROFILE ---
     function renderProfile(div) {
         const d = shopData;
         const lock = d.isVerified ? 'disabled' : '';
-        const lockMsg = d.isVerified ? '<div style="background:#E8F5E9; color:green; padding:10px; border-radius:8px; margin-bottom:15px; text-align:center;">🔒 Profile Locked (Verified)</div>' : '';
-
         div.innerHTML = `
             <div class="card">
                 <h3>Shop Profile</h3>
-                ${lockMsg}
-                <div class="text-center mb-2">
+                ${d.isVerified ? '<div style="background:#E8F5E9; color:green; padding:10px; border-radius:8px; text-align:center;">🔒 Locked (Verified)</div>' : ''}
+                <div class="text-center mb-2 mt-1">
                     <img id="p-logo" src="${d.logo||'logo.png'}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);">
                     ${!d.isVerified ? `<br><label class="btn btn-outline" style="width:auto; display:inline-block; margin-top:10px; padding:6px 15px;">Upload Logo <input type="file" hidden onchange="upImg(this, 'logo')"></label>` : ''}
                 </div>
@@ -440,10 +563,8 @@
                 <div class="input-group"><label>Address</label><textarea id="s-addr" ${lock}>${d.address||''}</textarea></div>
                 <div class="input-group"><label>Owner Name</label><input id="s-own" value="${d.ownerName||''}" ${lock}></div>
                 <div class="input-group"><label>NIC</label><input id="s-nic" value="${d.nic||''}" ${lock}></div>
-                <div class="input-group"><label>Phone 1</label><input id="s-ph1" value="${d.phone1||''}" ${lock}></div>
-                <div class="input-group"><label>Phone 2</label><input id="s-ph2" value="${d.phone2||''}" ${lock}></div>
+                <div class="input-group"><label>Phone</label><input id="s-ph1" value="${d.phone1||''}" ${lock}></div>
                 <div class="input-group"><label>WhatsApp (+94)</label><input id="s-wa" value="${d.whatsapp||'+94'}" ${lock}></div>
-                
                 ${!d.isVerified ? `<button class="btn" onclick="saveProfile()">Save Profile</button>` : ''}
             </div>
         `;
@@ -452,116 +573,132 @@
     async function saveProfile() {
         const wa = document.getElementById('s-wa').value;
         if(!wa.startsWith('+94')) return alert("WhatsApp must start with +94");
-        
-        const upd = {
+        await db.collection('users').doc(user.uid).update({
             shopName: document.getElementById('s-name').value,
             address: document.getElementById('s-addr').value,
             ownerName: document.getElementById('s-own').value,
             nic: document.getElementById('s-nic').value,
             phone1: document.getElementById('s-ph1').value,
-            phone2: document.getElementById('s-ph2').value,
             whatsapp: wa,
             logo: shopData.temp_logo || shopData.logo || '',
             profileCompleted: true
-        };
-        
-        await db.collection('users').doc(user.uid).update(upd);
-        shopData = {...shopData, ...upd};
-        alert("Profile Saved!");
+        });
+        shopData = (await db.collection('users').doc(user.uid).get()).data();
+        alert("Saved!");
         switchTab('Dashboard');
     }
 
-    // --- 4) VERIFIED ---
+    // --- 5) GET VERIFIED ---
     function renderVerify(div) {
-        if(shopData.isVerified) return div.innerHTML = `<div class="card text-center" style="padding:40px;"><h1 style="color:var(--green)"><i class="fa-solid fa-circle-check"></i> Verified</h1><p>You have the trusted badge.</p></div>`;
-        
+        if(shopData.isVerified) return div.innerHTML = `<div class="card text-center" style="padding:40px;"><h1 class="text-green"><i class="fa-solid fa-circle-check"></i> Verified</h1></div>`;
         div.innerHTML = `
             <div class="card">
                 <h3>Get Verified (Rs. 5000)</h3>
-                <p style="color:#666; margin-bottom:15px;">Follow steps to get the Green Badge.</p>
-                <button class="btn btn-outline" onclick="printProf()">1. Download Profile PDF</button>
                 <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0;">
-                    <b>2. Certify:</b> GN or JP Stamp.<br>
-                    <b>3. Pay Rs. 5000:</b><br>Bank: Commercial Bank, Homagama<br>Acc: 8750053306 (Colombage SD)
+                    <b>* GN:</b> Grama Niladhari<br><b>* JP:</b> Justice of Peace<br><b>* Bank:</b> Commercial Bank, Homagama (Colombage SD) - 8750053306
                 </div>
-                <div class="input-group">
-                    <label>4. Upload Certified Doc</label>
-                    <div class="upload-box" onclick="document.getElementById('v-doc').click()">Click to Upload <input type="file" id="v-doc" hidden onchange="upImg(this, 'doc')"></div>
-                    <small id="st-doc" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded</small>
-                </div>
-                <div class="input-group">
-                    <label>5. Upload Payment Slip</label>
-                    <div class="upload-box" onclick="document.getElementById('v-slip').click()">Click to Upload <input type="file" id="v-slip" hidden onchange="upImg(this, 'slip')"></div>
-                    <small id="st-slip" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded</small>
-                </div>
-                <button class="btn btn-green" onclick="subVerify()">Submit for Review</button>
+                <button class="btn btn-outline" onclick="printProf()">1. Download Profile PDF</button>
+                <div class="input-group mt-1"><label>2. Certified Doc</label><div class="upload-box" onclick="document.getElementById('v-doc').click()">Upload <input type="file" id="v-doc" hidden onchange="upImg(this, 'doc')"></div></div>
+                <div class="input-group"><label>3. Payment Slip</label><div class="upload-box" onclick="document.getElementById('v-slip').click()">Upload <input type="file" id="v-slip" hidden onchange="upImg(this, 'slip')"></div></div>
+                <button class="btn btn-green" onclick="subVerify()">Submit</button>
             </div>
         `;
     }
-
+    
     function printProf() {
         const w = window.open('','','width=600,height=600');
-        w.document.write(`<h2>${shopData.shopName}</h2><p>Owner: ${shopData.ownerName}<br>NIC: ${shopData.nic}<br>Phone: ${shopData.phone1}</p><br><br><p>______________<br>GN/JP Signature</p>`);
+        w.document.write(`<h2>${shopData.shopName}</h2><p>Owner: ${shopData.ownerName}<br>NIC: ${shopData.nic}</p>`);
         w.print();
     }
 
     async function subVerify() {
-        if(!shopData.temp_doc || !shopData.temp_slip) return alert("Upload both proofs");
-        await db.collection('admin_requests').add({
-            uid: user.uid, type: 'verify', shopName: shopData.shopName,
-            doc: shopData.temp_doc, slip: shopData.temp_slip, time: new Date().toISOString()
-        });
+        if(!shopData.temp_doc || !shopData.temp_slip) return alert("Upload proofs");
+        await db.collection('admin_requests').add({ uid: user.uid, shopName: shopData.shopName, doc: shopData.temp_doc, slip: shopData.temp_slip, time: new Date().toISOString() });
         alert("Submitted!");
     }
 
-    // --- 5) OPEN/CLOSE ---
+    // --- 6) OPEN/CLOSE (Major Update) ---
     function renderOpenClose(div) {
-        // Fix: Use shopData.isOpen directly from DB
-        const isOpen = shopData.isOpen === true; 
+        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const schedule = shopData.schedule || {};
+        const isEmergency = shopData.emergencyClose || false;
         
-        div.innerHTML = `
-            <div class="card text-center">
-                <h3>Shop Status</h3>
-                <div style="font-size:3rem; margin:20px 0; color:${isOpen ? 'var(--green)' : 'var(--red)'}">
-                    <i class="fa-solid fa-store${isOpen ? '' : '-slash'}"></i>
-                </div>
-                <h2 style="color:${isOpen ? 'var(--green)' : 'var(--red)'}">${isOpen ? 'OPEN' : 'CLOSED'}</h2>
-                
-                <div class="flex center" style="margin:20px 0; gap:15px;">
-                    <div class="w-100 text-left">
-                        <label>Open Time</label>
-                        <input type="time" id="t-open" value="${shopData.openTime||'09:00'}" class="w-100" style="padding:10px; border-radius:8px; border:1px solid #ccc;">
-                    </div>
-                    <div class="w-100 text-left">
-                        <label>Close Time</label>
-                        <input type="time" id="t-close" value="${shopData.closeTime||'20:00'}" class="w-100" style="padding:10px; border-radius:8px; border:1px solid #ccc;">
-                    </div>
-                </div>
+        let rows = days.map(d => {
+            const s = schedule[d] || {open: true, start: "09:00", end: "20:00"};
+            return `
+            <div class="day-row">
+                <div style="width:90px; font-weight:bold;">${d}</div>
+                <select id="st-${d}"><option value="open" ${s.open?'selected':''}>Open</option><option value="closed" ${!s.open?'selected':''}>Closed</option></select>
+                <input type="time" id="start-${d}" value="${s.start}"> to <input type="time" id="end-${d}" value="${s.end}">
+            </div>`;
+        }).join('');
 
-                <button class="btn btn-${isOpen ? 'red' : 'green'}" onclick="toggleStatus(${!isOpen})">
-                    ${isOpen ? 'Close Shop Now' : 'Open Shop Now'}
-                </button>
-                <button class="btn btn-outline" onclick="saveTimes()">Save Times Only</button>
+        const specialDates = (shopData.specialDates || []).map((sd, i) => `
+            <span class="date-chip">${sd} <i class="fa-solid fa-times" style="cursor:pointer; margin-left:5px;" onclick="removeDate(${i})"></i></span>
+        `).join('');
+
+        div.innerHTML = `
+            <div class="card" style="border:2px solid ${isEmergency?'red':'green'}">
+                <h3>Emergency Control</h3>
+                <p>${isEmergency ? "🔴 SHOP IS CLOSED TODAY" : "🟢 Operating Normally"}</p>
+                <button class="btn btn-${isEmergency?'green':'red'}" onclick="toggleEmergency(!${isEmergency})">${isEmergency?'Re-Open Shop':'Close Today'}</button>
+            </div>
+            <div class="card">
+                <h3>Weekly Schedule</h3>
+                ${rows}
+                <button class="btn mt-1" onclick="saveSchedule()">Save Weekly Settings</button>
+            </div>
+            <div class="card">
+                <h3>Special Closed Dates</h3>
+                <div class="flex mb-1">
+                    <input type="date" id="sp-date" class="w-100">
+                    <button class="btn btn-sm btn-outline" onclick="addDate()">Add</button>
+                </div>
+                <div>${specialDates || 'No dates added.'}</div>
             </div>
         `;
     }
 
-    async function toggleStatus(status) {
-        await db.collection('users').doc(user.uid).update({ isOpen: status });
-        shopData.isOpen = status;
-        alert(status ? "Shop is OPEN" : "Shop is CLOSED");
+    async function saveSchedule() {
+        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const schedule = {};
+        days.forEach(d => {
+            schedule[d] = {
+                open: document.getElementById(`st-${d}`).value === 'open',
+                start: document.getElementById(`start-${d}`).value,
+                end: document.getElementById(`end-${d}`).value
+            };
+        });
+        await db.collection('users').doc(user.uid).update({ schedule });
+        shopData.schedule = schedule;
+        alert("Weekly Schedule Saved!");
+    }
+
+    async function toggleEmergency(state) {
+        await db.collection('users').doc(user.uid).update({ emergencyClose: state });
+        shopData.emergencyClose = state;
         renderOpenClose(document.getElementById('content-area'));
     }
 
-    async function saveTimes() {
-        await db.collection('users').doc(user.uid).update({
-            openTime: document.getElementById('t-open').value,
-            closeTime: document.getElementById('t-close').value
-        });
-        alert("Times Saved");
+    async function addDate() {
+        const d = document.getElementById('sp-date').value;
+        if(!d) return;
+        const arr = shopData.specialDates || [];
+        arr.push(d);
+        await db.collection('users').doc(user.uid).update({ specialDates: arr });
+        shopData.specialDates = arr;
+        renderOpenClose(document.getElementById('content-area'));
     }
 
-    // --- 6) PRODUCTS ---
+    async function removeDate(i) {
+        const arr = shopData.specialDates;
+        arr.splice(i, 1);
+        await db.collection('users').doc(user.uid).update({ specialDates: arr });
+        shopData.specialDates = arr;
+        renderOpenClose(document.getElementById('content-area'));
+    }
+
+    // --- 7) PRODUCTS (Strict Cats) ---
     function renderProducts(div) {
         tempImages = [null,null,null];
         div.innerHTML = `
@@ -573,11 +710,14 @@
                         ${[0,1,2].map(i=>`<div class="upload-box" style="padding:10px; min-width:70px;" onclick="document.getElementById('f-p${i}').click()">+<input type="file" id="f-p${i}" hidden onchange="upImg(this, 'prod', ${i})"><img id="prev-p${i}"></div>`).join('')}
                     </div>
                 </div>
-                <div class="input-group"><label>Category</label><select id="p-cat"><option>Living Room</option><option>Bedroom</option><option>Dining</option><option>Office</option><option>Outdoor</option></select></div>
-                <div class="input-group"><label>Sub Category</label><input id="p-sub" placeholder="e.g. Sofa"></div>
+                <div class="input-group"><label>Category *</label>
+                    <select id="p-cat">
+                        <option value="">Select Category</option>
+                        ${CATEGORIES.map(c => `<option>${c}</option>`).join('')}
+                    </select>
+                </div>
                 <div class="input-group"><label>Name</label><input id="p-name"></div>
                 <div class="input-group"><label>Description</label><textarea id="p-desc"></textarea></div>
-                <div class="input-group"><label>Promo Text</label><input id="p-promo"></div>
                 <div class="input-group"><label>Price (Rs)</label><input type="number" id="p-price"></div>
                 <button class="btn" onclick="saveProd()">Save Product</button>
             </div>
@@ -585,7 +725,7 @@
             ${(shopData.products||[]).map((p,i)=>`
                 <div class="card flex space-between" style="padding:15px;">
                     <div class="flex"><img src="${p.images[0]}" style="width:50px; height:50px; border-radius:8px;"> <div><b>${p.name}</b><br>Rs. ${p.price}</div></div>
-                    <button class="btn btn-outline" style="width:auto; padding:5px; color:red; border-color:red;" onclick="delProd(${i})"><i class="fa-solid fa-trash"></i></button>
+                    <button class="btn btn-outline" style="width:auto; padding:5px; border-color:red; color:red;" onclick="delProd(${i})"><i class="fa-solid fa-trash"></i></button>
                 </div>
             `).join('')}
         `;
@@ -593,14 +733,15 @@
 
     async function saveProd() {
         const imgs = tempImages.filter(x=>x);
+        const cat = document.getElementById('p-cat').value;
         if(!imgs.length) return alert("Image required");
+        if(!cat) return alert("Category required");
+        
         const prod = {
             id: Date.now(),
-            category: document.getElementById('p-cat').value,
-            subCategory: document.getElementById('p-sub').value,
+            category: cat,
             name: document.getElementById('p-name').value,
             desc: document.getElementById('p-desc').value,
-            promoText: document.getElementById('p-promo').value,
             price: document.getElementById('p-price').value,
             images: imgs
         };
@@ -618,23 +759,18 @@
         renderProducts(document.getElementById('content-area'));
     }
 
-    // --- 7) WEBPAGE (VISUAL EDITOR) ---
+    // --- 8) MY WEBPAGE ---
     function renderWebpage(div) {
-        // Fix 1: Correct Public Link Generation
-        // Using current origin + logic to point to sibling 'shop.html'
         const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
         const url = `${window.location.origin}${path}/shop.html?id=${user.uid}`;
-        
         const sl = shopData.socialLinks || {};
 
         div.innerHTML = `
             <div class="card text-center">
-                <img src="${shopData.logo||'logo.png'}" style="width:80px;height:80px;border-radius:50%;border:3px solid var(--primary);">
-                <h3>${shopData.shopName}</h3>
-                <p>Public Shop Link:</p>
-                <input value="${url}" readonly class="w-100 text-center" style="background:#eee; border:none; padding:10px; border-radius:10px; margin-bottom:10px;">
+                <h3>Public Link</h3>
+                <input value="${url}" readonly class="w-100 text-center mb-1" style="background:#eee; border:none; padding:10px; border-radius:10px;">
                 <div class="flex center">
-                    <a href="${url}" target="_blank" class="btn btn-accent">Open Page</a>
+                    <a href="${url}" target="_blank" class="btn btn-accent" style="text-decoration:none;">Open Page</a>
                     <button class="btn btn-outline" onclick="navigator.clipboard.writeText('${url}'); alert('Copied')">Copy</button>
                 </div>
             </div>
@@ -645,13 +781,12 @@
                 <div class="input-group"><label>Welcome Text</label><input id="w-txt" value="${shopData.heroText||''}" onchange="saveWeb()"></div>
             </div>
 
-            <!-- Fix 2: Social Media Inputs -->
             <div class="card">
-                <h3>Social Media Links</h3>
-                <div class="input-group"><label><i class="fa-brands fa-facebook text-primary"></i> Facebook</label><input id="sl-fb" value="${sl.fb||''}" placeholder="https://facebook.com/..." onchange="saveWeb()"></div>
-                <div class="input-group"><label><i class="fa-brands fa-instagram" style="color:#E1306C"></i> Instagram</label><input id="sl-ig" value="${sl.ig||''}" placeholder="https://instagram.com/..." onchange="saveWeb()"></div>
-                <div class="input-group"><label><i class="fa-brands fa-tiktok"></i> TikTok</label><input id="sl-tk" value="${sl.tk||''}" placeholder="https://tiktok.com/..." onchange="saveWeb()"></div>
-                <div class="input-group"><label><i class="fa-brands fa-youtube" style="color:red"></i> YouTube</label><input id="sl-yt" value="${sl.yt||''}" placeholder="https://youtube.com/..." onchange="saveWeb()"></div>
+                <h3>Social Media</h3>
+                <div class="input-group"><label>Facebook</label><input id="sl-fb" value="${sl.fb||''}" placeholder="https://facebook.com/..." onchange="saveWeb()"></div>
+                <div class="input-group"><label>Instagram</label><input id="sl-ig" value="${sl.ig||''}" placeholder="https://instagram.com/..." onchange="saveWeb()"></div>
+                <div class="input-group"><label>TikTok</label><input id="sl-tk" value="${sl.tk||''}" placeholder="https://tiktok.com/..." onchange="saveWeb()"></div>
+                <div class="input-group"><label>YouTube</label><input id="sl-yt" value="${sl.yt||''}" placeholder="https://youtube.com/..." onchange="saveWeb()"></div>
             </div>
         `;
     }
@@ -666,10 +801,10 @@
                 tk: document.getElementById('sl-tk').value,
                 yt: document.getElementById('sl-yt').value
             }
-        }).then(()=>console.log("Webpage Updated")); // Auto-save silently
+        }).then(()=>console.log("Webpage Updated"));
     }
 
-    // --- 8) ORDERS ---
+    // --- 9) ORDERS ---
     function renderOrders(div) {
         if(!shopOrders.length) return div.innerHTML = `<div class="card text-center"><h3>No Orders</h3></div>`;
         div.innerHTML = shopOrders.map(o => `
@@ -679,30 +814,21 @@
                 </div>
                 <div class="flex space-between" style="margin-top:10px;">
                     <b style="color:var(--primary)">Rs. ${o.total}</b>
-                    <a href="https://wa.me/${o.custWa}" target="_blank" class="btn btn-green" style="width:auto; padding:5px 10px; font-size:0.8rem; margin:0;"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                    <a href="https://wa.me/${o.custWa}" target="_blank" class="btn btn-green btn-sm"><i class="fa-brands fa-whatsapp"></i> Chat</a>
                 </div>
                 <p style="font-size:0.85rem; color:#666; margin-top:10px;">Items: ${o.items.map(i=>i.name).join(', ')}</p>
             </div>
         `).join('');
     }
 
-    // --- 9) MESSAGES ---
+    // --- 10) MESSAGES ---
     function renderMessages(div) {
-        div.innerHTML = `
-            <div class="card text-center">
-                <h3>Customer Messages</h3>
-                <p style="color:#777;">Customer chat integration will appear here.</p>
-                <div style="height:300px; background:#f9f9f9; border-radius:12px; display:flex; align-items:center; justify-content:center; border:2px dashed #ddd;">
-                    <span style="font-size:3rem; color:#ddd;"><i class="fa-solid fa-comments"></i></span>
-                </div>
-            </div>
-        `;
+        div.innerHTML = `<div class="card text-center"><h3>Messages</h3><p style="color:#777;">Chat integration coming soon.</p></div>`;
     }
 
-    // --- 10) REVIEWS ---
+    // --- 11) REVIEWS ---
     function renderReviews(div) {
         if(!shopReviews.length) return div.innerHTML = `<div class="card text-center"><h3>Reviews</h3><p>No reviews yet.</p></div>`;
-        
         div.innerHTML = shopReviews.map(r => `
             <div class="card">
                 <div class="flex space-between">
@@ -713,8 +839,8 @@
                 <div class="flex space-between">
                     <span class="status-badge" style="background:${r.status==='published'?'#E8F5E9':'#FFF3E0'}">${r.status || 'Pending'}</span>
                     <div class="flex">
-                        ${r.status !== 'published' ? `<button class="btn btn-green" style="width:auto; padding:5px 10px; margin:0;" onclick="pubRev('${r.id}')">Publish</button>` : ''}
-                        <button class="btn btn-outline" style="width:auto; padding:5px 10px; color:red; border-color:red; margin:0;" onclick="delRev('${r.id}')">Delete</button>
+                        ${r.status !== 'published' ? `<button class="btn btn-green btn-sm" onclick="pubRev('${r.id}')">Publish</button>` : ''}
+                        <button class="btn btn-outline btn-sm" style="color:red; border-color:red;" onclick="delRev('${r.id}')">Delete</button>
                     </div>
                 </div>
             </div>
@@ -723,16 +849,14 @@
 
     function pubRev(id) {
         db.collection('users').doc(user.uid).collection('reviews').doc(id).update({status: 'published'});
-        alert("Review Published!");
+        alert("Published!");
     }
 
     function delRev(id) {
-        if(confirm("Delete this review?")) {
-            db.collection('users').doc(user.uid).collection('reviews').doc(id).delete();
-        }
+        if(confirm("Delete?")) db.collection('users').doc(user.uid).collection('reviews').doc(id).delete();
     }
 
-    // --- UTILS: UPLOAD ---
+    // --- UTILS ---
     function upImg(input, type, idx) {
         const file = input.files[0];
         if(!file) return;
@@ -746,7 +870,6 @@
                 const scale = 600/img.width;
                 cvs.width = 600; cvs.height = img.height*scale;
                 cvs.getContext('2d').drawImage(img,0,0,cvs.width,cvs.height);
-                
                 const task = storage.ref(`img/${user.uid}/${Date.now()}.jpg`).putString(cvs.toDataURL('image/jpeg',0.7), 'data_url');
                 task.then(s => s.ref.getDownloadURL().then(url => {
                     if(type==='logo') { shopData.temp_logo = url; document.getElementById('p-logo').src = url; }
