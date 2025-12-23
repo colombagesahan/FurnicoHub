@@ -79,10 +79,7 @@
             location.href = 'customer.html';
         }
     }
-    <script>
-    // ... (Your existing Firebase code is here) ...
-
-    // --- PWA SERVICE WORKER REGISTRATION ---
+   
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js')
@@ -93,7 +90,7 @@
                 });
         });
     }
-</script>
+
 </script>
 </body>
 </html>
