@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FurnicoHub | Sri Lanka's #1 Furniture Marketplace</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+    <style>
+        :root { --primary: #8d6e63; --secondary: #3e2723; --bg: #f4f4f9; --white: #ffffff; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        body { margin:0; font-family:'Poppins', sans-serif; background:var(--bg); color:var(--secondary); padding-bottom: 80px; }
+        
+        /* Nav */
+        nav { background: var(--white); padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .logo { font-size: 1.2rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .logo img { height: 35px; }
+        .btn { padding: 8px 16px; border-radius: 50px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        
+        /* Hero */
+        .hero { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #efebe9 0%, #ffffff 100%); }
+        .hero h1 { font-size: 2rem; margin-bottom: 10px; color: var(--secondary); }
+        .hero p { color: #666; font-size: 0.95rem; margin-bottom: 20px; }
+        
+        /* Filters */
+        .filters { padding: 0 20px; display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .filter-select { padding: 10px; border-radius: 10px; border: 1px solid #ccc; flex: 1; min-width: 140px; }
+
+        /* Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 20px; }
+        .card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; position: relative; }
+        .card:hover { transform: translateY(-5px); }
+        .card img { width: 100%; height: 140px; object-fit: cover; }
+        .card-body { padding: 12px; }
+        .card-price { color: var(--primary); font-weight: 800; font-size: 1.1rem; }
+        .verified-badge { position: absolute; top: 10px; right: 10px; background: #2ecc71; color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: bold; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .seller-info { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 0.75rem; color: #777; border-top: 1px solid #eee; padding-top: 8px; }
+        .seller-img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
+        
+        /* Footer */
+        footer { background: var(--secondary); color: white; padding: 40px 20px; text-align: center; border-radius: 20px 20px 0 0; margin-top: 20px; }
+        
+        /* Verified Check */
+        .fa-circle-check { color: white; }
+
+        @media (min-width: 768px) {
+            .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+            .card img { height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <img src="logo.png" alt="Logo"> FurnicoHub
+        </div>
+        <a href="dashboard.html" class="btn btn-primary">Seller Login</a>
+    </nav>
+
+    <div class="hero">
+        <h1>Find Your Dream Furniture <br> <span style="color:var(--primary)">Or Sell to the Nation</span></h1>
+        <p>Customers: Explore Sri Lanka's largest furniture showroom.<br>Sellers: Create your store in 2 minutes and reach thousands.</p>
+        <div style="display:flex; justify-content:center; gap:10px;">
+            <a href="#market" class="btn btn-primary">Shop Now</a>
+            <a href="dashboard.html" class="btn" style="border:2px solid var(--primary); color:var(--primary)">Start Selling</a>
+        </div>
+    </div>
+
+    <div id="market" style="padding: 10px 20px;">
+        <h3>Explore Collection</h3>
+    </div>
+    
+    <div class="filters">
+        <select id="cat-filter" class="filter-select" onchange="filterProducts()">
+            <option value="">All Categories</option>
+            <option value="Living Room">Living Room</option>
+            <option value="Bedroom">Bedroom</option>
+            <option value="Dining">Dining</option>
+            <option value="Office">Office</option>
+        </select>
+        <select id="sub-filter" class="filter-select" onchange="filterProducts()">
+            <option value="">Sub Category</option>
+            <!-- Populated by JS -->
+        </select>
+    </div>
+
+    <div id="product-grid" class="grid">
+        <!-- Products injected here -->
+        <div style="grid-column:1/-1; text-align:center; padding:50px;">
+            <i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--primary)"></i>
+        </div>
+    </div>
+
+    <footer>
+        <h3>FurnicoHub</h3>
+        <p>110, Ranala Road, Habarakada, Homagama.</p>
+        <p>Hotline: 0703150742</p>
+        <small>&copy; 2025 FurnicoHub. All Rights Reserved.</small>
+    </footer>
+
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0",
+      authDomain: "furnicohub.firebaseapp.com",
+      projectId: "furnicohub",
+      storageBucket: "furnicohub.firebasestorage.app",
+      messagingSenderId: "395576125006",
+      appId: "1:395576125006:web:a848f68053c69409ddc51f",
+      measurementId: "G-WE0RETCVTX"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let allProducts = [];
+
+    window.onload = async () => {
+        try {
+            // Fetch all sellers first (Simple approach for PWA)
+            const snapshot = await db.collection('users').where('role', '==', 'seller').get();
+            snapshot.forEach(doc => {
+                const seller = doc.data();
+                if (seller.products) {
+                    seller.products.forEach(p => {
+                        allProducts.push({
+                            ...p,
+                            sellerId: doc.id,
+                            sellerName: seller.shopName || 'Unknown Shop',
+                            sellerLogo: seller.logo || 'https://via.placeholder.com/30',
+                            verified: seller.isVerified,
+                            latestReview: seller.lastReview || null
+                        });
+                    });
+                }
+            });
+
+            // Fisher-Yates Shuffle for "Reasonable Opportunity"
+            for (let i = allProducts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allProducts[i], allProducts[j]] = [allProducts[j], allProducts[i]];
+            }
+
+            renderProducts(allProducts);
+        } catch (e) {
+            console.error(e);
+            document.getElementById('product-grid').innerHTML = '<p>Error loading furniture.</p>';
+        }
+    };
+
+    function renderProducts(list) {
+        const grid = document.getElementById('product-grid');
+        grid.innerHTML = list.map(p => `
+            <div class="card" onclick="location.href='shop.html?id=${p.sellerId}'">
+                <img src="${p.images[0]}" alt="${p.name}" loading="lazy">
+                ${p.verified ? `<div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</div>` : ''}
+                <div class="card-body">
+                    <div style="font-size:0.9rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
+                    <div class="card-price">Rs. ${p.price}</div>
+                    <div style="font-size:0.7rem; color:#e67e22; margin:5px 0;">${p.promoText || ''}</div>
+                    <div class="seller-info">
+                        <img src="${p.sellerLogo}" class="seller-img">
+                        <span>${p.sellerName}</span>
+                    </div>
+                    ${p.latestReview ? `<div style="font-size:0.7rem; color:#777; margin-top:5px; font-style:italic;">"${p.latestReview}"</div>` : ''}
+                    <button class="btn btn-primary" style="width:100%; margin-top:10px; font-size:0.8rem;">See Details</button>
+                </div>
+            </div>
+        `).join('');
+
+        if(list.length === 0) grid.innerHTML = "<div style='grid-column:1/-1; text-align:center;'>No products found.</div>";
+    }
+
+    function filterProducts() {
+        const cat = document.getElementById('cat-filter').value;
+        // Simple filtering
+        const filtered = allProducts.filter(p => cat === "" || p.category === cat);
+        renderProducts(filtered);
+    }
+</script>
+</body>
+</html>
