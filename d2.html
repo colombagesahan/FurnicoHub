@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FurnicoHub | Seller Portal</title>
+    
+    <!-- PWA Meta -->
+    <meta name="theme-color" content="#4E342E">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" href="icon.png">
+
+    <!-- Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        :root {
+            /* --- IMPROVED COLOR PALETTE --- */
+            --primary: #4E342E;        /* Mahogany */
+            --primary-light: #8D6E63;  /* Lighter Brown */
+            --accent: #FF7043;         /* Vibrant Orange for Actions */
+            --bg-body: #FDFBF7;        /* Warm White */
+            --surface: #FFFFFF;
+            --text: #3E2723;
+            --green: #4CAF50;
+            --green-light: #E8F5E9;
+            --red: #E53935;
+            --gold: #FFC107;
+            
+            /* Design System */
+            --shadow: 0 8px 24px rgba(78, 52, 46, 0.08);
+            --radius: 16px;
+            --font: 'Poppins', sans-serif;
+            --sidebar-w: 260px;
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg-body); color: var(--text); padding-bottom: 80px; font-size: 14px; }
+        
+        /* UTILS */
+        .hidden { display: none !important; }
+        .flex { display: flex; align-items: center; gap: 10px; }
+        .center { align-items: center; justify-content: center; }
+        .space-between { justify-content: space-between; }
+        .col { flex-direction: column; }
+        .bold { font-weight: 700; }
+        .text-center { text-align: center; }
+        .w-100 { width: 100%; }
+        .mt-2 { margin-top: 15px; } .mb-2 { margin-bottom: 15px; }
+
+        /* COMPONENTS */
+        .btn {
+            width: 100%; padding: 12px; border: none; border-radius: 12px;
+            background: var(--primary); color: white; font-weight: 600;
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 0.9rem; transition: 0.2s; margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(78, 52, 46, 0.2);
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-accent { background: var(--accent); color: white; }
+        .btn-green { background: var(--green); color: white; }
+        .btn-red { background: var(--red); color: white; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); box-shadow: none; }
+
+        .card {
+            background: var(--surface); padding: 20px; border-radius: var(--radius);
+            box-shadow: var(--shadow); margin-bottom: 15px;
+            border: 1px solid #EFEBE9; animation: slideUp 0.4s ease-out;
+        }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600; color: #5D4037; }
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%; padding: 12px; border: 2px solid #E0E0E0; border-radius: 12px;
+            font-family: var(--font); font-size: 0.95rem; background: #FAFAFA; transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--primary); background: #fff; }
+        .input-group input:disabled { background: #F5F5F5; color: #999; border-color: #EEE; }
+
+        /* FILE UPLOAD */
+        .upload-box {
+            border: 2px dashed #BCAAA4; border-radius: 12px; padding: 20px;
+            text-align: center; cursor: pointer; background: #FAFAFA; position: relative; transition: 0.3s;
+        }
+        .upload-box:hover { background: #fff; border-color: var(--accent); }
+        .upload-box img { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; display: none; margin-top: 5px; }
+
+        /* LOGIN SCREEN */
+        #login-ui {
+            height: 100vh; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; padding: 20px;
+            background: radial-gradient(circle at top right, #EFEBE9 0%, #D7CCC8 100%);
+        }
+
+        /* NAVIGATION */
+        .mobile-header {
+            background: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .tabs-container {
+            width: 100%; overflow-x: auto; background: white; 
+            padding: 10px; display: flex; gap: 8px;
+            scrollbar-width: none; -webkit-overflow-scrolling: touch;
+            border-bottom: 1px solid #eee;
+        }
+        .tab-btn {
+            padding: 8px 18px; background: #F5F5F5; border: 1px solid #E0E0E0;
+            border-radius: 20px; white-space: nowrap; cursor: pointer;
+            color: #5D4037; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;
+            transition: 0.2s;
+        }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(78, 52, 46, 0.3); }
+
+        /* DESKTOP SIDEBAR */
+        @media (min-width: 900px) {
+            .mobile-header { display: none; }
+            #dashboard-ui { display: flex; }
+            .tabs-container {
+                flex-direction: column; width: var(--sidebar-w); height: 100vh;
+                position: fixed; left: 0; top: 0; background: white; border-right: 1px solid #eee;
+                padding: 25px; gap: 8px; border-bottom: none;
+            }
+            .tabs-container::before {
+                content: 'FurnicoHub'; font-size: 1.8rem; font-weight: 800; color: var(--primary);
+                padding: 0 10px 30px; display: block; border-bottom: 1px solid #eee; margin-bottom: 15px;
+            }
+            .tab-btn { width: 100%; border-radius: 10px; border: none; padding: 14px; justify-content: flex-start; background: transparent; }
+            .tab-btn:hover { background: #FFF3E0; color: var(--primary); }
+            .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(78, 52, 46, 0.2); }
+            #content-area { margin-left: var(--sidebar-w); padding: 40px; width: calc(100% - var(--sidebar-w)); max-width: 1200px; }
+        }
+
+        /* 250px RESPONSIVENESS */
+        @media (max-width: 350px) {
+            h3 { font-size: 1.1rem; }
+            .card { padding: 12px; }
+            .btn { font-size: 0.8rem; padding: 10px; }
+            .nav-brand { font-size: 1rem; }
+            .stat-grid { grid-template-columns: 1fr !important; }
+        }
+
+        /* EXTRA STYLES */
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+        .st-verified { background: var(--green-light); color: var(--green); border: 1px solid var(--green); }
+        .st-pending { background: #FFF3E0; color: #E65100; border: 1px solid #FFCC80; }
+        
+        .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 15px; border-radius: 16px; text-align: center; cursor: pointer; border-bottom: 4px solid transparent; box-shadow: var(--shadow); transition: 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); }
+
+        .toggle-switch { display: flex; background: #eee; border-radius: 50px; padding: 4px; width: fit-content; margin: 0 auto 15px; }
+        .toggle-opt { padding: 6px 16px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #777; transition: 0.2s; }
+        .toggle-opt.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+        @keyframes slideUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="login-ui">
+        <div class="card" style="width: 100%; max-width: 350px; text-align: center; padding: 40px 25px;">
+            <img src="logo.png" style="width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 4px solid var(--primary); margin-bottom: 20px;">
+            <h2 style="color:var(--primary); margin-bottom: 5px;">Seller Portal</h2>
+            <p style="color:#666; margin-bottom: 30px; line-height: 1.5;">Manage your furniture shop, inventory, and orders in one place.</p>
+            <button class="btn" onclick="login()"><i class="fa-brands fa-google"></i> Login with Google</button>
+            <a href="index.html" class="btn btn-outline" style="margin-top: 10px;">Back to Marketplace</a>
+        </div>
+    </div>
+
+    <!-- 2. DASHBOARD UI -->
+    <div id="dashboard-ui" class="hidden">
+        <div class="mobile-header">
+            <div class="bold" style="font-size:1.1rem; display:flex; align-items:center; gap:8px; color:var(--primary);">
+                <img src="icon.png" height="28"> FurnicoHub
+            </div>
+            <button class="btn" style="width:auto; padding:6px 14px; margin:0; background:rgba(78, 52, 46, 0.1); color:var(--primary);" onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+        </div>
+
+        <div class="tabs-container" id="tabs-nav">
+            <!-- Injected via JS -->
+        </div>
+
+        <div id="content-area" style="padding: 20px;">
+            <div style="text-align:center; padding:50px; color:#aaa;">
+                <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+            </div>
+        </div>
+    </div>
+
+    <iframe id="printFrame" style="display:none;"></iframe>
+
+<script>
+    // --- 1. FIREBASE CONFIG ---
+    const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    let user = null;
+    let shopData = {};
+    let shopOrders = [];
+    let shopReviews = [];
+    let currentTab = 'Dashboard';
+    let tempImages = [null, null, null]; 
+    let discountType = 'amount'; // 'amount' or 'percent'
+
+    // --- TABS ---
+    const TABS = [
+        { id: 'Dashboard', icon: 'fa-calculator' }, 
+        { id: 'Marketplace', icon: 'fa-store' },    
+        { id: 'Profile', icon: 'fa-user-gear' },     
+        { id: 'Get Verified', icon: 'fa-certificate' }, 
+        { id: 'Open/Close', icon: 'fa-clock' },     
+        { id: 'Products', icon: 'fa-couch' },       
+        { id: 'My Webpage', icon: 'fa-globe' },     
+        { id: 'Orders', icon: 'fa-box-open' },      
+        { id: 'Messages', icon: 'fa-comments' },    
+        { id: 'Reviews', icon: 'fa-star' }          
+    ];
+
+    // --- 2. AUTH ---
+    auth.onAuthStateChanged(async u => {
+        if (u) {
+            user = u;
+            document.getElementById('login-ui').classList.add('hidden');
+            document.getElementById('dashboard-ui').classList.remove('hidden');
+            await loadShopData();
+        } else {
+            document.getElementById('login-ui').classList.remove('hidden');
+            document.getElementById('dashboard-ui').classList.add('hidden');
+        }
+    });
+
+    function login() { 
+        auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => alert(e.message)); 
+    }
+    function logout() { auth.signOut(); }
+
+    async function loadShopData() {
+        const doc = await db.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+            shopData = doc.data();
+            currentTab = shopData.profileCompleted ? 'Dashboard' : 'Profile';
+        } else {
+            shopData = { role: 'seller', profileCompleted: false, isVerified: false, products: [], isOpen: false };
+            await db.collection('users').doc(user.uid).set(shopData);
+            currentTab = 'Profile';
+        }
+        
+        // Listeners
+        db.collection('users').doc(user.uid).collection('orders').orderBy('time', 'desc').onSnapshot(snap => {
+            const newOrders = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            if (newOrders.length > shopOrders.length && shopOrders.length > 0) {
+                alert("🔔 New Order Received!");
+            }
+            shopOrders = newOrders;
+            if(currentTab === 'Orders' || currentTab === 'Dashboard') renderContent();
+        });
+
+        db.collection('users').doc(user.uid).collection('reviews').onSnapshot(snap => {
+            shopReviews = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            if(currentTab === 'Reviews') renderContent();
+        });
+
+        renderTabs();
+        renderContent();
+    }
+
+    // --- 3. RENDER SYSTEM ---
+    function renderTabs() {
+        const nav = document.getElementById('tabs-nav');
+        let html = TABS.map(t => 
+            `<button class="tab-btn ${currentTab === t.id ? 'active' : ''}" onclick="switchTab('${t.id}')">
+                <i class="fa-solid ${t.icon}"></i> ${t.id}
+             </button>`
+        ).join('');
+        if(window.innerWidth > 900) html += `<button class="tab-btn" onclick="logout()" style="margin-top:auto; color:#E53935;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>`;
+        nav.innerHTML = html;
+    }
+
+    function switchTab(id) {
+        if(!shopData.profileCompleted && id !== 'Profile') return alert("Please complete Profile first!");
+        currentTab = id;
+        renderTabs();
+        renderContent();
+    }
+
+    function renderContent() {
+        const c = document.getElementById('content-area');
+        c.innerHTML = '';
+        
+        switch(currentTab) {
+            case 'Dashboard': renderPOS(c); break;
+            case 'Marketplace': renderMarketplace(c); break;
+            case 'Profile': renderProfile(c); break;
+            case 'Get Verified': renderVerify(c); break;
+            case 'Open/Close': renderOpenClose(c); break;
+            case 'Products': renderProducts(c); break;
+            case 'My Webpage': renderWebpage(c); break;
+            case 'Orders': renderOrders(c); break;
+            case 'Messages': renderMessages(c); break;
+            case 'Reviews': renderReviews(c); break;
+        }
+    }
+
+    // --- 1) DASHBOARD / SMART POS ---
+    function renderPOS(div) {
+        div.innerHTML = `
+            <div class="card">
+                <h3><i class="fa-solid fa-calculator"></i> Smart POS</h3>
+                <div class="input-group">
+                    <label>Select Product</label>
+                    <select id="pos-item" onchange="calcPos()">
+                        <option value="0|Select">Select...</option>
+                        ${(shopData.products||[]).map(p => `<option value="${p.price}|${p.name}">${p.name} - Rs.${p.price}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="input-group"><label>Customer Name</label><input id="pos-cust"></div>
+                
+                <div class="input-group">
+                    <label>Discount Type</label>
+                    <div class="toggle-switch">
+                        <div class="toggle-opt ${discountType==='amount'?'active':''}" onclick="setDiscType('amount')">Rs. Amount</div>
+                        <div class="toggle-opt ${discountType==='percent'?'active':''}" onclick="setDiscType('percent')">% Percent</div>
+                    </div>
+                    <input type="number" id="pos-disc" value="0" oninput="calcPos()" placeholder="Enter value">
+                </div>
+                
+                <div class="text-center" style="margin:20px 0; background:#FFF8E1; padding:15px; border-radius:12px;">
+                    <small>Total Payable</small><br>
+                    <span style="font-size:1.8rem; font-weight:800; color:var(--primary);" id="pos-total">Rs. 0</span>
+                </div>
+                <button class="btn btn-green" onclick="printInv()">Generate Invoice & Print</button>
+            </div>
+        `;
+    }
+    
+    function setDiscType(type) {
+        discountType = type;
+        renderPOS(document.getElementById('content-area')); // Re-render to update UI
+        calcPos();
+    }
+
+    function calcPos() {
+        const val = document.getElementById('pos-item').value.split('|')[0];
+        const price = parseInt(val) || 0;
+        const discVal = parseInt(document.getElementById('pos-disc').value) || 0;
+        let final = 0;
+
+        if (discountType === 'amount') {
+            final = price - discVal;
+        } else {
+            final = price - (price * (discVal / 100));
+        }
+        
+        document.getElementById('pos-total').innerText = "Rs. " + Math.max(0, final);
+    }
+
+    function printInv() {
+        const [price, name] = document.getElementById('pos-item').value.split('|');
+        if(name === 'Select') return;
+        const total = document.getElementById('pos-total').innerText;
+        const date = new Date().toLocaleDateString();
+        
+        const w = window.open('','','width=300,height=500');
+        w.document.write(`
+            <body style="font-family:monospace; text-align:center; padding:10px;">
+                <h3>${shopData.shopName}</h3>
+                <p>${shopData.address}<br>${shopData.phone1}</p>
+                <hr style="border-top:1px dashed #000">
+                <p style="text-align:left">Date: ${date}</p>
+                <table style="width:100%"><tr><td>${name}</td><td align="right">${price}</td></tr></table>
+                <p style="text-align:right">Total: ${total}</p>
+                <hr>
+                <p>Thank You!</p>
+                <script>window.print();<\/script>
+            </body>
+        `);
+    }
+
+    // --- 2) MARKETPLACE ---
+    async function renderMarketplace(div) {
+        div.innerHTML = `<div class="card"><h3>Marketplace Feed</h3><input placeholder="Search..." onkeyup="filterFeed(this.value)" class="w-100" style="padding:10px; border-radius:10px; border:1px solid #ccc;"></div><div id="feed-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:15px;">Loading...</div>`;
+        const snap = await db.collection('users').where('role', '==', 'seller').get();
+        let items = [];
+        snap.forEach(doc => {
+            const d = doc.data();
+            if(d.products) d.products.forEach(p => items.push({...p, seller: d.shopName, logo: d.logo, verified: d.isVerified}));
+        });
+        window.marketItems = items;
+        filterFeed('');
+    }
+
+    window.filterFeed = function(q) {
+        const grid = document.getElementById('feed-grid');
+        const term = q.toLowerCase();
+        const filtered = window.marketItems.filter(i => i.name.toLowerCase().includes(term));
+        grid.innerHTML = filtered.map(i => `
+            <div class="card" style="padding:0; overflow:hidden;">
+                <img src="${i.images[0]}" style="width:100%; height:120px; object-fit:cover;">
+                <div style="padding:10px;">
+                    <div class="bold">${i.name}</div>
+                    <div style="color:var(--primary);">Rs. ${i.price}</div>
+                    <div style="font-size:0.75rem; color:#777; margin-top:5px;">${i.seller}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // --- 3) PROFILE ---
+    function renderProfile(div) {
+        const d = shopData;
+        const lock = d.isVerified ? 'disabled' : '';
+        const lockMsg = d.isVerified ? '<div style="background:#E8F5E9; color:green; padding:10px; border-radius:8px; margin-bottom:15px; text-align:center;">🔒 Profile Locked (Verified)</div>' : '';
+
+        div.innerHTML = `
+            <div class="card">
+                <h3>Shop Profile</h3>
+                ${lockMsg}
+                <div class="text-center mb-2">
+                    <img id="p-logo" src="${d.logo||'logo.png'}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);">
+                    ${!d.isVerified ? `<br><label class="btn btn-outline" style="width:auto; display:inline-block; margin-top:10px; padding:6px 15px;">Upload Logo <input type="file" hidden onchange="upImg(this, 'logo')"></label>` : ''}
+                </div>
+                <div class="input-group"><label>Shop Name</label><input id="s-name" value="${d.shopName||''}" ${lock}></div>
+                <div class="input-group"><label>Address</label><textarea id="s-addr" ${lock}>${d.address||''}</textarea></div>
+                <div class="input-group"><label>Owner Name</label><input id="s-own" value="${d.ownerName||''}" ${lock}></div>
+                <div class="input-group"><label>NIC</label><input id="s-nic" value="${d.nic||''}" ${lock}></div>
+                <div class="input-group"><label>Phone 1</label><input id="s-ph1" value="${d.phone1||''}" ${lock}></div>
+                <div class="input-group"><label>Phone 2</label><input id="s-ph2" value="${d.phone2||''}" ${lock}></div>
+                <div class="input-group"><label>WhatsApp (+94)</label><input id="s-wa" value="${d.whatsapp||'+94'}" ${lock}></div>
+                
+                ${!d.isVerified ? `<button class="btn" onclick="saveProfile()">Save Profile</button>` : ''}
+            </div>
+        `;
+    }
+
+    async function saveProfile() {
+        const wa = document.getElementById('s-wa').value;
+        if(!wa.startsWith('+94')) return alert("WhatsApp must start with +94");
+        
+        const upd = {
+            shopName: document.getElementById('s-name').value,
+            address: document.getElementById('s-addr').value,
+            ownerName: document.getElementById('s-own').value,
+            nic: document.getElementById('s-nic').value,
+            phone1: document.getElementById('s-ph1').value,
+            phone2: document.getElementById('s-ph2').value,
+            whatsapp: wa,
+            logo: shopData.temp_logo || shopData.logo || '',
+            profileCompleted: true
+        };
+        
+        await db.collection('users').doc(user.uid).update(upd);
+        shopData = {...shopData, ...upd};
+        alert("Profile Saved!");
+        switchTab('Dashboard');
+    }
+
+    // --- 4) VERIFIED ---
+    function renderVerify(div) {
+        if(shopData.isVerified) return div.innerHTML = `<div class="card text-center" style="padding:40px;"><h1 style="color:var(--green)"><i class="fa-solid fa-circle-check"></i> Verified</h1><p>You have the trusted badge.</p></div>`;
+        
+        div.innerHTML = `
+            <div class="card">
+                <h3>Get Verified (Rs. 5000)</h3>
+                <p style="color:#666; margin-bottom:15px;">Follow steps to get the Green Badge.</p>
+                <button class="btn btn-outline" onclick="printProf()">1. Download Profile PDF</button>
+                <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0;">
+                    <b>2. Certify:</b> GN or JP Stamp.<br>
+                    <b>3. Pay Rs. 5000:</b><br>Bank: Commercial Bank, Homagama<br>Acc: 8750053306 (Colombage SD)
+                </div>
+                <div class="input-group">
+                    <label>4. Upload Certified Doc</label>
+                    <div class="upload-box" onclick="document.getElementById('v-doc').click()">Click to Upload <input type="file" id="v-doc" hidden onchange="upImg(this, 'doc')"></div>
+                    <small id="st-doc" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded</small>
+                </div>
+                <div class="input-group">
+                    <label>5. Upload Payment Slip</label>
+                    <div class="upload-box" onclick="document.getElementById('v-slip').click()">Click to Upload <input type="file" id="v-slip" hidden onchange="upImg(this, 'slip')"></div>
+                    <small id="st-slip" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded</small>
+                </div>
+                <button class="btn btn-green" onclick="subVerify()">Submit for Review</button>
+            </div>
+        `;
+    }
+
+    function printProf() {
+        const w = window.open('','','width=600,height=600');
+        w.document.write(`<h2>${shopData.shopName}</h2><p>Owner: ${shopData.ownerName}<br>NIC: ${shopData.nic}<br>Phone: ${shopData.phone1}</p><br><br><p>______________<br>GN/JP Signature</p>`);
+        w.print();
+    }
+
+    async function subVerify() {
+        if(!shopData.temp_doc || !shopData.temp_slip) return alert("Upload both proofs");
+        await db.collection('admin_requests').add({
+            uid: user.uid, type: 'verify', shopName: shopData.shopName,
+            doc: shopData.temp_doc, slip: shopData.temp_slip, time: new Date().toISOString()
+        });
+        alert("Submitted!");
+    }
+
+    // --- 5) OPEN/CLOSE ---
+    function renderOpenClose(div) {
+        // Fix: Use shopData.isOpen directly from DB
+        const isOpen = shopData.isOpen === true; 
+        
+        div.innerHTML = `
+            <div class="card text-center">
+                <h3>Shop Status</h3>
+                <div style="font-size:3rem; margin:20px 0; color:${isOpen ? 'var(--green)' : 'var(--red)'}">
+                    <i class="fa-solid fa-store${isOpen ? '' : '-slash'}"></i>
+                </div>
+                <h2 style="color:${isOpen ? 'var(--green)' : 'var(--red)'}">${isOpen ? 'OPEN' : 'CLOSED'}</h2>
+                
+                <div class="flex center" style="margin:20px 0; gap:15px;">
+                    <div class="w-100 text-left">
+                        <label>Open Time</label>
+                        <input type="time" id="t-open" value="${shopData.openTime||'09:00'}" class="w-100" style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+                    </div>
+                    <div class="w-100 text-left">
+                        <label>Close Time</label>
+                        <input type="time" id="t-close" value="${shopData.closeTime||'20:00'}" class="w-100" style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+                    </div>
+                </div>
+
+                <button class="btn btn-${isOpen ? 'red' : 'green'}" onclick="toggleStatus(${!isOpen})">
+                    ${isOpen ? 'Close Shop Now' : 'Open Shop Now'}
+                </button>
+                <button class="btn btn-outline" onclick="saveTimes()">Save Times Only</button>
+            </div>
+        `;
+    }
+
+    async function toggleStatus(status) {
+        await db.collection('users').doc(user.uid).update({ isOpen: status });
+        shopData.isOpen = status;
+        alert(status ? "Shop is OPEN" : "Shop is CLOSED");
+        renderOpenClose(document.getElementById('content-area'));
+    }
+
+    async function saveTimes() {
+        await db.collection('users').doc(user.uid).update({
+            openTime: document.getElementById('t-open').value,
+            closeTime: document.getElementById('t-close').value
+        });
+        alert("Times Saved");
+    }
+
+    // --- 6) PRODUCTS ---
+    function renderProducts(div) {
+        tempImages = [null,null,null];
+        div.innerHTML = `
+            <div class="card">
+                <h3>Add Product</h3>
+                <div class="input-group">
+                    <label>Images (Max 3) *</label>
+                    <div class="flex">
+                        ${[0,1,2].map(i=>`<div class="upload-box" style="padding:10px; min-width:70px;" onclick="document.getElementById('f-p${i}').click()">+<input type="file" id="f-p${i}" hidden onchange="upImg(this, 'prod', ${i})"><img id="prev-p${i}"></div>`).join('')}
+                    </div>
+                </div>
+                <div class="input-group"><label>Category</label><select id="p-cat"><option>Living Room</option><option>Bedroom</option><option>Dining</option><option>Office</option><option>Outdoor</option></select></div>
+                <div class="input-group"><label>Sub Category</label><input id="p-sub" placeholder="e.g. Sofa"></div>
+                <div class="input-group"><label>Name</label><input id="p-name"></div>
+                <div class="input-group"><label>Description</label><textarea id="p-desc"></textarea></div>
+                <div class="input-group"><label>Promo Text</label><input id="p-promo"></div>
+                <div class="input-group"><label>Price (Rs)</label><input type="number" id="p-price"></div>
+                <button class="btn" onclick="saveProd()">Save Product</button>
+            </div>
+            <h3>Inventory</h3>
+            ${(shopData.products||[]).map((p,i)=>`
+                <div class="card flex space-between" style="padding:15px;">
+                    <div class="flex"><img src="${p.images[0]}" style="width:50px; height:50px; border-radius:8px;"> <div><b>${p.name}</b><br>Rs. ${p.price}</div></div>
+                    <button class="btn btn-outline" style="width:auto; padding:5px; color:red; border-color:red;" onclick="delProd(${i})"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('')}
+        `;
+    }
+
+    async function saveProd() {
+        const imgs = tempImages.filter(x=>x);
+        if(!imgs.length) return alert("Image required");
+        const prod = {
+            id: Date.now(),
+            category: document.getElementById('p-cat').value,
+            subCategory: document.getElementById('p-sub').value,
+            name: document.getElementById('p-name').value,
+            desc: document.getElementById('p-desc').value,
+            promoText: document.getElementById('p-promo').value,
+            price: document.getElementById('p-price').value,
+            images: imgs
+        };
+        const newArr = [...(shopData.products||[]), prod];
+        await db.collection('users').doc(user.uid).update({products: newArr});
+        shopData.products = newArr;
+        alert("Added!");
+        renderProducts(document.getElementById('content-area'));
+    }
+
+    function delProd(i) {
+        if(!confirm("Delete?")) return;
+        shopData.products.splice(i,1);
+        db.collection('users').doc(user.uid).update({products: shopData.products});
+        renderProducts(document.getElementById('content-area'));
+    }
+
+    // --- 7) WEBPAGE (VISUAL EDITOR) ---
+    function renderWebpage(div) {
+        // Fix 1: Correct Public Link Generation
+        // Using current origin + logic to point to sibling 'shop.html'
+        const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+        const url = `${window.location.origin}${path}/shop.html?id=${user.uid}`;
+        
+        const sl = shopData.socialLinks || {};
+
+        div.innerHTML = `
+            <div class="card text-center">
+                <img src="${shopData.logo||'logo.png'}" style="width:80px;height:80px;border-radius:50%;border:3px solid var(--primary);">
+                <h3>${shopData.shopName}</h3>
+                <p>Public Shop Link:</p>
+                <input value="${url}" readonly class="w-100 text-center" style="background:#eee; border:none; padding:10px; border-radius:10px; margin-bottom:10px;">
+                <div class="flex center">
+                    <a href="${url}" target="_blank" class="btn btn-accent">Open Page</a>
+                    <button class="btn btn-outline" onclick="navigator.clipboard.writeText('${url}'); alert('Copied')">Copy</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Visual Editor</h3>
+                <div class="input-group"><label>Brand Color</label><input type="color" id="w-col" value="${shopData.themeColor||'#4E342E'}" onchange="saveWeb()"></div>
+                <div class="input-group"><label>Welcome Text</label><input id="w-txt" value="${shopData.heroText||''}" onchange="saveWeb()"></div>
+            </div>
+
+            <!-- Fix 2: Social Media Inputs -->
+            <div class="card">
+                <h3>Social Media Links</h3>
+                <div class="input-group"><label><i class="fa-brands fa-facebook text-primary"></i> Facebook</label><input id="sl-fb" value="${sl.fb||''}" placeholder="https://facebook.com/..." onchange="saveWeb()"></div>
+                <div class="input-group"><label><i class="fa-brands fa-instagram" style="color:#E1306C"></i> Instagram</label><input id="sl-ig" value="${sl.ig||''}" placeholder="https://instagram.com/..." onchange="saveWeb()"></div>
+                <div class="input-group"><label><i class="fa-brands fa-tiktok"></i> TikTok</label><input id="sl-tk" value="${sl.tk||''}" placeholder="https://tiktok.com/..." onchange="saveWeb()"></div>
+                <div class="input-group"><label><i class="fa-brands fa-youtube" style="color:red"></i> YouTube</label><input id="sl-yt" value="${sl.yt||''}" placeholder="https://youtube.com/..." onchange="saveWeb()"></div>
+            </div>
+        `;
+    }
+    
+    function saveWeb() {
+        db.collection('users').doc(user.uid).update({
+            themeColor: document.getElementById('w-col').value,
+            heroText: document.getElementById('w-txt').value,
+            socialLinks: {
+                fb: document.getElementById('sl-fb').value,
+                ig: document.getElementById('sl-ig').value,
+                tk: document.getElementById('sl-tk').value,
+                yt: document.getElementById('sl-yt').value
+            }
+        }).then(()=>console.log("Webpage Updated")); // Auto-save silently
+    }
+
+    // --- 8) ORDERS ---
+    function renderOrders(div) {
+        if(!shopOrders.length) return div.innerHTML = `<div class="card text-center"><h3>No Orders</h3></div>`;
+        div.innerHTML = shopOrders.map(o => `
+            <div class="card" style="border-left:5px solid ${o.status==='new'?'var(--accent)':'var(--green)'}">
+                <div class="flex space-between">
+                    <b>${o.custName}</b> <span class="status-badge" style="background:#eee">${o.status.toUpperCase()}</span>
+                </div>
+                <div class="flex space-between" style="margin-top:10px;">
+                    <b style="color:var(--primary)">Rs. ${o.total}</b>
+                    <a href="https://wa.me/${o.custWa}" target="_blank" class="btn btn-green" style="width:auto; padding:5px 10px; font-size:0.8rem; margin:0;"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                </div>
+                <p style="font-size:0.85rem; color:#666; margin-top:10px;">Items: ${o.items.map(i=>i.name).join(', ')}</p>
+            </div>
+        `).join('');
+    }
+
+    // --- 9) MESSAGES ---
+    function renderMessages(div) {
+        div.innerHTML = `
+            <div class="card text-center">
+                <h3>Customer Messages</h3>
+                <p style="color:#777;">Customer chat integration will appear here.</p>
+                <div style="height:300px; background:#f9f9f9; border-radius:12px; display:flex; align-items:center; justify-content:center; border:2px dashed #ddd;">
+                    <span style="font-size:3rem; color:#ddd;"><i class="fa-solid fa-comments"></i></span>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- 10) REVIEWS ---
+    function renderReviews(div) {
+        if(!shopReviews.length) return div.innerHTML = `<div class="card text-center"><h3>Reviews</h3><p>No reviews yet.</p></div>`;
+        
+        div.innerHTML = shopReviews.map(r => `
+            <div class="card">
+                <div class="flex space-between">
+                    <b>${r.name}</b>
+                    <div style="color:var(--gold)">${'★'.repeat(r.stars || 5)}</div>
+                </div>
+                <p style="margin:10px 0; font-style:italic;">"${r.text}"</p>
+                <div class="flex space-between">
+                    <span class="status-badge" style="background:${r.status==='published'?'#E8F5E9':'#FFF3E0'}">${r.status || 'Pending'}</span>
+                    <div class="flex">
+                        ${r.status !== 'published' ? `<button class="btn btn-green" style="width:auto; padding:5px 10px; margin:0;" onclick="pubRev('${r.id}')">Publish</button>` : ''}
+                        <button class="btn btn-outline" style="width:auto; padding:5px 10px; color:red; border-color:red; margin:0;" onclick="delRev('${r.id}')">Delete</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function pubRev(id) {
+        db.collection('users').doc(user.uid).collection('reviews').doc(id).update({status: 'published'});
+        alert("Review Published!");
+    }
+
+    function delRev(id) {
+        if(confirm("Delete this review?")) {
+            db.collection('users').doc(user.uid).collection('reviews').doc(id).delete();
+        }
+    }
+
+    // --- UTILS: UPLOAD ---
+    function upImg(input, type, idx) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = e => {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = () => {
+                const cvs = document.createElement('canvas');
+                const scale = 600/img.width;
+                cvs.width = 600; cvs.height = img.height*scale;
+                cvs.getContext('2d').drawImage(img,0,0,cvs.width,cvs.height);
+                
+                const task = storage.ref(`img/${user.uid}/${Date.now()}.jpg`).putString(cvs.toDataURL('image/jpeg',0.7), 'data_url');
+                task.then(s => s.ref.getDownloadURL().then(url => {
+                    if(type==='logo') { shopData.temp_logo = url; document.getElementById('p-logo').src = url; }
+                    else if(type==='doc') { shopData.temp_doc = url; document.getElementById('st-doc').classList.remove('hidden'); }
+                    else if(type==='slip') { shopData.temp_slip = url; document.getElementById('st-slip').classList.remove('hidden'); }
+                    else if(type==='prod') { tempImages[idx] = url; document.getElementById(`prev-p${idx}`).src = url; document.getElementById(`prev-p${idx}`).style.display='block'; }
+                }));
+            }
+        }
+    }
+</script>
+</body>
+</html>
