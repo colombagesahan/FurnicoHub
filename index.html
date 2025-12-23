@@ -185,7 +185,7 @@
         const filtered = allProducts.filter(p => cat === "" || p.category === cat);
         renderProducts(filtered);
      }
-    // --- PWA SERVICE WORKER REGISTRATION ---//
+   
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js')
