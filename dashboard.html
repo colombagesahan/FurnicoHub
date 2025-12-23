@@ -4,480 +4,762 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FurnicoHub | Seller Dashboard</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="icon.png">
     
-    <!-- Libraries -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#795548">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/png" href="icon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
+    <!-- Leaflet Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
-        :root { --primary: #795548; --bg: #F4F7FC; --white: #fff; --green: #2ED573; --red: #FF4757; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; }
+        :root {
+            /* --- FURNITURE COLOR PALETTE --- */
+            --primary: #795548; 
+            --primary-grad: linear-gradient(135deg, #795548, #A1887F);
+            --secondary: #3E2723;
+            --bg-body: #F5F5F5;
+            --surface: #FFFFFF;
+            --green: #27ae60;
+            --green-grad: linear-gradient(135deg, #27ae60, #2ecc71);
+            --gold: #D4AF37;
+            --gold-grad: linear-gradient(135deg, #D4AF37, #F1C40F);
+            
+            /* Design System */
+            --shadow-sm: 0 4px 6px rgba(0,0,0,0.02);
+            --shadow-card: 0 10px 25px rgba(62, 39, 35, 0.05);
+            --shadow-float: 0 15px 30px rgba(121, 85, 72, 0.25);
+            --glass: rgba(255, 255, 255, 0.95);
+            --backdrop: blur(12px);
+            --font: 'Poppins', sans-serif;
+            --radius: 16px;
+            --sidebar-width: 260px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        body { 
+            margin: 0; padding: 0; font-family: var(--font); 
+            background: var(--bg-body); color: var(--secondary); 
+            font-size: 14px; line-height: 1.6; overflow-x: hidden; 
+            padding-bottom: 80px; 
+            min-height: 100vh;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #D7CCC8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- UTILITY --- */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .center { align-items: center; justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .w-100 { width: 100%; }
         .hidden { display: none !important; }
-        .flex { display: flex; align-items: center; }
+        .mt-1 { margin-top: 0.75rem; }
+        .mt-2 { margin-top: 1.5rem; }
+        .mb-1 { margin-bottom: 0.75rem; }
+        .p-1 { padding: 0.75rem; }
+        .p-2 { padding: 1.5rem; }
+        .text-center { text-align: center; }
+        .text-primary { color: var(--primary); }
+        .text-green { color: var(--green); }
+        .bold { font-weight: 700; }
         
-        /* Login Screen */
-        .login-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; background: white; }
-        
-        /* Navbar */
-        .top-nav { background: var(--white); padding: 15px; position: sticky; top: 0; z-index: 999; display: flex; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .brand { font-weight: 800; color: var(--primary); font-size: 1.2rem; }
-        
-        /* Bottom Tabs */
-        .tabs { position: fixed; bottom: 0; width: 100%; background: white; display: flex; overflow-x: auto; padding: 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; gap: 5px; }
-        .tab-btn { padding: 8px 12px; border-radius: 12px; border: none; background: transparent; color: #777; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; min-width: 60px; cursor: pointer; flex-shrink: 0; }
-        .tab-btn i { font-size: 1.2rem; margin-bottom: 4px; }
-        .tab-btn.active { color: var(--primary); background: #efebe9; font-weight: 600; }
+        h1, h2, h3, h4 { margin: 0 0 10px 0; color: var(--secondary); font-weight: 800; }
+        h3 { font-size: 1.2rem; }
 
-        /* Container */
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
-        
-        /* Forms */
+        /* --- COMPONENTS --- */
+        .btn { 
+            padding: 12px 20px; border: none; border-radius: 12px; cursor: pointer; 
+            font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease; 
+            width: 100%; text-align: center; display: inline-flex; justify-content: center; align-items: center; gap: 8px;
+            color: white; margin-bottom: 10px;
+        }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn-primary { background: var(--primary-grad); box-shadow: 0 5px 15px rgba(121, 85, 72, 0.3); }
+        .btn-green { background: var(--green-grad); box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3); }
+        .btn-gold { background: var(--gold-grad); color: #3E2723; }
+        .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
+
+        .card { 
+            background: var(--surface); padding: 20px; border-radius: var(--radius); 
+            box-shadow: var(--shadow-card); margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.8);
+            animation: slideUp 0.4s ease-out;
+        }
+
         .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.85rem; color: #555; }
-        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-green { background: var(--green); color: white; }
-        
-        /* POS & Products */
-        .product-item { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-        .product-item img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin-right: 10px; }
-        
-        /* Badge */
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; }
-        .bg-pending { background: #fff3cd; color: #856404; }
-        .bg-verified { background: #d4edda; color: #155724; }
+        .input-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.85rem; color: #5D4037; }
+        .input-group input, .input-group select, .input-group textarea { 
+            width: 100%; padding: 12px; border: 2px solid #EFEBE9; border-radius: 12px; 
+            font-size: 0.95rem; background: #FAFAFA; transition: 0.3s; font-family: var(--font);
+        }
+        .input-group input:focus { border-color: var(--primary); background: #fff; }
 
-        /* Verification Area */
-        .verify-box { background: #fff8e1; border: 1px solid #ffe082; padding: 15px; border-radius: 10px; font-size: 0.9rem; }
+        /* Image Upload Box */
+        .file-upload-wrapper {
+            border: 2px dashed #D7CCC8; border-radius: 12px; padding: 20px;
+            text-align: center; cursor: pointer; background: #EFEBE9; transition: 0.3s;
+        }
+        .file-upload-wrapper:hover { border-color: var(--primary); background: #fff; }
+
+        /* --- NAVIGATION --- */
+        nav { 
+            background: var(--glass); backdrop-filter: var(--backdrop);
+            padding: 12px 20px; position: sticky; top: 10px; z-index: 1000; 
+            box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: space-between; 
+            margin: 0 10px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.5);
+        }
+        .nav-brand { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+
+        /* Mobile Tabs */
+        .tabs-wrapper { background: transparent; z-index: 900; width: 100%; overflow: hidden; margin-top: 10px; }
+        .tabs-container { 
+            display: flex; overflow-x: auto; padding: 10px 15px; 
+            -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 8px;
+        }
+        .tabs-container::-webkit-scrollbar { display: none; }
+        
+        .tab-btn { 
+            padding: 8px 16px; white-space: nowrap; cursor: pointer; color: #8D6E63; 
+            font-weight: 600; border-radius: 50px; background: #fff; transition: 0.3s; 
+            font-size: 0.8rem; flex-shrink: 0; border: 1px solid #EFEBE9; 
+            display: flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm);
+        }
+        .tab-btn.active { background: var(--primary); color: white; border-color: transparent; box-shadow: 0 4px 12px rgba(121, 85, 72, 0.3); }
+
+        .sidebar-logout { display: none; }
+
+        /* --- DESKTOP SIDEBAR --- */
+        @media (min-width: 900px) {
+            nav { display: none; }
+            .tabs-wrapper {
+                position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100vh;
+                background: white; border-right: 1px solid #eee; margin: 0; padding: 0;
+                display: flex; flex-direction: column; z-index: 1001;
+            }
+            .tabs-wrapper:before {
+                content: 'FurnicoHub'; display: block; font-size: 1.6rem; font-weight: 800; 
+                color: var(--primary); padding: 30px 25px; border-bottom: 1px solid #f5f5f5;
+            }
+            .tabs-container { flex-direction: column; padding: 20px; gap: 5px; flex: 1; }
+            .tab-btn {
+                width: 100%; border-radius: 10px; justify-content: flex-start; 
+                padding: 12px 20px; background: transparent; border: none; box-shadow: none;
+                color: #5D4037; font-size: 0.9rem; margin-bottom: 2px;
+            }
+            .tab-btn:hover { background: #EFEBE9; color: var(--primary); }
+            .tab-btn.active { background: #D7CCC8; color: #3E2723; border-right: 4px solid var(--primary); border-radius: 8px; }
+            
+            #dash-content { margin-left: var(--sidebar-width); padding: 40px; max-width: 1100px; }
+            .sidebar-logout { display: flex; align-items: center; gap: 10px; padding: 20px 25px; border-top: 1px solid #eee; cursor: pointer; color: #3E2723; font-weight: 700; transition:0.3s; }
+            .sidebar-logout:hover { background: #ffebee; color: #c62828; }
+        }
+
+        /* --- MAP & MISC --- */
+        .map-container { width: 100%; height: 300px; border-radius: 12px; margin-top: 10px; z-index: 1; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Verification Badges */
+        .status-verified { background: #E8F5E9; color: #2E7D32; padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; border: 1px solid #A5D6A7; display:inline-flex; align-items:center; gap:5px; }
+        .status-pending { background: #FFF8E1; color: #F57F17; padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; border: 1px solid #FFE082; display:inline-flex; align-items:center; gap:5px; }
     </style>
 </head>
 <body>
 
-    <!-- 1. LOGIN VIEW -->
-    <div id="login-view" class="login-screen">
-        <img src="logo.png" style="width:100px; margin-bottom:20px;">
-        <h1>Seller Portal</h1>
-        <p>Manage your furniture shop, POS, and Online Webpage.</p>
-        <button class="btn btn-primary" onclick="googleLogin()">Login with Gmail</button>
-        <a href="index.html" style="margin-top:20px; color:var(--primary)">Back to Home</a>
-    </div>
+<div id="app">
+    <!-- MOBILE NAV -->
+    <nav>
+        <div class="nav-brand">
+            <img src="logo.png" style="height:30px;"> FurnicoHub
+        </div>
+        <button class="btn" style="width:auto; padding:6px 12px; margin:0; background:#D7CCC8; color:#3E2723;" onclick="authLogout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+    </nav>
 
-    <!-- 2. DASHBOARD VIEW -->
-    <div id="main-view" class="hidden">
-        <nav class="top-nav">
-            <div class="brand"><i class="fa-solid fa-couch"></i> <span id="shop-name-disp">Loading...</span></div>
-            <button onclick="auth.signOut()" style="background:none; border:none; color:var(--red)"><i class="fa-solid fa-power-off"></i></button>
-        </nav>
-
-        <div id="content-area" class="container"></div>
-
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('pos')"><i class="fa-solid fa-cash-register"></i> POS</button>
-            <button class="tab-btn" onclick="switchTab('marketplace')"><i class="fa-solid fa-store"></i> Market</button>
-            <button class="tab-btn" onclick="switchTab('products')"><i class="fa-solid fa-box-open"></i> Items</button>
-            <button class="tab-btn" onclick="switchTab('profile')"><i class="fa-solid fa-user-gear"></i> Profile</button>
-            <button class="tab-btn" onclick="switchTab('verify')"><i class="fa-solid fa-certificate"></i> Verify</button>
-            <button class="tab-btn" onclick="switchTab('webpage')"><i class="fa-solid fa-globe"></i> Web</button>
-            <button class="tab-btn" onclick="switchTab('orders')"><i class="fa-solid fa-clipboard-list"></i> Orders</button>
+    <!-- TABS / SIDEBAR -->
+    <div class="tabs-wrapper">
+        <div class="tabs-container" id="dash-tabs">
+            <!-- Tabs injected via JS -->
+        </div>
+        <div class="sidebar-logout" onclick="authLogout()">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
         </div>
     </div>
 
+    <!-- MAIN CONTENT -->
+    <div id="dash-content" style="padding: 20px;">
+        <div style="height:80vh; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+            <div class="loader"></div>
+            <p class="mt-2 bold" style="color:var(--primary)">Loading Seller Portal...</p>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Config
-    const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f", measurementId: "G-WE0RETCVTX" };
-    firebase.initializeApp(firebaseConfig);
+    // 1. FIREBASE CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0",
+      authDomain: "furnicohub.firebaseapp.com",
+      projectId: "furnicohub",
+      storageBucket: "furnicohub.firebasestorage.app",
+      messagingSenderId: "395576125006",
+      appId: "1:395576125006:web:a848f68053c69409ddc51f",
+      measurementId: "G-WE0RETCVTX"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
     const storage = firebase.storage();
 
-    let user = null;
-    let userData = {};
-    let tempImages = [];
+    let currentUser = null;
+    let shopData = {};
+    let shopProducts = [];
+    let currentTab = 'Profile'; // Default for new users
+    let mapInstance = null;
+    let markerInstance = null;
+    let tempImages = [null, null, null]; // For product upload
 
-    // Auth Logic
-    auth.onAuthStateChanged(async u => {
-        if (u) {
-            user = u;
-            document.getElementById('login-view').classList.add('hidden');
-            document.getElementById('main-view').classList.remove('hidden');
-            
-            // Check Profile
-            const doc = await db.collection('users').doc(user.uid).get();
-            if(doc.exists) {
-                userData = doc.data();
-                if(userData.role !== 'seller') { 
-                    alert("Account exists as Customer. Please use a different email for Seller.");
-                    auth.signOut();
-                    return;
-                }
-                document.getElementById('shop-name-disp').innerText = userData.shopName || "FurnicoHub";
-                // Default Tab Logic
-                if(!userData.profileSaved) switchTab('profile');
-                else switchTab('pos');
-            } else {
-                // First Time Seller
-                userData = { role: 'seller', profileSaved: false, isVerified: false, products: [] };
-                await db.collection('users').doc(user.uid).set(userData);
-                switchTab('profile');
-            }
+    // TABS CONFIGURATION
+    const TABS = [
+        { id: 'smart-pos', name: 'Smart POS', icon: 'fa-cash-register' },
+        { id: 'marketplace', name: 'Marketplace', icon: 'fa-store' },
+        { id: 'profile', name: 'Profile', icon: 'fa-user-pen' },
+        { id: 'verify', name: 'Get Verified', icon: 'fa-certificate' },
+        { id: 'open-close', name: 'Open/Close', icon: 'fa-clock' },
+        { id: 'products', name: 'Products', icon: 'fa-couch' },
+        { id: 'webpage', name: 'My Webpage', icon: 'fa-globe' },
+        { id: 'orders', name: 'Orders', icon: 'fa-box-open' },
+        { id: 'messages', name: 'Messages', icon: 'fa-comments' },
+        { id: 'reviews', name: 'Reviews', icon: 'fa-star' }
+    ];
+
+    // 2. AUTH & INIT
+    auth.onAuthStateChanged(async user => {
+        if (user) {
+            currentUser = user;
+            await loadShopData();
         } else {
-            document.getElementById('login-view').classList.remove('hidden');
-            document.getElementById('main-view').classList.add('hidden');
+            // Redirect to index if not logged in (or show login modal if preferred)
+            window.location.href = "index.html"; 
         }
     });
 
-    function googleLogin() {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider).catch(e => alert(e.message));
+    function authLogout() {
+        auth.signOut().then(() => window.location.href = "index.html");
     }
 
-    // Tab Router
-    function switchTab(tab) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        event?.currentTarget?.classList.add('active');
+    async function loadShopData() {
+        // Fetch User Data
+        const doc = await db.collection('users').doc(currentUser.uid).get();
+        if (doc.exists) {
+            shopData = doc.data();
+            // Default tab logic
+            if (shopData.profileCompleted) {
+                currentTab = 'smart-pos';
+            } else {
+                currentTab = 'profile';
+                showToast("Please complete your profile first.", "info");
+            }
+        } else {
+            // Initialize new seller
+            shopData = { role: 'seller', profileCompleted: false, isVerified: false, products: [] };
+            await db.collection('users').doc(currentUser.uid).set(shopData);
+            currentTab = 'profile';
+        }
+
+        // Fetch Products
+        if (shopData.products) shopProducts = shopData.products;
+
+        renderTabs();
+        switchTab(currentTab);
+    }
+
+    // 3. UI RENDERING
+    function renderTabs() {
+        const container = document.getElementById('dash-tabs');
+        container.innerHTML = TABS.map(t => 
+            `<button class="tab-btn ${currentTab === t.id ? 'active' : ''}" onclick="switchTab('${t.id}')">
+                <i class="fa-solid ${t.icon}"></i> ${t.name}
+             </button>`
+        ).join('');
+    }
+
+    function switchTab(tabId) {
+        currentTab = tabId;
+        renderTabs(); // Update active state
         
-        const content = document.getElementById('content-area');
-        content.innerHTML = ''; 
+        const content = document.getElementById('dash-content');
+        content.innerHTML = ''; // Clear current content
 
-        if(tab === 'profile') renderProfile(content);
-        else if(tab === 'verify') renderVerify(content);
-        else if(tab === 'products') renderProducts(content);
-        else if(tab === 'pos') renderPOS(content);
-        else if(tab === 'marketplace') renderMarketplace(content);
-        else if(tab === 'webpage') renderWebpage(content);
-        else if(tab === 'orders') renderOrders(content);
+        // Check verification lock for Profile
+        if (tabId === 'profile' && shopData.isVerified) {
+            // Allow view but show message
+        }
+
+        switch (tabId) {
+            case 'smart-pos': renderPOS(content); break;
+            case 'marketplace': renderMarketplace(content); break;
+            case 'profile': renderProfile(content); break;
+            case 'verify': renderVerify(content); break;
+            case 'open-close': renderOpenClose(content); break;
+            case 'products': renderProducts(content); break;
+            case 'webpage': renderWebpage(content); break;
+            case 'orders': content.innerHTML = '<div class="card text-center"><h3>Orders</h3><p>Manage your orders here (Coming Soon).</p></div>'; break;
+            case 'messages': content.innerHTML = '<div class="card text-center"><h3>Customer Messages</h3><p>Chat with buyers (Coming Soon).</p></div>'; break;
+            case 'reviews': content.innerHTML = '<div class="card text-center"><h3>Reviews</h3><p>See what customers say (Coming Soon).</p></div>'; break;
+        }
     }
 
-    // --- 1. PROFILE ---
+    // --- TAB: PROFILE ---
     function renderProfile(target) {
-        const d = userData;
-        const disabled = d.isVerified ? 'disabled' : ''; // Lock only if verified
-        
+        const d = shopData;
+        const disabled = d.isVerified ? 'disabled' : ''; // Lock if verified
+        const warning = d.isVerified ? '<p class="text-green bold mb-1"><i class="fa-solid fa-lock"></i> Profile Locked (Verified)</p>' : '<p class="text-primary mb-1" style="font-size:0.85rem">You can edit this before verification. Once verified, this section locks.</p>';
+
         target.innerHTML = `
             <div class="card">
-                <h3>Shop Profile ${d.isVerified ? '<span class="badge bg-verified">Verified</span>' : ''}</h3>
-                <p style="color:red; font-size:0.8rem;">${d.isVerified ? 'Profile is Verified & Locked.' : 'You can edit until verified.'}</p>
+                <h3>Shop Profile</h3>
+                ${warning}
                 
-                <div class="input-group">
-                    <label>Shop Logo</label>
-                    <input type="file" ${disabled} onchange="uploadImage(this, 'logo')">
-                    ${d.logo ? `<img src="${d.logo}" style="width:60px; height:60px; border-radius:50%; margin-top:5px;">` : ''}
+                <div class="input-group center flex-col">
+                    <div style="position:relative; width:100px; height:100px; margin-bottom:10px;">
+                        <img id="prev-logo" src="${d.logo || 'https://via.placeholder.com/100'}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; border:3px solid var(--primary);">
+                        ${!d.isVerified ? `<label style="position:absolute; bottom:0; right:0; background:var(--primary); color:white; padding:5px 8px; border-radius:50%; cursor:pointer;"><i class="fa-solid fa-camera"></i><input type="file" hidden onchange="handleImageUpload(this, 'logo')"></label>` : ''}
+                    </div>
                 </div>
+
                 <div class="input-group"><label>Shop Name *</label><input id="p-name" value="${d.shopName||''}" ${disabled}></div>
-                <div class="input-group"><label>Address *</label><textarea id="p-addr" ${disabled}>${d.address||''}</textarea></div>
+                <div class="input-group"><label>Shop Address *</label><textarea id="p-addr" ${disabled}>${d.address||''}</textarea></div>
                 <div class="input-group"><label>Owner Full Name *</label><input id="p-owner" value="${d.ownerName||''}" ${disabled}></div>
                 <div class="input-group"><label>NIC Number *</label><input id="p-nic" value="${d.nic||''}" ${disabled}></div>
-                <div class="input-group"><label>Phone 01 *</label><input type="tel" id="p-ph1" value="${d.phone1||''}" ${disabled}></div>
-                <div class="input-group"><label>Phone 02 (Optional)</label><input type="tel" id="p-ph2" value="${d.phone2||''}" ${disabled}></div>
-                <div class="input-group"><label>WhatsApp Number *</label><input type="tel" id="p-wa" value="${d.whatsapp||''}" ${disabled} placeholder="07xxxxxxxx"></div>
+                <div class="input-group"><label>Phone Number 01 *</label><input type="tel" id="p-ph1" value="${d.phone1||''}" ${disabled}></div>
+                <div class="input-group"><label>Phone Number 02 (Optional)</label><input type="tel" id="p-ph2" value="${d.phone2||''}" ${disabled}></div>
                 
+                <div class="input-group">
+                    <label>WhatsApp Number (+94) *</label>
+                    <input type="tel" id="p-wa" value="${d.whatsapp||'+94'}" ${disabled}>
+                    <small style="color:#777">Must be international format (+94...)</small>
+                </div>
+
                 ${!d.isVerified ? `<button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>` : ''}
-            </div>
-            
-            <div class="card">
-                <h3>Open/Close Times</h3>
-                <div class="input-group"><label>Opening Hours</label><input id="p-hours" value="${d.hours||'8 AM - 8 PM'}"></div>
-                <button class="btn btn-primary" onclick="saveHours()">Update Hours</button>
             </div>
         `;
     }
 
     async function saveProfile() {
-        const waInput = document.getElementById('p-wa').value;
-        const formattedWa = waInput.startsWith('0') ? '+94' + waInput.substring(1) : waInput;
+        const wa = document.getElementById('p-wa').value;
+        if (!wa.startsWith('+94')) return showToast("WhatsApp must start with +94", "error");
 
-        const newData = {
+        const updateData = {
             shopName: document.getElementById('p-name').value,
             address: document.getElementById('p-addr').value,
             ownerName: document.getElementById('p-owner').value,
             nic: document.getElementById('p-nic').value,
             phone1: document.getElementById('p-ph1').value,
             phone2: document.getElementById('p-ph2').value,
-            whatsapp: formattedWa,
-            profileSaved: true
+            whatsapp: wa,
+            profileCompleted: true,
+            logo: shopData.tempLogo || shopData.logo || ''
         };
 
-        if(!newData.shopName || !newData.ownerName || !newData.nic || !newData.whatsapp) return alert("Fill required fields!");
+        if(!updateData.shopName || !updateData.ownerName || !updateData.nic || !updateData.phone1) {
+            return showToast("Please fill all required fields", "error");
+        }
 
-        await db.collection('users').doc(user.uid).update(newData);
-        userData = { ...userData, ...newData };
-        alert("Profile Saved!");
-        if(!userData.isVerified) switchTab('pos');
-    }
-    
-    function saveHours() {
-        const h = document.getElementById('p-hours').value;
-        db.collection('users').doc(user.uid).update({ hours: h }).then(() => alert("Hours updated"));
+        try {
+            await db.collection('users').doc(currentUser.uid).update(updateData);
+            shopData = { ...shopData, ...updateData };
+            showToast("Profile Saved!", "success");
+            delete shopData.tempLogo;
+        } catch(e) { console.error(e); showToast("Error saving", "error"); }
     }
 
-    // --- 2. VERIFY ---
+    // --- TAB: VERIFY ---
     function renderVerify(target) {
-        if(userData.isVerified) {
-            target.innerHTML = `<div class="card" style="text-align:center; color:green;"><i class="fa-solid fa-circle-check fa-3x"></i><h3>You are Verified!</h3><p>Your shop has the trusted badge.</p></div>`;
+        if(shopData.isVerified) {
+            target.innerHTML = `<div class="card center flex-col p-2"><i class="fa-solid fa-circle-check fa-4x text-green mb-1"></i><h3>Verified Seller</h3><p>You have the trusted badge.</p></div>`;
             return;
         }
+
         target.innerHTML = `
             <div class="card">
-                <h3>Get Verified (Rs. 5000 One-time)</h3>
-                <p>Build customer trust. Verified shops get a badge and better visibility.</p>
+                <h3>Get Verified <span style="font-size:0.8rem; background:#FFF3E0; color:#E65100; padding:2px 8px; border-radius:10px;">Rs. 5000</span></h3>
+                <p class="mb-1" style="color:#555;">Verification builds customer trust. Verified shops get a badge and higher ranking.</p>
                 
-                <div class="verify-box">
-                    <p><b>Step 1:</b> Download Profile Details.</p>
-                    <button class="btn" style="background:#fff; border:1px solid #333;" onclick="printProfile()">Download/Print</button>
-                    
-                    <p style="margin-top:10px;"><b>Step 2:</b> Get it certified by Grama Niladhari or JP (Rubber stamp required).</p>
-                    
-                    <p><b>Step 3:</b> Pay Rs. 5000 to:</p>
-                    <ul>
-                        <li><b>Bank:</b> Commercial Bank, Homagama</li>
-                        <li><b>Account:</b> 8750053306</li>
-                        <li><b>Name:</b> COLOMBAGE SD</li>
-                    </ul>
-                    
-                    <p><b>Step 4:</b> Upload Proof (Certified Doc & Payment Slip).</p>
-                    <input type="file" class="input-group" onchange="uploadImage(this, 'verifyDoc')">
+                <div style="background:#EFEBE9; padding:15px; border-radius:12px; margin-bottom:15px;">
+                    <h4>How to verify?</h4>
+                    <ol style="padding-left:20px; font-size:0.9rem;">
+                        <li><b>Download Profile:</b> Click button below to print your details.</li>
+                        <li><b>Certify:</b> Get it stamped by Grama Niladhari or JP.</li>
+                        <li><b>Pay Rs. 5000:</b><br>Bank: Commercial Bank, Homagama<br>Acc: 8750053306 (Colombage SD)</li>
+                        <li><b>Upload:</b> Submit photo of Certified Doc & Payment Slip.</li>
+                    </ol>
+                    <button class="btn btn-primary" onclick="printDetails()">1. Download Profile PDF</button>
                 </div>
+
+                <div class="input-group">
+                    <label>Upload Proof (Slip + Doc)</label>
+                    <div class="file-upload-wrapper" onclick="document.getElementById('v-proof').click()">
+                        <i class="fa-solid fa-cloud-arrow-up fa-2x text-primary"></i><br>Click to Upload
+                        <input type="file" id="v-proof" hidden onchange="handleImageUpload(this, 'proof')">
+                    </div>
+                    <img id="v-preview" class="hidden mt-1" style="width:100%; border-radius:10px;">
+                </div>
+
+                <button class="btn btn-green" onclick="submitVerification()">Submit for Review</button>
                 
-                <button class="btn btn-green" onclick="submitVerify()">Submit for Review</button>
-                <p style="font-size:0.8rem; margin-top:10px;">Support: 0703150742 | Sahan Colombage</p>
+                <div class="mt-2 text-center" style="font-size:0.85rem; color:#777;">
+                    Support: 0703150742 (Sahan) | colombagesahan@gmail.com
+                </div>
             </div>
         `;
     }
 
-    async function submitVerify() {
-        if(!userData.temp_verifyDoc) return alert("Please upload proof image first.");
+    function printDetails() {
+        const w = window.open('', '', 'width=600,height=800');
+        w.document.write(`
+            <h1>FurnicoHub Seller Profile</h1>
+            <hr>
+            <p><b>Shop:</b> ${shopData.shopName}</p>
+            <p><b>Owner:</b> ${shopData.ownerName}</p>
+            <p><b>NIC:</b> ${shopData.nic}</p>
+            <p><b>Address:</b> ${shopData.address}</p>
+            <p><b>Phone:</b> ${shopData.phone1}</p>
+            <br><br><br>
+            <p>__________________________</p>
+            <p>Grama Niladhari / JP Signature & Stamp</p>
+        `);
+        w.print();
+    }
+
+    async function submitVerification() {
+        if(!shopData.tempProof) return showToast("Please upload proof image", "error");
+        
         await db.collection('admin_requests').add({
-            uid: user.uid,
-            shopName: userData.shopName,
-            proof: userData.temp_verifyDoc,
+            uid: currentUser.uid,
+            type: 'verification',
+            shopName: shopData.shopName,
+            proof: shopData.tempProof,
             timestamp: new Date().toISOString(),
             status: 'pending'
         });
-        alert("Verification Submitted! Admin will review.");
-    }
-    
-    function printProfile() {
-        const w = window.open();
-        w.document.write(`<h3>${userData.shopName} - Profile</h3><p>Owner: ${userData.ownerName}</p><p>NIC: ${userData.nic}</p><p>Address: ${userData.address}</p><script>window.print()<\/script>`);
+        showToast("Submitted! Admin will review.", "success");
     }
 
-    // --- 3. PRODUCTS ---
+    // --- TAB: PRODUCTS ---
     function renderProducts(target) {
-        tempImages = [null, null, null];
+        tempImages = [null, null, null]; // Reset
+        
         target.innerHTML = `
             <div class="card">
-                <h3>Add/Edit Product</h3>
-                <div class="input-group"><label>Category</label><select id="prod-cat"><option>Living Room</option><option>Bedroom</option><option>Dining</option><option>Office</option></select></div>
-                <div class="input-group"><label>Sub Category</label><input id="prod-sub" placeholder="e.g. Sofa, Bed"></div>
-                <div class="input-group"><label>Product Name</label><input id="prod-name"></div>
-                <div class="input-group"><label>Price (LKR)</label><input type="number" id="prod-price"></div>
-                <div class="input-group"><label>Promo Text (Short)</label><input id="prod-promo"></div>
-                <div class="input-group"><label>Description</label><textarea id="prod-desc"></textarea></div>
-                
+                <h3>Add New Furniture</h3>
                 <div class="input-group">
-                    <label>Images (Max 3)</label>
-                    <div class="flex" style="gap:10px">
-                        <input type="file" onchange="uploadImage(this, 'prod', 0)">
-                        <input type="file" onchange="uploadImage(this, 'prod', 1)">
-                        <input type="file" onchange="uploadImage(this, 'prod', 2)">
+                    <label>Category</label>
+                    <select id="pd-cat">
+                        <option>Living Room</option>
+                        <option>Bedroom</option>
+                        <option>Dining</option>
+                        <option>Office</option>
+                        <option>Outdoor</option>
+                    </select>
+                </div>
+                <div class="input-group"><label>Sub Category</label><input id="pd-sub" placeholder="e.g. Sofa, Bed Frame"></div>
+                <div class="input-group">
+                    <label>Photos (Max 3)</label>
+                    <div class="flex" style="gap:10px; overflow-x:auto;">
+                        ${[0,1,2].map(i => `
+                            <div style="flex:1; min-width:80px; height:80px; background:#eee; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative;" onclick="document.getElementById('p-img-${i}').click()">
+                                <i class="fa-solid fa-plus"></i>
+                                <img id="prev-img-${i}" style="position:absolute; width:100%; height:100%; border-radius:8px; display:none; object-fit:cover;">
+                                <input type="file" id="p-img-${i}" hidden onchange="handleImageUpload(this, 'product', ${i})">
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="addProduct()">Save Product</button>
+                <div class="input-group"><label>Product Name</label><input id="pd-name"></div>
+                <div class="input-group"><label>Description</label><textarea id="pd-desc" rows="3"></textarea></div>
+                <div class="input-group"><label>Promo Text (Short)</label><input id="pd-promo" placeholder="e.g. 10% Off"></div>
+                <div class="input-group"><label>Price (LKR)</label><input type="number" id="pd-price"></div>
+                
+                <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
             </div>
-            
+
             <h3>My Inventory</h3>
-            <div id="inventory-list">
-                ${(userData.products || []).map((p, idx) => `
-                    <div class="card product-item">
-                        <img src="${p.images[0]}">
-                        <div style="flex:1;">
-                            <b>${p.name}</b><br>Rs. ${p.price}
+            <div id="inv-list">
+                ${(shopData.products || []).map((p, i) => `
+                    <div class="card flex center justify-between" style="padding:15px; margin-bottom:10px;">
+                        <div class="flex center">
+                            <img src="${p.images[0]}" style="width:60px; height:60px; border-radius:8px; object-fit:cover; margin-right:15px;">
+                            <div>
+                                <div class="bold">${p.name}</div>
+                                <div style="font-size:0.8rem; color:#777;">${p.category}</div>
+                                <div class="bold text-primary">Rs. ${p.price}</div>
+                            </div>
                         </div>
-                        <button onclick="deleteProduct(${idx})" style="color:red; background:none; border:none;"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn btn-outline" style="width:auto; padding:5px 10px; border-color:#d32f2f; color:#d32f2f;" onclick="deleteProduct(${i})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `).join('')}
+                ${(shopData.products || []).length === 0 ? '<p class="text-center" style="color:#aaa">No items yet.</p>' : ''}
             </div>
         `;
     }
 
-    async function addProduct() {
-        // Filter out nulls
-        const validImgs = tempImages.filter(i => i !== null);
-        if(validImgs.length === 0) return alert("At least 1 image required.");
+    async function saveProduct() {
+        const validImgs = tempImages.filter(x => x !== null);
+        if(validImgs.length === 0) return showToast("Upload at least 1 image", "error");
         
-        const newP = {
-            id: Date.now().toString(),
-            category: document.getElementById('prod-cat').value,
-            subCategory: document.getElementById('prod-sub').value,
-            name: document.getElementById('prod-name').value,
-            price: document.getElementById('prod-price').value,
-            promoText: document.getElementById('prod-promo').value,
-            description: document.getElementById('prod-desc').value,
+        const newProd = {
+            id: Date.now(),
+            category: document.getElementById('pd-cat').value,
+            subCategory: document.getElementById('pd-sub').value,
+            name: document.getElementById('pd-name').value,
+            desc: document.getElementById('pd-desc').value,
+            promoText: document.getElementById('pd-promo').value,
+            price: document.getElementById('pd-price').value,
             images: validImgs
         };
-        
-        const products = [...(userData.products || []), newP];
-        await db.collection('users').doc(user.uid).update({ products });
-        userData.products = products;
-        alert("Product Saved!");
-        renderProducts(document.getElementById('content-area'));
-    }
-    
-    async function deleteProduct(idx) {
-        if(!confirm("Delete item?")) return;
-        userData.products.splice(idx, 1);
-        await db.collection('users').doc(user.uid).update({ products: userData.products });
-        renderProducts(document.getElementById('content-area'));
+
+        if(!newProd.name || !newProd.price) return showToast("Name and Price required", "error");
+
+        const updatedProducts = [...(shopData.products || []), newProd];
+        await db.collection('users').doc(currentUser.uid).update({ products: updatedProducts });
+        shopData.products = updatedProducts;
+        showToast("Product Added!", "success");
+        renderProducts(document.getElementById('dash-content'));
     }
 
-    // --- 4. POS (Smart Point of Sale) ---
+    async function deleteProduct(idx) {
+        if(!confirm("Delete this item?")) return;
+        shopData.products.splice(idx, 1);
+        await db.collection('users').doc(currentUser.uid).update({ products: shopData.products });
+        renderProducts(document.getElementById('dash-content'));
+    }
+
+    // --- TAB: POS ---
     function renderPOS(target) {
         target.innerHTML = `
             <div class="card">
-                <h3>Smart POS</h3>
+                <h3><i class="fa-solid fa-calculator"></i> Smart POS</h3>
                 <div class="input-group">
                     <label>Select Product</label>
-                    <select id="pos-select">
-                        <option value="">-- Choose --</option>
-                        ${(userData.products || []).map(p => `<option value="${p.name}|${p.price}">${p.name} - Rs. ${p.price}</option>`).join('')}
+                    <select id="pos-item" onchange="updatePosTotal()">
+                        <option value="0|Select">Select Item...</option>
+                        ${(shopData.products || []).map(p => `<option value="${p.price}|${p.name}">${p.name} - Rs. ${p.price}</option>`).join('')}
                     </select>
                 </div>
-                <div class="input-group"><label>Customer Name</label><input id="pos-cname"></div>
-                <div class="input-group"><label>Discount (LKR)</label><input type="number" id="pos-disc" value="0"></div>
+                <div class="input-group"><label>Customer Name</label><input id="pos-cust"></div>
+                <div class="input-group"><label>Discount (LKR)</label><input type="number" id="pos-disc" value="0" oninput="updatePosTotal()"></div>
                 
-                <button class="btn btn-green" onclick="generateInvoice()">Generate & Print Invoice</button>
+                <div style="background:#EFEBE9; padding:15px; border-radius:12px; margin-bottom:15px; text-align:right;">
+                    <span style="font-size:0.9rem;">Total Amount</span><br>
+                    <span class="bold text-primary" style="font-size:1.5rem;" id="pos-total">Rs. 0</span>
+                </div>
+
+                <button class="btn btn-green" onclick="printInvoice()">Generate Invoice & Print</button>
             </div>
         `;
     }
 
-    function generateInvoice() {
-        const sel = document.getElementById('pos-select').value;
-        if(!sel) return alert("Select a product");
-        const [pName, pPrice] = sel.split('|');
-        const cName = document.getElementById('pos-cname').value || "Walk-in Customer";
+    function updatePosTotal() {
+        const val = document.getElementById('pos-item').value.split('|')[0];
         const disc = document.getElementById('pos-disc').value || 0;
-        const total = parseInt(pPrice) - parseInt(disc);
-        const date = new Date().toLocaleString();
-
-        const win = window.open('', '', 'width=400,height=600');
-        win.document.write(`
-            <html><head><title>Invoice</title><style>body{font-family:monospace; padding:20px;}</style></head><body>
-            <center>
-                <h2>${userData.shopName}</h2>
-                <p>${userData.address}<br>Tel: ${userData.phone1}</p>
-                <hr>
-                <h3>INVOICE</h3>
-            </center>
-            <p>Date: ${date}</p>
-            <p>Customer: ${cName}</p>
-            <table width="100%">
-                <tr><td>${pName}</td><td align="right">${pPrice}</td></tr>
-                <tr><td>Discount</td><td align="right">-${disc}</td></tr>
-                <tr style="font-weight:bold; border-top:1px solid black;"><td>TOTAL</td><td align="right">Rs. ${total}</td></tr>
-            </table>
-            <center><p>Thank You!</p></center>
-            </body></html>
-        `);
-        win.print();
-        
-        // Save to Orders (for record)
-        db.collection('users').doc(user.uid).collection('orders').add({
-            date, customer: cName, item: pName, total, type: 'POS'
-        });
+        const total = Math.max(0, parseInt(val) - parseInt(disc));
+        document.getElementById('pos-total').innerText = "Rs. " + total;
     }
 
-    // --- 5. MARKETPLACE (Search) ---
+    function printInvoice() {
+        const [price, name] = document.getElementById('pos-item').value.split('|');
+        if(name === 'Select') return showToast("Select a product", "error");
+        
+        const cust = document.getElementById('pos-cust').value || 'Cash Customer';
+        const disc = document.getElementById('pos-disc').value;
+        const total = document.getElementById('pos-total').innerText;
+        const date = new Date().toLocaleDateString();
+
+        const w = window.open('', '', 'width=350,height=500');
+        w.document.write(`
+            <html>
+            <body style="font-family:monospace; padding:10px; text-align:center;">
+                <h3>${shopData.shopName}</h3>
+                <p>${shopData.address}<br>${shopData.phone1}</p>
+                <hr style="border-top:1px dashed #000">
+                <p style="text-align:left;">Date: ${date}<br>Cust: ${cust}</p>
+                <table style="width:100%; text-align:left;">
+                    <tr><td>${name}</td><td style="text-align:right;">${price}</td></tr>
+                    <tr><td>Discount</td><td style="text-align:right;">-${disc}</td></tr>
+                    <tr style="font-weight:bold;"><td>TOTAL</td><td style="text-align:right;">${total}</td></tr>
+                </table>
+                <hr style="border-top:1px dashed #000">
+                <p>Thank You!</p>
+                <script>window.print();<\/script>
+            </body>
+            </html>
+        `);
+    }
+
+    // --- TAB: MARKETPLACE ---
     function renderMarketplace(target) {
         target.innerHTML = `
             <div class="card">
-                <h3>Marketplace Search</h3>
-                <input class="input-group" placeholder="Search furniture..." onkeyup="searchMarket(this.value)" style="padding:15px; width:100%;">
-                <div id="search-results" style="margin-top:20px;"></div>
+                <h3>Marketplace</h3>
+                <div class="input-group">
+                    <input placeholder="Search products, categories..." onkeyup="searchMarket(this.value)">
+                </div>
+                <div id="market-results" style="margin-top:15px;"></div>
             </div>
         `;
+        searchMarket(''); // Load all initially
     }
-    
-    async function searchMarket(term) {
-        if(term.length < 3) return;
-        const resDiv = document.getElementById('search-results');
-        resDiv.innerHTML = 'Searching...';
-        // Note: Client-side filtering is simpler for this structure without Algolia
-        const snapshot = await db.collection('users').where('role', '==', 'seller').get();
-        let html = '';
-        snapshot.forEach(doc => {
+
+    async function searchMarket(q) {
+        const resDiv = document.getElementById('market-results');
+        const term = q.toLowerCase();
+        
+        // Fetch all sellers (In production, use indexed queries)
+        const snap = await db.collection('users').where('role', '==', 'seller').get();
+        let items = [];
+        
+        snap.forEach(doc => {
             const d = doc.data();
             if(d.products) {
                 d.products.forEach(p => {
-                    if(p.name.toLowerCase().includes(term.toLowerCase())) {
-                        html += `<div class="product-item"><img src="${p.images[0]}"> <b>${p.name}</b> (${d.shopName})</div>`;
+                    if(p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term)) {
+                        items.push({...p, seller: d.shopName});
                     }
                 });
             }
         });
-        resDiv.innerHTML = html || 'No matches found.';
+
+        if(items.length === 0) {
+            resDiv.innerHTML = '<p class="text-center text-gray">No products found.</p>';
+            return;
+        }
+
+        resDiv.innerHTML = items.map(p => `
+            <div class="card flex" style="padding:10px; margin-bottom:10px; box-shadow:none; border:1px solid #eee;">
+                <img src="${p.images[0]}" style="width:60px; height:60px; border-radius:8px; object-fit:cover; margin-right:10px;">
+                <div>
+                    <div class="bold" style="font-size:0.9rem;">${p.name}</div>
+                    <div style="font-size:0.75rem; color:#777;">${p.seller}</div>
+                    <div class="text-primary bold">Rs. ${p.price}</div>
+                </div>
+            </div>
+        `).join('');
     }
 
-    // --- 6. WEBPAGE & EXTRAS ---
-    function renderWebpage(target) {
+    // --- TAB: OPEN/CLOSE ---
+    function renderOpenClose(target) {
         target.innerHTML = `
             <div class="card">
-                <h3>My Webpage</h3>
-                <p>Your online store link:</p>
-                <a href="shop.html?id=${user.uid}" target="_blank" style="color:blue; word-break:break-all;">${window.location.origin}/shop.html?id=${user.uid}</a>
-                <p style="font-size:0.8rem; color:#777; margin-top:10px;">Customers can chat with you here.</p>
-            </div>
-            <div class="card">
-                <h3>Reviews</h3>
-                <div id="review-list">No reviews yet.</div>
+                <h3>Shop Status</h3>
+                <div class="flex center justify-between mb-1" style="background:#f5f5f5; padding:15px; border-radius:12px;">
+                    <label>Shop is Currently:</label>
+                    <select id="shop-stat" style="padding:5px; border-radius:8px;">
+                        <option value="Open">Open</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+                <div class="input-group"><label>Open Time</label><input type="time" id="t-open" value="${shopData.openTime||'09:00'}"></div>
+                <div class="input-group"><label>Close Time</label><input type="time" id="t-close" value="${shopData.closeTime||'20:00'}"></div>
+                <button class="btn btn-primary" onclick="saveStatus()">Update Status</button>
             </div>
         `;
-        // Load reviews logic can be added here
     }
 
-    function renderOrders(target) {
-        target.innerHTML = `<div class="card"><h3>Orders</h3><p>Online orders feature coming soon.</p></div>`;
+    function saveStatus() {
+        db.collection('users').doc(currentUser.uid).update({
+            isOpen: document.getElementById('shop-stat').value === 'Open',
+            openTime: document.getElementById('t-open').value,
+            closeTime: document.getElementById('t-close').value
+        }).then(() => showToast("Status Updated!", "success"));
     }
 
-    // --- UTILS ---
-    async function uploadImage(input, type, index = 0) {
+    // --- TAB: WEBPAGE ---
+    function renderWebpage(target) {
+        const url = `${window.location.origin}/shop.html?id=${currentUser.uid}`;
+        target.innerHTML = `
+            <div class="card text-center">
+                <img src="${shopData.logo || 'icon.png'}" style="width:80px; height:80px; border-radius:50%; margin-bottom:10px;">
+                <h3>${shopData.shopName}</h3>
+                <p>Your public store link:</p>
+                <input class="w-100 p-2 mb-1 text-center" value="${url}" readonly style="background:#f5f5f5; border:none; border-radius:8px; color:#555;">
+                <a href="${url}" target="_blank" class="btn btn-outline" style="display:inline-block; width:auto; text-decoration:none;">Visit Webpage</a>
+            </div>
+        `;
+    }
+
+    // --- UTILITIES ---
+    function showToast(msg, type='success') {
+        const t = document.createElement('div');
+        t.innerText = msg;
+        t.style = `position:fixed; top:20px; right:20px; background:${type==='error'?'#e74c3c':'#27ae60'}; color:white; padding:12px 20px; border-radius:50px; z-index:9999; box-shadow:0 5px 15px rgba(0,0,0,0.2); font-weight:bold; font-size:0.9rem; animation: slideIn 0.3s forwards;`;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+    }
+
+    async function uploadImage(input, type, index) {
         const file = input.files[0];
-        if(!file) return;
-        
-        // Compress using Canvas
+        if (!file) return;
+
+        showToast("Compressing & Uploading...", "info");
+
         const img = new Image();
         img.src = URL.createObjectURL(file);
         img.onload = async () => {
             const cvs = document.createElement('canvas');
             const ctx = cvs.getContext('2d');
-            const scale = 600 / img.width; 
-            cvs.width = 600; 
+            const scale = 600 / img.width;
+            cvs.width = 600;
             cvs.height = img.height * scale;
             ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
             
             const dataUrl = cvs.toDataURL('image/jpeg', 0.7);
-            const ref = storage.ref(`uploads/${user.uid}/${Date.now()}_${index}.jpg`);
-            await ref.putString(dataUrl, 'data_url');
-            const url = await ref.getDownloadURL();
+            const ref = storage.ref(`uploads/${currentUser.uid}/${Date.now()}.jpg`);
             
-            if(type === 'logo') {
-                db.collection('users').doc(user.uid).update({ logo: url });
-                userData.logo = url;
-                renderProfile(document.getElementById('content-area'));
-            } else if (type === 'verifyDoc') {
-                userData.temp_verifyDoc = url;
-            } else if (type === 'prod') {
-                tempImages[index] = url;
-            }
-            alert("Image Uploaded!");
+            try {
+                await ref.putString(dataUrl, 'data_url');
+                const url = await ref.getDownloadURL();
+                
+                if (type === 'logo') {
+                    shopData.tempLogo = url;
+                    document.getElementById('prev-logo').src = url;
+                } else if (type === 'proof') {
+                    shopData.tempProof = url;
+                    document.getElementById('v-preview').src = url;
+                    document.getElementById('v-preview').classList.remove('hidden');
+                } else if (type === 'product') {
+                    tempImages[index] = url;
+                    document.getElementById(`prev-img-${index}`).src = url;
+                    document.getElementById(`prev-img-${index}`).style.display = 'block';
+                }
+                showToast("Upload Successful", "success");
+            } catch(e) { console.error(e); showToast("Upload Failed", "error"); }
         };
+    }
+
+    // --- SW REGISTRATION ---
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js');
+        });
     }
 </script>
 </body>
