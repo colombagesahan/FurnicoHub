@@ -24,14 +24,15 @@
 
     <style>
         :root {
-            /* --- COLOR PALETTE --- */
+            /* --- IMPROVED COLOR PALETTE --- */
             --primary: #4E342E;        /* Mahogany */
-            --primary-light: #8D6E63;
-            --accent: #FF7043;         
-            --bg-body: #FDFBF7;
+            --primary-light: #8D6E63;  /* Lighter Brown */
+            --accent: #FF7043;         /* Vibrant Orange for Actions */
+            --bg-body: #FDFBF7;        /* Warm White */
             --surface: #FFFFFF;
             --text: #3E2723;
             --green: #4CAF50;
+            --green-light: #E8F5E9;
             --red: #E53935;
             --gold: #FFC107;
             
@@ -48,13 +49,13 @@
         /* UTILS */
         .hidden { display: none !important; }
         .flex { display: flex; align-items: center; gap: 10px; }
+        .center { align-items: center; justify-content: center; }
         .space-between { justify-content: space-between; }
         .col { flex-direction: column; }
-        .center { text-align: center; }
         .bold { font-weight: 700; }
+        .text-center { text-align: center; }
         .w-100 { width: 100%; }
-        .mb-1 { margin-bottom: 10px; }
-        .mt-1 { margin-top: 10px; }
+        .mt-2 { margin-top: 15px; } .mb-2 { margin-bottom: 15px; }
 
         /* COMPONENTS */
         .btn {
@@ -62,9 +63,10 @@
             background: var(--primary); color: white; font-weight: 600;
             cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
             font-size: 0.9rem; transition: 0.2s; margin-bottom: 10px;
-            box-shadow: 0 4px 10px rgba(78, 52, 46, 0.2); text-decoration: none;
+            box-shadow: 0 4px 10px rgba(78, 52, 46, 0.2);
         }
         .btn:active { transform: scale(0.97); }
+        .btn-accent { background: var(--accent); color: white; }
         .btn-green { background: var(--green); color: white; }
         .btn-red { background: var(--red); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); box-shadow: none; }
@@ -81,14 +83,15 @@
             width: 100%; padding: 12px; border: 2px solid #E0E0E0; border-radius: 12px;
             font-family: var(--font); font-size: 0.95rem; background: #FAFAFA; transition: 0.3s;
         }
-        /* Fix for Color Input */
-        input[type="color"] { height: 50px; padding: 2px; cursor: pointer; }
+        .input-group input:focus { border-color: var(--primary); background: #fff; }
+        .input-group input:disabled { background: #F5F5F5; color: #999; border-color: #EEE; }
 
         /* FILE UPLOAD */
         .upload-box {
             border: 2px dashed #BCAAA4; border-radius: 12px; padding: 20px;
             text-align: center; cursor: pointer; background: #FAFAFA; position: relative; transition: 0.3s;
         }
+        .upload-box:hover { background: #fff; border-color: var(--accent); }
         .upload-box img { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; display: none; margin-top: 5px; }
 
         /* LOGIN SCREEN */
@@ -144,21 +147,22 @@
             .card { padding: 12px; }
             .btn { font-size: 0.8rem; padding: 10px; }
             .nav-brand { font-size: 1rem; }
-            .day-row input { width: 100%; margin-bottom: 5px; }
-            .day-row { flex-direction: column; align-items: flex-start; }
+            .stat-grid { grid-template-columns: 1fr !important; }
         }
 
-        /* STATUS & GRID */
+        /* EXTRA STYLES */
         .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
-        .st-verified { background: #E8F5E9; color: var(--green); border: 1px solid var(--green); }
+        .st-verified { background: var(--green-light); color: var(--green); border: 1px solid var(--green); }
         .st-pending { background: #FFF3E0; color: #E65100; border: 1px solid #FFCC80; }
         
+        .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 15px; border-radius: 16px; text-align: center; cursor: pointer; border-bottom: 4px solid transparent; box-shadow: var(--shadow); transition: 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); }
+
         .toggle-switch { display: flex; background: #eee; border-radius: 50px; padding: 4px; width: fit-content; margin: 0 auto 15px; }
         .toggle-opt { padding: 6px 16px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #777; transition: 0.2s; }
         .toggle-opt.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-        .day-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-        
         @keyframes slideUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
     </style>
 </head>
@@ -211,26 +215,13 @@
     let shopData = {};
     let shopOrders = [];
     let shopReviews = [];
-    let currentTab = 'Smart POS';
+    let currentTab = 'Dashboard';
     let tempImages = [null, null, null]; 
-    let discountType = 'amount';
+    let discountType = 'amount'; // 'amount' or 'percent'
 
-    // --- CATEGORIES DATA (Fixed) ---
-    const CATEGORIES = {
-        "Living Room Furniture": ["Sofas & Couches", "Sofa Beds", "Recliners", "Armchairs", "Coffee Tables", "Side Tables", "TV Stands & Media Units", "Bookshelves", "Display Cabinets", "Shoe Racks"],
-        "Bedroom Furniture": ["Beds (Single, Double, Queen, King)", "Bunk Beds", "Bed Frames", "Mattresses", "Wardrobes", "Dressers", "Nightstands", "Chest of Drawers", "Dressing Tables"],
-        "Dining Room Furniture": ["Dining Tables", "Dining Chairs", "Dining Sets", "Bar Tables", "Bar Stools", "Sideboards", "Buffets", "China Cabinets"],
-        "Office & Study Furniture": ["Office Tables / Desks", "Office Chairs", "Computer Tables", "Study Tables", "Book Racks", "Filing Cabinets", "Drawer Units", "Conference Tables"],
-        "Kids & Baby Furniture": ["Kids Beds", "Baby Cribs", "Bunk Beds", "Study Tables for Kids", "Toy Storage Units", "Kids Chairs", "Wardrobes for Kids"],
-        "Storage & Organization": ["Cabinets", "Cupboards", "Shelving Units", "Drawer Units", "Shoe Cabinets", "Storage Boxes", "Trunks"],
-        "Outdoor & Garden Furniture": ["Garden Chairs", "Garden Tables", "Outdoor Sofa Sets", "Swing Chairs", "Benches", "Patio Sets", "Sun Loungers"],
-        "Commercial Furniture": ["Hotel Furniture", "Restaurant Furniture", "Cafe Furniture", "Office Bulk Furniture", "School Furniture", "Hospital Furniture"],
-        "Custom & Handcrafted Furniture": ["Custom-Made Furniture", "Wooden Furniture", "Cane / Rattan Furniture", "Metal Furniture", "Upholstered Furniture"]
-    };
-
-    // --- TABS CONFIG ---
+    // --- TABS ---
     const TABS = [
-        { id: 'Smart POS', icon: 'fa-calculator' }, 
+        { id: 'Dashboard', icon: 'fa-calculator' }, 
         { id: 'Marketplace', icon: 'fa-store' },    
         { id: 'Profile', icon: 'fa-user-gear' },     
         { id: 'Get Verified', icon: 'fa-certificate' }, 
@@ -264,9 +255,9 @@
         const doc = await db.collection('users').doc(user.uid).get();
         if (doc.exists) {
             shopData = doc.data();
-            currentTab = shopData.profileCompleted ? 'Smart POS' : 'Profile';
+            currentTab = shopData.profileCompleted ? 'Dashboard' : 'Profile';
         } else {
-            shopData = { role: 'seller', profileCompleted: false, isVerified: false, products: [], isOpen: false, emergencyClose: false, schedule: {} };
+            shopData = { role: 'seller', profileCompleted: false, isVerified: false, products: [], isOpen: false };
             await db.collection('users').doc(user.uid).set(shopData);
             currentTab = 'Profile';
         }
@@ -278,7 +269,7 @@
                 alert("🔔 New Order Received!");
             }
             shopOrders = newOrders;
-            if(currentTab === 'Orders') renderContent();
+            if(currentTab === 'Orders' || currentTab === 'Dashboard') renderContent();
         });
 
         db.collection('users').doc(user.uid).collection('reviews').onSnapshot(snap => {
@@ -314,7 +305,7 @@
         c.innerHTML = '';
         
         switch(currentTab) {
-            case 'Smart POS': renderPOS(c); break;
+            case 'Dashboard': renderPOS(c); break;
             case 'Marketplace': renderMarketplace(c); break;
             case 'Profile': renderProfile(c); break;
             case 'Get Verified': renderVerify(c); break;
@@ -327,7 +318,7 @@
         }
     }
 
-    // --- 1) SMART POS ---
+    // --- 1) DASHBOARD / SMART POS ---
     function renderPOS(div) {
         div.innerHTML = `
             <div class="card">
@@ -342,7 +333,7 @@
                 <div class="input-group"><label>Customer Name</label><input id="pos-cust"></div>
                 
                 <div class="input-group">
-                    <label>Discount</label>
+                    <label>Discount Type</label>
                     <div class="toggle-switch">
                         <div class="toggle-opt ${discountType==='amount'?'active':''}" onclick="setDiscType('amount')">Rs. Amount</div>
                         <div class="toggle-opt ${discountType==='percent'?'active':''}" onclick="setDiscType('percent')">% Percent</div>
@@ -404,66 +395,25 @@
 
     // --- 2) MARKETPLACE ---
     async function renderMarketplace(div) {
-        div.innerHTML = `
-            <div class="card">
-                <h3>Marketplace Feed</h3>
-                
-                <div class="flex" style="flex-wrap:wrap;">
-                    <select id="mk-cat" class="w-100" onchange="updateSubCatFilter(); filterFeed()">
-                        <option value="">All Categories</option>
-                        ${Object.keys(CATEGORIES).map(c => `<option>${c}</option>`).join('')}
-                    </select>
-                    <select id="mk-sub" class="w-100" onchange="filterFeed()"><option value="">All Subcategories</option></select>
-                </div>
-
-                <div class="flex mt-1">
-                    <input id="search-prod" placeholder="Search by Product Name..." class="w-100" onkeyup="filterFeed()">
-                    <input id="search-shop" placeholder="Search by Shop Name..." class="w-100" onkeyup="filterFeed()">
-                </div>
-            </div>
-            <div id="feed-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:15px;">Loading...</div>
-        `;
-        
-        // Fetch All Sellers
+        div.innerHTML = `<div class="card"><h3>Marketplace Feed</h3><input placeholder="Search..." onkeyup="filterFeed(this.value)" class="w-100" style="padding:10px; border-radius:10px; border:1px solid #ccc;"></div><div id="feed-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:15px;">Loading...</div>`;
         const snap = await db.collection('users').where('role', '==', 'seller').get();
         let items = [];
         snap.forEach(doc => {
             const d = doc.data();
-            if(d.products) d.products.forEach(p => items.push({...p, seller: d.shopName, logo: d.logo, verified: d.isVerified, sellerId: doc.id}));
+            if(d.products) d.products.forEach(p => items.push({...p, seller: d.shopName, logo: d.logo, verified: d.isVerified}));
         });
         window.marketItems = items;
-        filterFeed();
+        filterFeed('');
     }
 
-    window.updateSubCatFilter = function() {
-        const cat = document.getElementById('mk-cat').value;
-        const subSel = document.getElementById('mk-sub');
-        subSel.innerHTML = '<option value="">All Subcategories</option>';
-        if(cat && CATEGORIES[cat]) {
-            CATEGORIES[cat].forEach(s => subSel.innerHTML += `<option>${s}</option>`);
-        }
-    }
-
-    window.filterFeed = function() {
-        const cat = document.getElementById('mk-cat').value;
-        const sub = document.getElementById('mk-sub').value;
-        const sProd = document.getElementById('search-prod').value.toLowerCase();
-        const sShop = document.getElementById('search-shop').value.toLowerCase();
-
+    window.filterFeed = function(q) {
         const grid = document.getElementById('feed-grid');
-        
-        const filtered = window.marketItems.filter(i => {
-            return (cat === "" || i.category === cat) &&
-                   (sub === "" || i.subCategory === sub) &&
-                   (sProd === "" || i.name.toLowerCase().includes(sProd)) &&
-                   (sShop === "" || i.seller.toLowerCase().includes(sShop));
-        });
-
+        const term = q.toLowerCase();
+        const filtered = window.marketItems.filter(i => i.name.toLowerCase().includes(term));
         grid.innerHTML = filtered.map(i => `
-            <div class="card" style="padding:0; overflow:hidden; cursor:pointer;" onclick="window.location.href='shop.html?id=${i.sellerId}'">
+            <div class="card" style="padding:0; overflow:hidden;">
                 <img src="${i.images[0]}" style="width:100%; height:120px; object-fit:cover;">
                 <div style="padding:10px;">
-                    ${i.verified ? '<div style="font-size:0.7rem; color:green; font-weight:bold;"><i class="fa-solid fa-circle-check"></i> Verified</div>' : ''}
                     <div class="bold">${i.name}</div>
                     <div style="color:var(--primary);">Rs. ${i.price}</div>
                     <div style="font-size:0.75rem; color:#777; margin-top:5px;">${i.seller}</div>
@@ -482,7 +432,7 @@
             <div class="card">
                 <h3>Shop Profile</h3>
                 ${lockMsg}
-                <div class="center mb-2">
+                <div class="text-center mb-2">
                     <img id="p-logo" src="${d.logo||'logo.png'}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);">
                     ${!d.isVerified ? `<br><label class="btn btn-outline" style="width:auto; display:inline-block; margin-top:10px; padding:6px 15px;">Upload Logo <input type="file" hidden onchange="upImg(this, 'logo')"></label>` : ''}
                 </div>
@@ -518,7 +468,7 @@
         await db.collection('users').doc(user.uid).update(upd);
         shopData = {...shopData, ...upd};
         alert("Profile Saved!");
-        switchTab('Smart POS');
+        switchTab('Dashboard');
     }
 
     // --- 4) VERIFIED ---
@@ -529,19 +479,18 @@
             <div class="card">
                 <h3>Get Verified (Rs. 5000)</h3>
                 <p style="color:#666; margin-bottom:15px;">Follow steps to get the Green Badge.</p>
-                <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0;">
-                    <b>* GN:</b> Grama Niladhari (Village Officer)<br>
-                    <b>* JP:</b> Justice of the Peace (Official Witness)<br>
-                    <b>* Fee:</b> Rs. 5000 (Commercial Bank, Homagama, Acc: 8750053306 - Colombage SD)
-                </div>
                 <button class="btn btn-outline" onclick="printProf()">1. Download Profile PDF</button>
-                <div class="input-group mt-1">
-                    <label>2. Upload Certified Doc (Signed by GN/JP)</label>
+                <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0;">
+                    <b>2. Certify:</b> GN or JP Stamp.<br>
+                    <b>3. Pay Rs. 5000:</b><br>Bank: Commercial Bank, Homagama<br>Acc: 8750053306 (Colombage SD)
+                </div>
+                <div class="input-group">
+                    <label>4. Upload Certified Doc</label>
                     <div class="upload-box" onclick="document.getElementById('v-doc').click()">Click to Upload <input type="file" id="v-doc" hidden onchange="upImg(this, 'doc')"></div>
                     <small id="st-doc" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded</small>
                 </div>
                 <div class="input-group">
-                    <label>3. Upload Payment Slip</label>
+                    <label>5. Upload Payment Slip</label>
                     <div class="upload-box" onclick="document.getElementById('v-slip').click()">Click to Upload <input type="file" id="v-slip" hidden onchange="upImg(this, 'slip')"></div>
                     <small id="st-slip" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded</small>
                 </div>
@@ -565,66 +514,54 @@
         alert("Submitted!");
     }
 
-    // --- 5) OPEN/CLOSE (Advanced) ---
+    // --- 5) OPEN/CLOSE ---
     function renderOpenClose(div) {
-        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-        const schedule = shopData.schedule || {};
-        const isEmergency = shopData.emergencyClose || false;
-
-        let rows = days.map(d => {
-            const s = schedule[d] || {open: true, start: "09:00", end: "20:00"};
-            return `
-            <div class="day-row">
-                <div style="width:100px; font-weight:bold;">${d}</div>
-                <select id="st-${d}" class="w-100" style="margin-right:5px;">
-                    <option value="open" ${s.open?'selected':''}>Open</option>
-                    <option value="closed" ${!s.open?'selected':''}>Closed</option>
-                </select>
-                <input type="time" id="start-${d}" value="${s.start}" class="w-100">
-                <span style="margin:0 5px;">to</span>
-                <input type="time" id="end-${d}" value="${s.end}" class="w-100">
-            </div>`;
-        }).join('');
-
+        // Fix: Use shopData.isOpen directly from DB
+        const isOpen = shopData.isOpen === true; 
+        
         div.innerHTML = `
-            <div class="card">
-                <h3>Weekly Schedule</h3>
-                ${rows}
-                <button class="btn btn-primary mt-1" onclick="saveSchedule()">Save Schedule</button>
-            </div>
-            
-            <div class="card" style="border-color:${isEmergency ? 'red' : 'green'}; border-width:2px;">
-                <h3>Emergency Status</h3>
-                <p>${isEmergency ? "🔴 YOU ARE CLOSED TODAY (Emergency)" : "🟢 Operating as per Schedule"}</p>
-                <button class="btn btn-${isEmergency ? 'green' : 'red'}" onclick="toggleEmergency(!${isEmergency})">
-                    ${isEmergency ? 'Re-Open Shop' : 'Close Today (Emergency)'}
+            <div class="card text-center">
+                <h3>Shop Status</h3>
+                <div style="font-size:3rem; margin:20px 0; color:${isOpen ? 'var(--green)' : 'var(--red)'}">
+                    <i class="fa-solid fa-store${isOpen ? '' : '-slash'}"></i>
+                </div>
+                <h2 style="color:${isOpen ? 'var(--green)' : 'var(--red)'}">${isOpen ? 'OPEN' : 'CLOSED'}</h2>
+                
+                <div class="flex center" style="margin:20px 0; gap:15px;">
+                    <div class="w-100 text-left">
+                        <label>Open Time</label>
+                        <input type="time" id="t-open" value="${shopData.openTime||'09:00'}" class="w-100" style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+                    </div>
+                    <div class="w-100 text-left">
+                        <label>Close Time</label>
+                        <input type="time" id="t-close" value="${shopData.closeTime||'20:00'}" class="w-100" style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+                    </div>
+                </div>
+
+                <button class="btn btn-${isOpen ? 'red' : 'green'}" onclick="toggleStatus(${!isOpen})">
+                    ${isOpen ? 'Close Shop Now' : 'Open Shop Now'}
                 </button>
+                <button class="btn btn-outline" onclick="saveTimes()">Save Times Only</button>
             </div>
         `;
     }
 
-    async function saveSchedule() {
-        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-        const schedule = {};
-        days.forEach(d => {
-            schedule[d] = {
-                open: document.getElementById(`st-${d}`).value === 'open',
-                start: document.getElementById(`start-${d}`).value,
-                end: document.getElementById(`end-${d}`).value
-            };
-        });
-        await db.collection('users').doc(user.uid).update({ schedule });
-        shopData.schedule = schedule;
-        alert("Schedule Saved");
-    }
-
-    async function toggleEmergency(state) {
-        await db.collection('users').doc(user.uid).update({ emergencyClose: state });
-        shopData.emergencyClose = state;
+    async function toggleStatus(status) {
+        await db.collection('users').doc(user.uid).update({ isOpen: status });
+        shopData.isOpen = status;
+        alert(status ? "Shop is OPEN" : "Shop is CLOSED");
         renderOpenClose(document.getElementById('content-area'));
     }
 
-    // --- 6) PRODUCTS (Strict Cats) ---
+    async function saveTimes() {
+        await db.collection('users').doc(user.uid).update({
+            openTime: document.getElementById('t-open').value,
+            closeTime: document.getElementById('t-close').value
+        });
+        alert("Times Saved");
+    }
+
+    // --- 6) PRODUCTS ---
     function renderProducts(div) {
         tempImages = [null,null,null];
         div.innerHTML = `
@@ -636,15 +573,8 @@
                         ${[0,1,2].map(i=>`<div class="upload-box" style="padding:10px; min-width:70px;" onclick="document.getElementById('f-p${i}').click()">+<input type="file" id="f-p${i}" hidden onchange="upImg(this, 'prod', ${i})"><img id="prev-p${i}"></div>`).join('')}
                     </div>
                 </div>
-                <div class="input-group"><label>Category</label>
-                    <select id="p-cat" onchange="updateSubCat(this.value)">
-                        <option value="">Select Category</option>
-                        ${Object.keys(CATEGORIES).map(c => `<option>${c}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="input-group"><label>Sub Category</label>
-                    <select id="p-sub"><option value="">Select Category First</option></select>
-                </div>
+                <div class="input-group"><label>Category</label><select id="p-cat"><option>Living Room</option><option>Bedroom</option><option>Dining</option><option>Office</option><option>Outdoor</option></select></div>
+                <div class="input-group"><label>Sub Category</label><input id="p-sub" placeholder="e.g. Sofa"></div>
                 <div class="input-group"><label>Name</label><input id="p-name"></div>
                 <div class="input-group"><label>Description</label><textarea id="p-desc"></textarea></div>
                 <div class="input-group"><label>Promo Text</label><input id="p-promo"></div>
@@ -659,14 +589,6 @@
                 </div>
             `).join('')}
         `;
-    }
-
-    window.updateSubCat = function(cat) {
-        const sub = document.getElementById('p-sub');
-        sub.innerHTML = '';
-        if(cat && CATEGORIES[cat]) {
-            CATEGORIES[cat].forEach(s => sub.innerHTML += `<option>${s}</option>`);
-        }
     }
 
     async function saveProd() {
@@ -696,10 +618,13 @@
         renderProducts(document.getElementById('content-area'));
     }
 
-    // --- 7) MY WEBPAGE (Visual Editor Fix) ---
+    // --- 7) WEBPAGE (VISUAL EDITOR) ---
     function renderWebpage(div) {
+        // Fix 1: Correct Public Link Generation
+        // Using current origin + logic to point to sibling 'shop.html'
         const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
         const url = `${window.location.origin}${path}/shop.html?id=${user.uid}`;
+        
         const sl = shopData.socialLinks || {};
 
         div.innerHTML = `
@@ -709,7 +634,7 @@
                 <p>Public Shop Link:</p>
                 <input value="${url}" readonly class="w-100 text-center" style="background:#eee; border:none; padding:10px; border-radius:10px; margin-bottom:10px;">
                 <div class="flex center">
-                    <a href="${url}" target="_blank" class="btn btn-accent" style="text-decoration:none;">Open Page</a>
+                    <a href="${url}" target="_blank" class="btn btn-accent">Open Page</a>
                     <button class="btn btn-outline" onclick="navigator.clipboard.writeText('${url}'); alert('Copied')">Copy</button>
                 </div>
             </div>
@@ -720,6 +645,7 @@
                 <div class="input-group"><label>Welcome Text</label><input id="w-txt" value="${shopData.heroText||''}" onchange="saveWeb()"></div>
             </div>
 
+            <!-- Fix 2: Social Media Inputs -->
             <div class="card">
                 <h3>Social Media Links</h3>
                 <div class="input-group"><label><i class="fa-brands fa-facebook text-primary"></i> Facebook</label><input id="sl-fb" value="${sl.fb||''}" placeholder="https://facebook.com/..." onchange="saveWeb()"></div>
@@ -740,7 +666,7 @@
                 tk: document.getElementById('sl-tk').value,
                 yt: document.getElementById('sl-yt').value
             }
-        }).then(()=>console.log("Webpage Updated"));
+        }).then(()=>console.log("Webpage Updated")); // Auto-save silently
     }
 
     // --- 8) ORDERS ---
