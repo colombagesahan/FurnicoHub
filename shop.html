@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FurnicoHub Shop</title>
+    <!-- Include same styles/firebase setup as index.html -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; margin:0; background: #f9f9f9; padding-bottom:60px; }
+        .header { background: white; padding: 20px; text-align: center; border-bottom: 1px solid #eee; }
+        .logo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #8d6e63; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 20px; }
+        .card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .card img { width: 100%; height: 150px; object-fit: cover; }
+        .details { padding: 10px; }
+        .fab { position: fixed; bottom: 20px; right: 20px; background: #8d6e63; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img id="s-logo" src="" class="logo">
+        <h1 id="s-name" style="margin:10px 0 5px;">Loading...</h1>
+        <p id="s-addr" style="color:#777; font-size:0.9rem;"></p>
+        <div id="s-badge"></div>
+    </div>
+
+    <div id="prod-grid" class="grid"></div>
+
+    <div class="fab" onclick="startChat()"><i class="fa-solid fa-comments"></i></div>
+
+<script>
+    // Firebase Config (Same as above)
+    const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f", measurementId: "G-WE0RETCVTX" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sellerId = urlParams.get('id');
+
+    window.onload = async () => {
+        if(!sellerId) return document.body.innerHTML = "Shop ID missing";
+        
+        const doc = await db.collection('users').doc(sellerId).get();
+        if(doc.exists) {
+            const s = doc.data();
+            document.getElementById('s-name').innerText = s.shopName;
+            document.getElementById('s-addr').innerText = s.address;
+            document.getElementById('s-logo').src = s.logo || 'icon.png';
+            if(s.isVerified) document.getElementById('s-badge').innerHTML = '<span style="color:green; font-weight:bold;"><i class="fa-solid fa-circle-check"></i> Verified Seller</span>';
+            
+            const grid = document.getElementById('prod-grid');
+            (s.products || []).forEach(p => {
+                grid.innerHTML += `
+                    <div class="card">
+                        <img src="${p.images[0]}">
+                        <div class="details">
+                            <b>${p.name}</b><br>
+                            <span style="color:#8d6e63; font-weight:bold;">Rs. ${p.price}</span>
+                        </div>
+                    </div>`;
+            });
+        }
+    };
+
+    function startChat() {
+        if(!auth.currentUser) {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).then(() => {
+                location.href = 'customer.html'; // Redirect to customer dashboard to chat
+            });
+        } else {
+            location.href = 'customer.html';
+        }
+    }
+</script>
+</body>
+</html>
