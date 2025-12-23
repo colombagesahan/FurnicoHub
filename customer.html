@@ -53,7 +53,7 @@
         }, {merge: true});
         alert("Saved!");
     }
-    // --- PWA SERVICE WORKER REGISTRATION ---
+   
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js')
