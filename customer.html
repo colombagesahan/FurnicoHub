@@ -6,65 +6,59 @@
     <title>FurnicoHub | My Account</title>
     <link rel="icon" type="image/png" href="icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <style>
-        body { margin:0; font-family:'Poppins', sans-serif; background:#f4f4f9; padding:20px; }
-        .card { background:white; padding:20px; border-radius:12px; margin-bottom:20px; }
-        .btn { background:#8d6e63; color:white; border:none; padding:10px; width:100%; border-radius:8px; margin-top:10px; }
+        body { font-family:'Poppins', sans-serif; background:#f4f4f9; padding:20px; max-width:500px; margin:0 auto; }
+        .card { background:white; padding:20px; border-radius:12px; margin-bottom:20px; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
+        .btn { background:#795548; color:white; border:none; padding:12px; width:100%; border-radius:8px; margin-top:10px; font-weight:600; cursor:pointer; }
+        input { width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>Customer Profile</h2>
-        <div id="profile-form">
-            <input id="c-name" placeholder="Your Name" style="width:100%; padding:10px; margin-bottom:10px;">
-            <input id="c-phone" placeholder="Phone" style="width:100%; padding:10px;">
-            <button class="btn" onclick="saveCustomer()">Save</button>
-        </div>
+        <h2>My Profile</h2>
+        <input id="c-name" placeholder="Your Name">
+        <input id="c-phone" placeholder="Phone Number">
+        <button class="btn" onclick="saveCustomer()">Save Details</button>
     </div>
+    
     <div class="card">
         <h3>My Messages</h3>
-        <p>No messages yet.</p>
+        <p style="color:#777;">No active chats.</p>
     </div>
-    <a href="index.html" class="btn" style="display:block; text-align:center; text-decoration:none;">Back to Shopping</a>
 
-<script>
-    const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f", measurementId: "G-WE0RETCVTX" };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    
-    auth.onAuthStateChanged(async u => {
-        if(!u) { location.href = 'index.html'; return; }
-        const doc = await db.collection('users').doc(u.uid).get();
-        if(doc.exists) {
-            document.getElementById('c-name').value = doc.data().name || '';
-            document.getElementById('c-phone').value = doc.data().phone || '';
-        }
-    });
+    <a href="index.html" class="btn" style="display:block; text-align:center; text-decoration:none;">Back to Marketplace</a>
 
-    async function saveCustomer() {
-        await db.collection('users').doc(auth.currentUser.uid).set({
-            role: 'customer',
-            name: document.getElementById('c-name').value,
-            phone: document.getElementById('c-phone').value
-        }, {merge: true});
-        alert("Saved!");
-    }
-   
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then((registration) => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, (err) => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f", measurementId: "G-WE0RETCVTX" };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        auth.onAuthStateChanged(async u => {
+            if(!u) { 
+                const provider = new firebase.auth.GoogleAuthProvider();
+                auth.signInWithPopup(provider);
+            } else {
+                const doc = await db.collection('users').doc(u.uid).get();
+                if(doc.exists) {
+                    document.getElementById('c-name').value = doc.data().name || '';
+                    document.getElementById('c-phone').value = doc.data().phone || '';
+                }
+            }
         });
-    }
 
-</script>
+        async function saveCustomer() {
+            await db.collection('users').doc(auth.currentUser.uid).set({
+                role: 'customer',
+                name: document.getElementById('c-name').value,
+                phone: document.getElementById('c-phone').value
+            }, {merge: true});
+            alert("Saved!");
+        }
+    </script>
 </body>
 </html>
