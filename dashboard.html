@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FurnicoHub | Seller Dashboard</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -67,8 +68,16 @@
     </div>
 
 <script>
-    // Firebase Config
-    const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f", measurementId: "G-WE0RETCVTX" };
+    // 1. FIREBASE CONFIGURATION
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", 
+        authDomain: "furnicohub.firebaseapp.com", 
+        projectId: "furnicohub", 
+        storageBucket: "furnicohub.firebasestorage.app", 
+        messagingSenderId: "395576125006", 
+        appId: "1:395576125006:web:a848f68053c69409ddc51f", 
+        measurementId: "G-WE0RETCVTX" 
+    };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -77,6 +86,7 @@
     let user = null;
     let userData = {};
 
+    // 2. AUTH STATE CHANGE
     auth.onAuthStateChanged(u => {
         if(u) {
             user = u;
@@ -89,9 +99,10 @@
         }
     });
 
+    // 3. AUTH FUNCTIONS
     function googleLogin() {
         const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider);
+        auth.signInWithPopup(provider).catch(e => alert(e.message));
     }
     function logout() { auth.signOut(); }
 
@@ -99,22 +110,28 @@
         const doc = await db.collection('users').doc(user.uid).get();
         if(doc.exists) {
             userData = doc.data();
-            if(userData.role !== 'seller') { alert("Not a seller account!"); auth.signOut(); return; }
+            if(userData.role !== 'seller') { 
+                alert("This account is not a seller account!"); 
+                auth.signOut(); 
+                return; 
+            }
             document.getElementById('shop-name-display').innerText = userData.shopName || "Setup Profile";
             switchTab(userData.profileSaved ? 'market' : 'profile');
         } else {
-            // New User
+            // New User Setup
             userData = { role: 'seller', isVerified: false, isLocked: false, products: [] };
             await db.collection('users').doc(user.uid).set(userData);
             switchTab('profile');
         }
     }
 
+    // 4. TAB SWITCHING
     function switchTab(tab) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        event?.target.classList.add('active'); // Optional chaining if called programmatically
+        if(event && event.target) event.target.classList.add('active'); 
+        
         const content = document.getElementById('content-area');
-        content.innerHTML = ''; // Clear
+        content.innerHTML = ''; // Clear content
 
         if(tab === 'profile') renderProfile(content);
         else if(tab === 'verify') renderVerify(content);
@@ -125,7 +142,9 @@
         else if(tab === 'orders') content.innerHTML = `<div class="card"><h3>Orders</h3><p>Order management coming soon.</p></div>`;
     }
 
-    // --- 3. PROFILE ---
+    // --- RENDER FUNCTIONS ---
+
+    // PROFILE
     function renderProfile(target) {
         const d = userData;
         const disabled = d.isLocked ? 'disabled' : '';
@@ -161,7 +180,7 @@
         loadUserData();
     }
 
-    // --- 4. VERIFY ---
+    // VERIFY
     function renderVerify(target) {
         target.innerHTML = `
             <div class="card">
@@ -188,7 +207,7 @@
         alert("Submitted! We will review shortly.");
     }
 
-    // --- 6. PRODUCTS ---
+    // PRODUCTS
     function renderProducts(target) {
         target.innerHTML = `
             <div class="card">
@@ -231,7 +250,7 @@
         renderProducts(document.getElementById('content-area'));
     }
 
-    // --- 1. POS ---
+    // POS - (Fixed script tag issue)
     function renderPOS(target) {
         target.innerHTML = `
             <div class="card">
@@ -245,9 +264,16 @@
     }
     
     function printInvoice() {
-        const [pName, pPrice] = document.getElementById('pos-select').value.split('|');
+        const val = document.getElementById('pos-select').value;
+        if(!val) return alert("Please select a product");
+        
+        const [pName, pPrice] = val.split('|');
         const cName = document.getElementById('pos-cust').value;
         const w = window.open('', '', 'width=400,height=600');
+        
+        // Split script tag to prevent parser error
+        const scriptTag = '<script>window.print();</' + 'script>';
+
         w.document.write(`
             <html><body>
             <center><h2>${userData.shopName}</h2><p>${userData.address}<br>${userData.phone1}</p><hr></center>
@@ -255,18 +281,23 @@
             <p>Item: ${pName}</p>
             <h3>Total: Rs. ${pPrice}</h3>
             <center><p>Thank You!</p></center>
-            <script>window.print();<\/script>
+            ${scriptTag}
             </body></html>
         `);
     }
 
-    // --- 7. WEBPAGE ---
+    // WEBPAGE
     function renderWeb(target) {
         const url = `shop.html?id=${user.uid}`;
         target.innerHTML = `<div class="card"><h3>My Webpage</h3><a href="${url}" target="_blank" class="btn btn-sec">Open My Page</a></div>`;
     }
 
-    // --- UTILS ---
+    // MARKET STUB
+    function renderMarket(t) { 
+        t.innerHTML = '<div class="card"><h3>Marketplace</h3><p>Browse other sellers (redirects to home).</p><a href="index.html" class="btn btn-main">Go to Home</a></div>'; 
+    }
+
+    // --- UTILITY FUNCTIONS ---
     async function uploadImg(input, type) {
         const file = input.files[0];
         if(!file) return;
@@ -297,27 +328,22 @@
     }
 
     function formatPhone(num) {
-        if(!num.startsWith('+94')) return '+94' + num.replace(/^0+/, '');
+        if(num && !num.startsWith('+94')) return '+94' + num.replace(/^0+/, '');
         return num;
     }
     
-    // Stub Market
-    function renderMarket(t) { t.innerHTML = '<div class="card"><h3>Marketplace</h3><p>Browse other sellers (redirects to home).</p><a href="index.html" class="btn btn-main">Go to Home</a></div>'; }
-<script>
-    // ... (Your existing Firebase code is here) ...
-
     // --- PWA SERVICE WORKER REGISTRATION ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js')
                 .then((registration) => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    console.log('SW registration successful');
                 }, (err) => {
-                    console.log('ServiceWorker registration failed: ', err);
+                    console.log('SW registration failed: ', err);
                 });
         });
     }
-</script>
+
 </script>
 </body>
 </html>
