@@ -1,42 +1,161 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>FurnicoHub Admin</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FurnicoHub | Admin</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <style>body{font-family:sans-serif; padding:20px;} .req{border:1px solid #ccc; padding:15px; margin-bottom:10px;}</style>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #F5F5F5; padding: 20px; max-width: 800px; margin: 0 auto; color: #3E2723; }
+        h2 { border-bottom: 2px solid #4E342E; padding-bottom: 10px; margin-top: 30px; }
+        
+        .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 5px solid #4E342E; }
+        
+        .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; margin-right: 5px; }
+        .btn-green { background: #2E7D32; }
+        .btn-red { background: #c62828; }
+        .btn-blue { background: #1976D2; }
+        
+        input { padding: 10px; width: 100%; box-sizing: border-box; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        
+        .badge { padding: 3px 8px; border-radius: 10px; font-size: 0.8rem; background: #eee; }
+        .verified { background: #E8F5E9; color: #2E7D32; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .img-preview { width: 100%; height: 150px; object-fit: contain; border: 1px solid #ddd; background: #f9f9f9; }
+    </style>
 </head>
 <body>
-    <h1>Verification Requests</h1>
-    <div id="list"></div>
+
+    <h1><i class="fa-solid fa-user-shield"></i> Admin Panel</h1>
+
+    <!-- SECTION 1: PENDING REQUESTS -->
+    <h2>Pending Verifications</h2>
+    <div id="request-list">Loading...</div>
+
+    <!-- SECTION 2: MANAGE SELLERS (Unlock Profiles) -->
+    <h2>Manage Sellers & Unlock Profiles</h2>
+    <input type="text" id="search" placeholder="Search by Shop Name..." onkeyup="searchSellers()">
+    <div id="seller-list"></div>
+
     <script>
+        // 1. FIREBASE CONFIG (Must match your project)
         const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        db.collection('admin_requests').onSnapshot(snap => {
-            document.getElementById('list').innerHTML = snap.docs.map(d => {
-                const r = d.data();
+        // 2. LOAD PENDING REQUESTS
+        db.collection('admin_requests').orderBy('time', 'desc').onSnapshot(snap => {
+            const list = document.getElementById('request-list');
+            if(snap.empty) { list.innerHTML = "<p>No pending requests.</p>"; return; }
+            
+            list.innerHTML = snap.docs.map(doc => {
+                const r = doc.data();
                 return `
-                <div class="req">
+                <div class="card">
                     <h3>${r.shopName}</h3>
-                    <a href="${r.doc}" target="_blank">View Doc</a> | <a href="${r.slip}" target="_blank">View Slip</a><br><br>
-                    <button onclick="approve('${d.id}', '${r.uid}')">Approve</button>
-                    <button onclick="reject('${d.id}')">Reject</button>
+                    <p>User ID: ${r.uid}</p>
+                    <div class="grid">
+                        <div><b>Doc:</b><br><a href="${r.doc}" target="_blank"><img src="${r.doc}" class="img-preview"></a></div>
+                        <div><b>Slip:</b><br><a href="${r.slip}" target="_blank"><img src="${r.slip}" class="img-preview"></a></div>
+                    </div>
+                    <div style="margin-top:15px;">
+                        <button class="btn btn-green" onclick="verifyUser('${doc.id}', '${r.uid}')">Approve & Verify</button>
+                        <button class="btn btn-red" onclick="rejectRequest('${doc.id}')">Reject</button>
+                    </div>
                 </div>`;
             }).join('');
         });
 
-        function approve(reqId, uid) {
-            if(confirm("Approve?")) {
-                db.collection('users').doc(uid).update({verified: true});
+        // 3. SEARCH SELLERS (For Unlocking)
+        let allSellers = [];
+        
+        // Fetch all sellers once on load
+        db.collection('users').where('role', '==', 'seller').get().then(snap => {
+            allSellers = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            renderSellers(allSellers);
+        });
+
+        function searchSellers() {
+            const q = document.getElementById('search').value.toLowerCase();
+            const filtered = allSellers.filter(s => (s.shopName || '').toLowerCase().includes(q));
+            renderSellers(filtered);
+        }
+
+        function renderSellers(list) {
+            const container = document.getElementById('seller-list');
+            if(list.length === 0) { container.innerHTML = "<p>No sellers found.</p>"; return; }
+
+            container.innerHTML = list.map(s => `
+                <div class="card" style="border-left-color: ${s.isVerified ? '#2E7D32' : '#FF9800'}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h3>${s.shopName || 'No Name'}</h3>
+                            <p>${s.phone1 || 'No Phone'}</p>
+                            ${s.isVerified ? '<span class="badge verified">VERIFIED (LOCKED)</span>' : '<span class="badge">UNVERIFIED (UNLOCKED)</span>'}
+                        </div>
+                        <div>
+                            ${s.isVerified 
+                                ? `<button class="btn btn-red" onclick="unlockProfile('${s.id}')"><i class="fa-solid fa-lock-open"></i> Unlock / Revoke</button>` 
+                                : `<button class="btn btn-blue" onclick="forceVerify('${s.id}')"><i class="fa-solid fa-check"></i> Force Verify</button>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- ACTIONS ---
+
+        // A. Approve from Request
+        function verifyUser(reqId, uid) {
+            if(!confirm("Approve Verification?")) return;
+            // 1. Set User as Verified
+            db.collection('users').doc(uid).update({ isVerified: true }).then(() => {
+                // 2. Delete Request
+                db.collection('admin_requests').doc(reqId).delete();
+                alert("User Verified Successfully!");
+            });
+        }
+
+        function rejectRequest(reqId) {
+            if(confirm("Reject this request?")) {
                 db.collection('admin_requests').doc(reqId).delete();
             }
         }
-        function reject(reqId) {
-            if(confirm("Reject?")) db.collection('admin_requests').doc(reqId).delete();
+
+        // B. Unlock / Revoke Verification
+        function unlockProfile(uid) {
+            const reason = prompt("Type 'CONFIRM' to remove verification and unlock profile:");
+            if(reason === 'CONFIRM') {
+                db.collection('users').doc(uid).update({ isVerified: false })
+                .then(() => {
+                    alert("Profile Unlocked! The seller can now edit their details.");
+                    location.reload(); // Refresh list
+                });
+            }
         }
+
+        // C. Force Verify (Manual)
+        function forceVerify(uid) {
+            if(confirm("Manually verify this user? This will LOCK their profile.")) {
+                db.collection('users').doc(uid).update({ isVerified: true })
+                .then(() => {
+                    alert("User Verified!");
+                    location.reload();
+                });
+            }
+        }
+
     </script>
 </body>
 </html>
