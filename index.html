@@ -184,11 +184,8 @@
         // Simple filtering
         const filtered = allProducts.filter(p => cat === "" || p.category === cat);
         renderProducts(filtered);
-    }
-    <script>
-    // ... (Your existing Firebase code is here) ...
-
-    // --- PWA SERVICE WORKER REGISTRATION ---
+     }
+    // --- PWA SERVICE WORKER REGISTRATION ---//
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js')
@@ -199,7 +196,7 @@
                 });
         });
     }
-</script>
+
 </script>
 </body>
 </html>
