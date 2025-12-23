@@ -4,80 +4,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FurnicoHub Shop</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <style>
-        body { font-family: 'Poppins', sans-serif; margin:0; background: #f9f9f9; padding-bottom:60px; }
-        .header { background: white; padding: 30px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-        .logo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid #795548; margin-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px; }
-        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        :root { --primary: #4E342E; --bg: #F5F5F5; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; }
+        .hero { background: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .hero img { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--primary); object-fit: cover; }
+        .verified { background: #27ae60; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        
+        .cat-title { margin: 30px 20px 10px; font-size: 1.2rem; color: var(--primary); border-bottom: 2px solid #ddd; display: inline-block; }
+        
+        .prod-grid { display: grid; gap: 15px; padding: 20px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+        .card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .card img { width: 100%; height: 150px; object-fit: cover; }
-        .details { padding: 10px; }
-        .fab { position: fixed; bottom: 20px; right: 20px; background: #795548; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 1000; transition: transform 0.2s; }
-        .fab:hover { transform: scale(1.1); }
+        .card-info { padding: 15px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 8px; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 5px; }
+        
+        .cart-float { position: fixed; bottom: 20px; right: 20px; background: #27ae60; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; }
+        .modal-content { background: white; width: 100%; max-width: 500px; padding: 20px; border-radius: 20px 20px 0 0; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <img id="s-logo" src="" class="logo" onerror="this.style.display='none'">
-        <h1 id="s-name" style="margin:5px 0;">Loading...</h1>
-        <div id="s-verified"></div>
-        <p id="s-addr" style="color:#777; font-size:0.9rem; margin-top:5px;"></p>
-        <p id="s-hours" style="color:#2ED573; font-weight:600; font-size:0.9rem;"></p>
-    </div>
-
-    <div id="prod-grid" class="grid"></div>
-
-    <div class="fab" onclick="startChat()"><i class="fa-solid fa-comments fa-lg"></i></div>
+<div id="app">
+    <div style="text-align:center; padding:50px;">Loading Shop...</div>
+</div>
 
 <script>
-    const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f", measurementId: "G-WE0RETCVTX" };
+    const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const auth = firebase.auth();
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const sellerId = urlParams.get('id');
+    const params = new URLSearchParams(window.location.search);
+    const uid = params.get('id');
+    let shop = {};
+    let cart = [];
 
-    window.onload = async () => {
-        if(!sellerId) return document.body.innerHTML = "<h2 style='text-align:center; padding:20px;'>Shop Not Found</h2>";
+    if(!uid) document.getElementById('app').innerHTML = "Shop ID missing.";
+    else {
+        db.collection('users').doc(uid).get().then(doc => {
+            if(!doc.exists) return;
+            shop = doc.data();
+            renderShop();
+        });
+    }
+
+    function renderShop() {
+        const cats = [...new Set((shop.products||[]).map(p => p.category))];
         
-        const doc = await db.collection('users').doc(sellerId).get();
-        if(doc.exists) {
-            const s = doc.data();
-            document.getElementById('s-name').innerText = s.shopName;
-            document.getElementById('s-addr').innerText = s.address;
-            document.getElementById('s-hours').innerText = s.hours || "Open Daily";
-            if(s.logo) document.getElementById('s-logo').src = s.logo;
-            if(s.isVerified) document.getElementById('s-verified').innerHTML = '<span style="background:#2ecc71; color:white; padding:2px 8px; border-radius:10px; font-size:0.7rem;">Verified Seller</span>';
+        document.getElementById('app').innerHTML = `
+            <div class="hero">
+                <img src="${shop.logo || 'logo.png'}">
+                <h1>${shop.shopName}</h1>
+                ${shop.verified ? '<span class="verified"><i class="fa-solid fa-check"></i> Verified Seller</span>' : ''}
+                <p>${shop.address}</p>
+                <a href="tel:${shop.phone1}" class="btn" style="display:inline-block; width:auto; margin-top:10px;"><i class="fa-solid fa-phone"></i> Call</a>
+            </div>
             
-            const grid = document.getElementById('prod-grid');
-            if(s.products) {
-                s.products.forEach(p => {
-                    grid.innerHTML += `
+            ${cats.map(c => `
+                <div class="cat-title">${c}</div>
+                <div class="prod-grid">
+                    ${shop.products.filter(p => p.category === c).map((p, i) => `
                         <div class="card">
-                            <img src="${p.images[0]}">
-                            <div class="details">
-                                <div style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-                                <div style="color:#e67e22; font-size:0.7rem;">${p.promoText||''}</div>
-                                <div style="color:#795548; font-weight:800; margin-top:5px;">Rs. ${parseInt(p.price).toLocaleString()}</div>
+                            <img src="${p.images[0]}" onclick="viewImg('${p.images[0]}')">
+                            <div class="card-info">
+                                <b>${p.name}</b>
+                                <div style="color:#e67e22; font-size:0.8rem;">${p.promoText||''}</div>
+                                <div>Rs. ${p.price}</div>
+                                <button class="btn" onclick="addToCart('${p.name}', ${p.price})">Add to Inquiry</button>
                             </div>
-                        </div>`;
-                });
-            } else {
-                grid.innerHTML = "<p style='text-align:center; width:100%; grid-column:1/-1;'>No products available yet.</p>";
-            }
-        }
-    };
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('')}
 
-    function startChat() {
-        // Redirect logic to start chat in customer dashboard
-        window.location.href = 'customer.html';
+            <!-- REVIEWS -->
+            <div style="padding:20px;">
+                <h3>Reviews</h3>
+                <div id="reviews">Loading reviews...</div>
+                <input id="r-name" placeholder="Your Name" style="width:100%; padding:10px; margin-bottom:5px;">
+                <textarea id="r-text" placeholder="Write review..." style="width:100%; padding:10px; margin-bottom:5px;"></textarea>
+                <button class="btn" onclick="sendReview()">Submit Review</button>
+            </div>
+
+            <div class="cart-float" onclick="openCart()"><i class="fa-brands fa-whatsapp"></i></div>
+            
+            <div id="modal" class="modal">
+                <div class="modal-content">
+                    <h3>Inquiry List</h3>
+                    <div id="cart-items"></div>
+                    <p><b>Total Est: Rs. <span id="total">0</span></b></p>
+                    <input id="c-name" placeholder="Your Name" style="width:100%; padding:10px; margin-bottom:10px;">
+                    <button class="btn" style="background:#25D366" onclick="sendWhatsApp()">Send via WhatsApp</button>
+                    <button class="btn" style="background:#777" onclick="document.getElementById('modal').style.display='none'">Close</button>
+                </div>
+            </div>
+        `;
+        
+        loadReviews();
+    }
+
+    function addToCart(name, price) {
+        cart.push({name, price});
+        alert("Added to inquiry list!");
+    }
+
+    function openCart() {
+        document.getElementById('modal').style.display = 'flex';
+        const list = document.getElementById('cart-items');
+        let t = 0;
+        list.innerHTML = cart.map(i => { t+=parseInt(i.price); return `<div>${i.name} - ${i.price}</div>`; }).join('');
+        document.getElementById('total').innerText = t;
+    }
+
+    function sendWhatsApp() {
+        const name = document.getElementById('c-name').value;
+        if(!name) return alert("Enter Name");
+        
+        let msg = `Hi ${shop.shopName}, I am ${name}. I am interested in:\n`;
+        cart.forEach(i => msg += `- ${i.name} (Rs. ${i.price})\n`);
+        
+        // Save order to Firestore for Seller Dashboard
+        db.collection('users').doc(uid).collection('orders').add({
+            custName: name, custPhone: 'WhatsApp', items: cart, total: document.getElementById('total').innerText, time: new Date().toISOString()
+        });
+
+        window.open(`https://wa.me/${shop.whatsapp}?text=${encodeURIComponent(msg)}`);
+    }
+
+    function loadReviews() {
+        db.collection('users').doc(uid).collection('reviews').get().then(snap => {
+            const div = document.getElementById('reviews');
+            if(snap.empty) div.innerHTML = "No reviews yet.";
+            else div.innerHTML = snap.docs.map(d => `<div style="background:white; padding:10px; border-radius:5px; margin-bottom:5px;"><b>${d.data().name}</b>: ${d.data().text}</div>`).join('');
+        });
+    }
+
+    function sendReview() {
+        const name = document.getElementById('r-name').value;
+        const text = document.getElementById('r-text').value;
+        if(!name || !text) return;
+        db.collection('users').doc(uid).collection('reviews').add({name, text, stars:5});
+        alert("Review Sent!");
+        loadReviews();
     }
 </script>
 </body>
