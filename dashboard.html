@@ -69,6 +69,7 @@
             box-shadow: 0 4px 10px rgba(78, 52, 46, 0.2); text-decoration: none;
         }
         .btn:active { transform: scale(0.97); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
         .btn-green { background: var(--green); color: white; }
         .btn-red { background: var(--red); color: white; }
         .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; margin: 0; }
@@ -347,7 +348,13 @@
 
     // --- 1) DASHBOARD (NEW HOME) ---
     function renderHome(div) {
-        const today = new Date().toISOString().split('T')[0];
+        // Fix for Timezone - get local date string YYYY-MM-DD
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const today = `${year}-${month}-${day}`;
+        
         const todaysOrders = shopOrders.filter(o => o.time.startsWith(today)).length;
         const pendingReviews = shopReviews.filter(r => r.status !== 'published').length;
         const unreadMsgs = 0; // Placeholder
@@ -502,24 +509,30 @@
             <div id="feed-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:15px;">Loading...</div>
         `;
         
-        const snap = await db.collection('users').where('role', '==', 'seller').get();
-        let items = [];
-        snap.forEach(doc => {
-            const d = doc.data();
-            if(d.products) d.products.forEach(p => items.push({...p, seller: d.shopName, logo: d.logo, verified: d.isVerified, sellerId: doc.id}));
-        });
-        window.marketItems = items;
-        filterFeed();
+        try {
+            const snap = await db.collection('users').where('role', '==', 'seller').get();
+            let items = [];
+            snap.forEach(doc => {
+                const d = doc.data();
+                if(d.products) d.products.forEach(p => items.push({...p, seller: d.shopName, logo: d.logo, verified: d.isVerified, sellerId: doc.id}));
+            });
+            window.marketItems = items;
+            window.filterFeed();
+        } catch(e) {
+            console.error(e);
+            document.getElementById('feed-grid').innerHTML = '<p class="text-red">Error loading feed.</p>';
+        }
     }
 
     window.filterFeed = function() {
-        const sShop = document.getElementById('search-shop').value.toLowerCase();
-        const sProd = document.getElementById('search-prod').value.toLowerCase();
+        const sShop = document.getElementById('search-shop') ? document.getElementById('search-shop').value.toLowerCase() : "";
+        const sProd = document.getElementById('search-prod') ? document.getElementById('search-prod').value.toLowerCase() : "";
         const grid = document.getElementById('feed-grid');
+        if (!grid) return;
         
-        let filtered = window.marketItems.filter(i => 
-            (sShop === "" || i.seller.toLowerCase().includes(sShop)) &&
-            (sProd === "" || i.name.toLowerCase().includes(sProd))
+        let filtered = (window.marketItems || []).filter(i => 
+            (sShop === "" || (i.seller && i.seller.toLowerCase().includes(sShop))) &&
+            (sProd === "" || (i.name && i.name.toLowerCase().includes(sProd)))
         );
 
         // Group by Category
@@ -565,34 +578,49 @@
                 <div class="input-group"><label>NIC</label><input id="s-nic" value="${d.nic||''}" ${lock}></div>
                 <div class="input-group"><label>Phone</label><input id="s-ph1" value="${d.phone1||''}" ${lock}></div>
                 <div class="input-group"><label>WhatsApp (+94)</label><input id="s-wa" value="${d.whatsapp||'+94'}" ${lock}></div>
-                ${!d.isVerified ? `<button class="btn" onclick="saveProfile()">Save Profile</button>` : ''}
+                ${!d.isVerified ? `<button class="btn" onclick="saveProfile(this)">Save Profile</button>` : ''}
             </div>
         `;
     }
 
-    async function saveProfile() {
+    async function saveProfile(btn) {
         const wa = document.getElementById('s-wa').value;
         if(!wa.startsWith('+94')) return alert("WhatsApp must start with +94");
-        await db.collection('users').doc(user.uid).update({
-            shopName: document.getElementById('s-name').value,
-            address: document.getElementById('s-addr').value,
-            ownerName: document.getElementById('s-own').value,
-            nic: document.getElementById('s-nic').value,
-            phone1: document.getElementById('s-ph1').value,
-            whatsapp: wa,
-            logo: shopData.temp_logo || shopData.logo || '',
-            profileCompleted: true
-        });
-        shopData = (await db.collection('users').doc(user.uid).get()).data();
-        alert("Saved!");
-        switchTab('Dashboard');
+        
+        const originalText = btn.innerText;
+        btn.innerText = "Saving...";
+        btn.disabled = true;
+
+        try {
+            await db.collection('users').doc(user.uid).update({
+                shopName: document.getElementById('s-name').value,
+                address: document.getElementById('s-addr').value,
+                ownerName: document.getElementById('s-own').value,
+                nic: document.getElementById('s-nic').value,
+                phone1: document.getElementById('s-ph1').value,
+                whatsapp: wa,
+                logo: shopData.temp_logo || shopData.logo || '',
+                profileCompleted: true
+            });
+            // Update local data immediately
+            shopData = (await db.collection('users').doc(user.uid).get()).data();
+            alert("Saved!");
+            switchTab('Dashboard');
+        } catch(e) {
+            console.error(e);
+            alert("Error saving profile: " + e.message);
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
     }
 
     // --- 5) GET VERIFIED ---
     function renderVerify(div) {
         if(shopData.isVerified) return div.innerHTML = `<div class="card text-center" style="padding:40px;"><h1 class="text-green"><i class="fa-solid fa-circle-check"></i> Verified</h1></div>`;
+        
+        // FIXED: Removed duplication in div.innerHTML assignment
         div.innerHTML = `
-            div.innerHTML = `
             <div class="card">
                 <h3>Get Verified (Rs. 5000)</h3>
                 <p style="color:#666; margin-bottom:15px;">Follow steps to get the Green Badge.</p>
@@ -611,10 +639,10 @@
                     <div class="upload-box" onclick="document.getElementById('v-slip').click()">Click to Upload <input type="file" id="v-slip" hidden onchange="upImg(this, 'slip')"></div>
                     <small id="st-slip" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded</small>
                 </div>
-                <button class="btn btn-green" onclick="subVerify()">Submit for Review</button>
+                <button class="btn btn-green" onclick="subVerify(this)">Submit for Review</button>
             </div>
         `;
-      }
+    }
       
     function printProf() {
         const w = window.open('','','width=600,height=600');
@@ -622,10 +650,21 @@
         w.print();
     }
 
-    async function subVerify() {
+    async function subVerify(btn) {
         if(!shopData.temp_doc || !shopData.temp_slip) return alert("Upload proofs");
-        await db.collection('admin_requests').add({ uid: user.uid, shopName: shopData.shopName, doc: shopData.temp_doc, slip: shopData.temp_slip, time: new Date().toISOString() });
-        alert("Submitted!");
+        
+        btn.innerText = "Submitting...";
+        btn.disabled = true;
+        
+        try {
+            await db.collection('admin_requests').add({ uid: user.uid, shopName: shopData.shopName, doc: shopData.temp_doc, slip: shopData.temp_slip, time: new Date().toISOString() });
+            alert("Submitted!");
+        } catch(e) {
+            alert("Error: " + e.message);
+        } finally {
+            btn.innerText = "Submit for Review";
+            btn.disabled = false;
+        }
     }
 
     // --- 6) OPEN/CLOSE (Major Update) ---
@@ -657,7 +696,7 @@
             <div class="card">
                 <h3>Weekly Schedule</h3>
                 ${rows}
-                <button class="btn mt-1" onclick="saveSchedule()">Save Weekly Settings</button>
+                <button class="btn mt-1" onclick="saveSchedule(this)">Save Weekly Settings</button>
             </div>
             <div class="card">
                 <h3>Special Closed Dates</h3>
@@ -670,7 +709,7 @@
         `;
     }
 
-    async function saveSchedule() {
+    async function saveSchedule(btn) {
         const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
         const schedule = {};
         days.forEach(d => {
@@ -680,15 +719,22 @@
                 end: document.getElementById(`end-${d}`).value
             };
         });
-        await db.collection('users').doc(user.uid).update({ schedule });
-        shopData.schedule = schedule;
-        alert("Weekly Schedule Saved!");
+        
+        btn.innerText = "Saving...";
+        try {
+            await db.collection('users').doc(user.uid).update({ schedule });
+            shopData.schedule = schedule;
+            alert("Weekly Schedule Saved!");
+        } catch(e) { alert(e.message); }
+        finally { btn.innerText = "Save Weekly Settings"; }
     }
 
     async function toggleEmergency(state) {
-        await db.collection('users').doc(user.uid).update({ emergencyClose: state });
-        shopData.emergencyClose = state;
-        renderOpenClose(document.getElementById('content-area'));
+        try {
+            await db.collection('users').doc(user.uid).update({ emergencyClose: state });
+            shopData.emergencyClose = state;
+            renderOpenClose(document.getElementById('content-area'));
+        } catch(e) { alert(e.message); }
     }
 
     async function addDate() {
@@ -696,17 +742,21 @@
         if(!d) return;
         const arr = shopData.specialDates || [];
         arr.push(d);
-        await db.collection('users').doc(user.uid).update({ specialDates: arr });
-        shopData.specialDates = arr;
-        renderOpenClose(document.getElementById('content-area'));
+        try {
+            await db.collection('users').doc(user.uid).update({ specialDates: arr });
+            shopData.specialDates = arr;
+            renderOpenClose(document.getElementById('content-area'));
+        } catch(e) { alert(e.message); }
     }
 
     async function removeDate(i) {
         const arr = shopData.specialDates;
         arr.splice(i, 1);
-        await db.collection('users').doc(user.uid).update({ specialDates: arr });
-        shopData.specialDates = arr;
-        renderOpenClose(document.getElementById('content-area'));
+        try {
+            await db.collection('users').doc(user.uid).update({ specialDates: arr });
+            shopData.specialDates = arr;
+            renderOpenClose(document.getElementById('content-area'));
+        } catch(e) { alert(e.message); }
     }
 
     // --- 7) PRODUCTS (Strict Cats) ---
@@ -730,7 +780,7 @@
                 <div class="input-group"><label>Name</label><input id="p-name"></div>
                 <div class="input-group"><label>Description</label><textarea id="p-desc"></textarea></div>
                 <div class="input-group"><label>Price (Rs)</label><input type="number" id="p-price"></div>
-                <button class="btn" onclick="saveProd()">Save Product</button>
+                <button class="btn" onclick="saveProd(this)">Save Product</button>
             </div>
             <h3>Inventory</h3>
             ${(shopData.products||[]).map((p,i)=>`
@@ -742,32 +792,49 @@
         `;
     }
 
-    async function saveProd() {
+    async function saveProd(btn) {
         const imgs = tempImages.filter(x=>x);
         const cat = document.getElementById('p-cat').value;
+        const name = document.getElementById('p-name').value;
+        const price = document.getElementById('p-price').value;
+
         if(!imgs.length) return alert("Image required");
         if(!cat) return alert("Category required");
+        if(!name) return alert("Name required");
+        if(!price) return alert("Price required");
         
+        btn.innerText = "Saving...";
+        btn.disabled = true;
+
         const prod = {
             id: Date.now(),
             category: cat,
-            name: document.getElementById('p-name').value,
+            name: name,
             desc: document.getElementById('p-desc').value,
-            price: document.getElementById('p-price').value,
+            price: Number(price),
             images: imgs
         };
-        const newArr = [...(shopData.products||[]), prod];
-        await db.collection('users').doc(user.uid).update({products: newArr});
-        shopData.products = newArr;
-        alert("Added!");
-        renderProducts(document.getElementById('content-area'));
+
+        try {
+            const newArr = [...(shopData.products||[]), prod];
+            await db.collection('users').doc(user.uid).update({products: newArr});
+            shopData.products = newArr;
+            alert("Added!");
+            renderProducts(document.getElementById('content-area'));
+        } catch(e) {
+            alert(e.message);
+            btn.innerText = "Save Product";
+            btn.disabled = false;
+        }
     }
 
-    function delProd(i) {
+    async function delProd(i) {
         if(!confirm("Delete?")) return;
-        shopData.products.splice(i,1);
-        db.collection('users').doc(user.uid).update({products: shopData.products});
-        renderProducts(document.getElementById('content-area'));
+        try {
+            shopData.products.splice(i,1);
+            await db.collection('users').doc(user.uid).update({products: shopData.products});
+            renderProducts(document.getElementById('content-area'));
+        } catch(e) { alert(e.message); }
     }
 
     // --- 8) MY WEBPAGE ---
@@ -812,7 +879,7 @@
                 tk: document.getElementById('sl-tk').value,
                 yt: document.getElementById('sl-yt').value
             }
-        }).then(()=>console.log("Webpage Updated"));
+        }).then(()=>console.log("Webpage Updated")).catch(e=>console.error(e));
     }
 
     // --- 9) ORDERS ---
@@ -821,13 +888,13 @@
         div.innerHTML = shopOrders.map(o => `
             <div class="card" style="border-left:5px solid ${o.status==='new'?'var(--accent)':'var(--green)'}">
                 <div class="flex space-between">
-                    <b>${o.custName}</b> <span class="status-badge" style="background:#eee">${o.status.toUpperCase()}</span>
+                    <b>${o.custName}</b> <span class="status-badge" style="background:#eee">${(o.status||'new').toUpperCase()}</span>
                 </div>
                 <div class="flex space-between" style="margin-top:10px;">
                     <b style="color:var(--primary)">Rs. ${o.total}</b>
                     <a href="https://wa.me/${o.custWa}" target="_blank" class="btn btn-green btn-sm"><i class="fa-brands fa-whatsapp"></i> Chat</a>
                 </div>
-                <p style="font-size:0.85rem; color:#666; margin-top:10px;">Items: ${o.items.map(i=>i.name).join(', ')}</p>
+                <p style="font-size:0.85rem; color:#666; margin-top:10px;">Items: ${(o.items||[]).map(i=>i.name).join(', ')}</p>
             </div>
         `).join('');
     }
@@ -887,7 +954,7 @@
                     else if(type==='doc') { shopData.temp_doc = url; document.getElementById('st-doc').classList.remove('hidden'); }
                     else if(type==='slip') { shopData.temp_slip = url; document.getElementById('st-slip').classList.remove('hidden'); }
                     else if(type==='prod') { tempImages[idx] = url; document.getElementById(`prev-p${idx}`).src = url; document.getElementById(`prev-p${idx}`).style.display='block'; }
-                }));
+                })).catch(err => alert("Upload failed: " + err.message));
             }
         }
     }
