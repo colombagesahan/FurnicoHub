@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FurnicoHub Shop</title>
-    <meta name="theme-color" content="#FF6D00"> <!-- Updated theme color -->
+    <meta name="theme-color" content="#FF6D00">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
@@ -14,186 +14,208 @@
 
     <style>
         :root { 
-            --primary: #FF6D00; /* Vibrant Orange */
-            --primary-dark: #E65100; /* Darker Orange */
-            --secondary: #3E2723; /* Dark Mahogany text */
-            --bg: #FFF3E0; /* Light Cream background */
-            --surface: #FFFFFF; /* White for cards */
+            --primary: #FF6D00; /* Vivid Orange */
+            --primary-dark: #E65100; /* Deeper Orange */
+            --secondary: #3E2723; /* Dark Mahogany */
+            --bg: #FFF3E0; /* Light Cream */
+            --surface: #FFFFFF; /* White */
             --font: 'Poppins', sans-serif;
             --radius: 16px;
-            --gold: #FFC107; /* Gold for stars */
-            --green: #2E7D32; /* Dark Green */
-            --red: #C62828; /* Dark Red */
+            --green-verified: #2E7D32; /* Darker green for verified badge */
+            --gold-star: #FFC107; /* Gold for stars */
+            --red-alert: #C62828; /* Red for alerts/closed status */
         }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: var(--font); background: var(--bg); color: var(--secondary); padding-bottom: 80px; overflow-x: hidden; }
-        a { text-decoration: none; color: inherit; }
-        
-        /* HEADER (Hero Section) */
+        body { 
+            margin: 0; font-family: var(--font); background: var(--bg); color: var(--secondary); 
+            padding-bottom: 80px; /* Space for footer */ overflow-x: hidden; 
+        }
+
+        /* HEADER & HERO */
         .hero { 
-            background: linear-gradient(180deg, #FFFFFF 0%, #FFF8E1 100%); /* Soft gradient */
+            background: linear-gradient(180deg, #FFFFFF 0%, #FFF8E1 100%); 
             padding: 40px 20px 20px; text-align: center; 
-            border-radius: 0 0 30px 30px; box-shadow: 0 5px 25px rgba(255, 109, 0, 0.15); /* Orange-tinted shadow */
+            border-radius: 0 0 30px 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); 
             margin-bottom: 20px;
         }
         .hero img.logo { 
             width: 120px; height: 120px; border-radius: 50%; 
             border: 4px solid var(--primary); object-fit: cover; 
-            background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px;
+            background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .shop-name { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin: 0; line-height: 1.2; }
-        .shop-addr { color: #5D4037; font-size: 0.9rem; margin: 5px 0 10px; padding: 0 20px; }
+        .shop-name { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin: 10px 0 5px; line-height: 1.2; }
+        .shop-addr { color: #5D4037; font-size: 0.9rem; margin: 5px 0 10px; padding: 0 10px; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .shop-addr i { color: var(--primary); }
+
         .verified-badge {
-            background: var(--green); color: white; /* Green for verified */
-            padding: 4px 12px; border-radius: 20px; 
+            background: var(--green-verified); color: white; padding: 4px 12px; border-radius: 20px; 
             font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 5px;
-            margin-top: 5px; margin-bottom: 10px;
+            margin-top: 5px; text-transform: uppercase;
         }
-        .contact-info { margin: 10px 0; font-size: 0.95rem; color: var(--secondary); font-weight: 600; }
-        .contact-info i { color: var(--primary); width: 20px; text-align: center; }
-        .contact-row { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 15px; flex-wrap: wrap; } /* Added flex-wrap */
-        .contact-item { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.9rem; }
+        .contact-info { margin: 20px 0; font-size: 0.95rem; color: #4E342E; font-weight: 600; text-align: center;}
+        .contact-info-item { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
+        .contact-info-item i { color: var(--primary); font-size: 1.1rem; width: 25px; text-align: center;}
         
         .hero-btn { 
-            background: var(--primary-dark); color: white; padding: 10px 25px; border-radius: 50px; 
-            border: none; font-weight: 600; margin-top: 15px; cursor: pointer; display: inline-block;
-            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.3); transition: 0.2s;
+            background: var(--secondary); color: white; padding: 12px 30px; border-radius: 50px; 
+            border: none; font-weight: 600; margin-top: 20px; cursor: pointer; display: inline-block;
+            font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(62, 39, 35, 0.2);
         }
-        .hero-btn:hover { background: var(--primary); transform: translateY(-2px); }
+        .hero-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(62, 39, 35, 0.3); }
 
-        /* CONTENT GRID */
+        /* CONTENT SECTIONS */
+        .section-container { padding: 0 20px; margin-top: 20px; }
         .cat-title { 
-            margin: 20px 20px 5px; font-size: 1.3rem; font-weight: 700; 
-            color: var(--secondary); display: flex; align-items: center; gap: 10px;
+            margin: 30px 0 10px; font-size: 1.3rem; font-weight: 700; 
+            color: var(--secondary); border-bottom: 2px solid #FFE0B2; padding-bottom: 5px;
+            display: flex; align-items: center; gap: 10px;
         }
-        .cat-title::after { content:''; flex:1; height:2px; background: #FFCC80; } /* Orange line */
+        .cat-title::before { content: ''; display: block; width: 25px; height: 2px; background: var(--primary); }
+        .cat-title::after { content: ''; display: block; flex: 1; height: 2px; background: #FFE0B2; }
         
         .prod-grid { 
-            display: grid; gap: 15px; padding: 0 20px 20px; 
+            display: grid; gap: 15px; padding: 0; 
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            margin-bottom: 30px;
         }
         
-        /* 250px Responsive Adjustments */
-        @media (max-width: 350px) {
-            .prod-grid { grid-template-columns: 1fr; } /* Stacks products */
-            .hero img.logo { width: 90px; height: 90px; }
-            .shop-name { font-size: 1.4rem; }
-            .shop-addr { font-size: 0.8rem; }
-            .contact-info { font-size: 0.85rem; }
-            .hero-btn { padding: 8px 20px; font-size: 0.8rem; }
-            .cat-title { font-size: 1.1rem; margin: 20px 15px 5px; }
-            .card { margin: 0 10px; } /* Adjust card margin for very small screens */
-            .float-wa { width: 50px; height: 50px; font-size: 1.8rem; }
-            .modal-content { padding: 15px; border-radius: 15px 15px 0 0; }
-            .form-input { padding: 10px; font-size: 0.9rem; }
-            footer { padding: 20px 15px; }
-        }
-
         .card { 
             background: white; border-radius: var(--radius); overflow: hidden; 
-            box-shadow: 0 5px 15px rgba(62, 39, 35, 0.08); border: 1px solid white; transition: 0.2s;
+            box-shadow: 0 5px 15px rgba(62, 39, 35, 0.08); cursor: pointer; transition: all 0.2s ease;
+            border: 1px solid rgba(255, 230, 199, 0.5);
         }
-        .card:hover { transform: translateY(-3px); border-color: var(--primary-light); }
-        .card:active { transform: scale(0.98); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(62, 39, 35, 0.12); }
         .card img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
-        .card-info { padding: 10px; }
-        .prod-name { font-weight: 700; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info { padding: 12px; }
+        .prod-name { font-weight: 700; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--secondary); }
+        .prod-promo { color: #E65100; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px; min-height: 18px; }
         .prod-price { color: var(--primary); font-weight: 800; font-size: 1.1rem; }
-        .promo { color: #E65100; font-size: 0.75rem; font-weight: 700; margin-bottom: 4px; }
-        
+
         /* BUTTONS & MODALS */
         .btn { 
-            background: var(--primary); color: white; border: none; padding: 10px; width: 100%; 
-            border-radius: 10px; cursor: pointer; font-weight: 600; margin-top: 5px; 
-            box-shadow: 0 2px 8px rgba(255, 109, 0, 0.2); transition: 0.2s;
+            background: var(--primary); color: white; border: none; padding: 10px 20px; width: 100%; 
+            border-radius: 10px; cursor: pointer; font-weight: 600; margin-top: 10px; 
+            transition: all 0.3s ease;
         }
+        .btn-green { background: #2E7D32; }
+        .btn-green:hover { background: #1B5E20; }
         .btn:hover { background: var(--primary-dark); }
-        .btn-green { background: var(--green); }
-        .btn-green:hover { background: #225C25; } /* Darker green on hover */
         
-        /* Floating WhatsApp Button */
+        .modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(62, 39, 35, 0.8); 
+            z-index: 2000; display: none; justify-content: center; align-items: flex-end; 
+            backdrop-filter: blur(5px);
+        }
+        .modal-content { 
+            background: white; width: 100%; max-width: 600px; padding: 25px; 
+            border-radius: 25px 25px 0 0; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease-out;
+            position: relative; /* For close button positioning */
+        }
+        .modal .close-btn { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #777; cursor: pointer; }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* REVIEWS */
+        .review-card { 
+            background: #FFF8E1; /* Lighter background */ padding: 15px; border-radius: 12px; margin-bottom: 10px; 
+            border-left: 5px solid var(--primary); /* Vibrant left border */ 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .review-card .stars { color: var(--gold-star); font-size: 1.1rem; margin-top: 5px;}
+        .review-card p { font-style: italic; color: #5D4037; margin: 10px 0; line-height: 1.5;}
+        .review-form { background: #FAFAFA; padding: 20px; border-radius: var(--radius); margin-top: 20px; border: 1px dashed #FFE0B2; }
+        .review-form h4 { color: var(--primary); margin-top: 0; }
+
+        /* CONTACT FORM & MAP */
+        .contact-section { margin-top: 30px; }
+        .contact-form { background: white; padding: 25px; margin: 0 20px; border-radius: var(--radius); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .contact-form h3 { color: var(--primary); }
+        .form-input { 
+            width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid #FFE0B2; 
+            border-radius: 10px; font-family: var(--font); color: var(--secondary);
+            background: #FAFAFA;
+        }
+        .form-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 2px rgba(255, 109, 0, 0.1); }
+        .map-container { margin: 20px; }
+        .map-container h3 { color: var(--secondary); }
+        .map-iframe { 
+            width: 100%; height: 300px; border: 0; border-radius: var(--radius); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* FOOTER */
+        footer { 
+            background: var(--secondary); color: #D7CCC8; padding: 40px 20px; 
+            text-align: center; margin-top: 50px; 
+            border-top-left-radius: 40px; border-top-right-radius: 40px;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.1);
+        }
+        footer .footer-logo {
+            font-size: 1.8rem; font-weight: 800; color: var(--primary-light); 
+            margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        footer .footer-logo img { height: 40px; }
+        footer p { margin: 5px 0; line-height: 1.6; color: #BCAAA4; }
+        footer .social-links { margin-top: 20px; }
+        footer .social-links a {
+            color: white; font-size: 1.5rem; margin: 0 10px; transition: color 0.3s ease;
+        }
+        footer .social-links a:hover { color: var(--primary); }
+
+        /* FLOATING WHATSAPP BUTTON */
         .float-wa { 
             position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; 
             background: #25D366; color: white; border-radius: 50%; 
             display: flex; justify-content: center; align-items: center; 
             font-size: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease; /* Added transition */
         }
-        .float-wa:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
-        /* Pulse animation for emphasis (e.g. after adding to cart) */
-        .float-wa.pulse {
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-            50% { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
-            100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        }
+        .float-wa:hover { transform: scale(1.1); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .float-wa.pulse { animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        /* Modal Base */
-        .modal { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(62, 39, 35, 0.8); /* Darker, themed overlay */
-            z-index: 2000; display: none; justify-content: center; align-items: flex-end; /* Always pops from bottom */
-            backdrop-filter: blur(5px); /* Blurred background */
-        }
-        .modal-content { 
-            background: white; width: 100%; max-width: 600px; padding: 25px; 
-            border-radius: 25px 25px 0 0; position: relative; max-height: 90vh; overflow-y: auto; 
-            animation: slideUp 0.3s ease-out; /* Animation */
-        }
-        @keyframes slideUp { from { transform: translateY(100%); opacity: 0.8; } to { transform: translateY(0); opacity: 1; } }
-        .close-modal-btn { 
-            position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #777; 
-            cursor: pointer; transition: color 0.2s;
-        }
-        .close-modal-btn:hover { color: var(--red); }
 
-        /* REVIEWS */
-        .section-box { background: white; margin: 20px; padding: 25px; border-radius: var(--radius); box-shadow: 0 5px 15px rgba(62, 39, 35, 0.08); }
-        .review-card { 
-            background: #FFF8E1; /* Light cream */ padding: 15px; border-radius: 12px; margin-bottom: 10px; 
-            border-left: 4px solid var(--primary); /* Orange accent */
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .review-card b { color: var(--secondary); }
-        .review-card span { color: var(--gold); }
-        .review-card p { font-style: italic; line-height: 1.6; margin: 10px 0; color: #5D4037; }
-        
-        /* CONTACT FORM & MAP */
-        .form-input { 
-            width: 100%; padding: 12px; margin-bottom: 10px; 
-            border: 2px solid #FFE0B2; border-radius: 10px; font-family: inherit;
-            background: #FFF8E1; color: var(--secondary);
-        }
-        .form-input:focus { border-color: var(--primary); background: var(--surface); }
-        
-        /* FOOTER */
-        footer { 
-            background: var(--secondary); /* Dark Mahogany */ color: #D7CCC8; /* Light brown-grey */ 
-            padding: 30px 20px; text-align: center; margin-top: 30px; 
-            font-size: 0.85rem;
-        }
-        footer .logo-footer {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        footer .logo-footer img {
-            height: 30px;
-            filter: brightness(0) invert(1); /* Makes logo white */
-        }
-        footer p {
-            margin: 5px 0;
-            line-height: 1.6;
-        }
-        footer a {
-            color: var(--primary-light);
-            text-decoration: underline;
+        /* 250px RESPONSIVE */
+        @media (max-width: 350px) {
+            .hero { padding: 30px 10px; }
+            .hero img.logo { width: 90px; height: 90px; }
+            .shop-name { font-size: 1.4rem; margin-top: 5px; }
+            .shop-addr { font-size: 0.85rem; gap: 5px; }
+            .contact-info-item { flex-direction: column; gap: 2px; align-items: center; margin-bottom: 10px; }
+            .contact-info-item i { font-size: 1rem; width: auto; margin-right: 0; }
+            .hero-btn { padding: 10px 20px; font-size: 0.85rem; margin-top: 15px;}
+            .cat-title { font-size: 1.1rem; margin-top: 20px; }
+            .cat-title::before, .cat-title::after { width: 15px; }
+            .prod-grid { grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
+            .card img { height: 140px; }
+            .card-info { padding: 10px; }
+            .prod-name { font-size: 0.9rem; }
+            .prod-price { font-size: 1rem; }
+            .section-container { padding: 0 10px; }
+            .review-card { padding: 10px; }
+            .review-card .stars { font-size: 1rem; }
+            .review-form { padding: 15px; }
+            .review-form h4 { font-size: 1.1rem; }
+            .form-input { padding: 10px; font-size: 0.85rem; }
+            .contact-form { margin: 0 10px; padding: 20px; }
+            .contact-form h3 { font-size: 1.3rem; }
+            .map-container { margin: 10px; }
+            .map-container h3 { font-size: 1.2rem; }
+            .map-iframe { height: 250px; }
+            footer { padding: 30px 10px; font-size: 0.8rem; }
+            footer .footer-logo { font-size: 1.4rem; }
+            footer .footer-logo img { height: 30px; }
+            footer .social-links a { font-size: 1.2rem; margin: 0 8px; }
+            .float-wa { width: 50px; height: 50px; font-size: 1.5rem; bottom: 15px; right: 15px;}
+            
+            /* Product Modal Specifics for 250px */
+            #prod-modal .modal-content { padding: 15px; }
+            #prod-modal #m-img { height: 200px; }
+            #prod-modal h2 { font-size: 1.5rem; }
+            #prod-modal h3 { font-size: 1.2rem; }
+            #prod-modal p { font-size: 0.9rem; }
+            #m-upsell div { min-width: 80px; }
+            #m-upsell img { width: 80px; height: 60px; }
+            #m-upsell div div { font-size: 0.7rem; width: 80px; }
         }
     </style>
 </head>
@@ -207,34 +229,37 @@
 
 <!-- Product Detail Modal -->
 <div id="prod-modal" class="modal">
-    <div class="modal-content">
-        <i class="fa-solid fa-times close-modal-btn" onclick="closeModal()"></i>
-        <img id="m-img" style="width:100%; height:250px; object-fit:cover; border-radius:15px; margin-bottom:15px;" onerror="this.src='https://via.placeholder.com/250/FFCC80/3E2723?text=Product+Image'">
+    <div class="modal-content" id="pm-content">
+        <i class="fa-solid fa-times close-btn" onclick="closeModal()"></i>
+        <img id="m-img" style="width:100%; height:250px; object-fit:cover; border-radius:15px; margin-bottom:15px;" onerror="this.src='https://via.placeholder.com/250/FF6D00/FFFFFF?text=No+Image'">
         <h2 id="m-title" style="margin:0; color:var(--secondary);"></h2>
         <h3 id="m-price" style="color:var(--primary); margin:5px 0 15px;"></h3>
         <p id="m-desc" style="color:#555; line-height:1.6; margin-bottom:20px;"></p>
-        <button class="btn" onclick="addToInquiryFromModal()">Add to Inquiry List</button>
+        <button class="btn" onclick="addToInquiryFromModal()"><i class="fa-solid fa-cart-plus"></i> Add to Inquiry List</button>
         
-        <div style="margin-top:30px; border-top:1px solid #eee; padding-top:15px;">
+        <div style="margin-top:30px; border-top:1px solid #FFE0B2; padding-top:15px;">
             <b style="color:var(--primary);">You might also like:</b>
-            <div id="m-upsell" style="display:flex; gap:10px; overflow-x:auto; margin-top:10px; padding-bottom: 5px;"></div>
+            <div id="m-upsell" style="display:flex; gap:10px; overflow-x:auto; margin-top:10px;"></div>
         </div>
     </div>
 </div>
 
-<!-- Inquiry List Modal -->
+<!-- Inquiry List Modal (Cart) -->
 <div id="inquiry-modal" class="modal">
     <div class="modal-content">
-        <h3>Your Inquiry List</h3>
+        <i class="fa-solid fa-times close-btn" onclick="document.getElementById('inquiry-modal').style.display='none'"></i>
+        <h3 style="color:var(--primary);">Your Inquiry List</h3>
+        <p style="color:#666; margin-bottom:15px;">Review your selected items and send your inquiry directly to the seller via WhatsApp.</p>
         <div id="cart-list" style="margin-bottom:15px;"></div>
-        <div style="font-weight:800; text-align:right; margin-bottom:15px; font-size:1.1rem;">Total Estimate: Rs. <span id="cart-total">0</span></div>
+        <div style="font-weight:800; text-align:right; margin-bottom:15px; font-size:1.1rem;">Total Est: <span style="color:var(--primary);">Rs. <span id="cart-total">0</span></span></div>
         <input id="c-name" class="form-input" placeholder="Your Name *">
-        <button class="btn btn-green" onclick="sendWhatsAppOrder()">Send via WhatsApp</button>
-        <button class="btn" style="background:#777; margin-top:10px;" onclick="document.getElementById('inquiry-modal').style.display='none'">Close</button>
+        <input id="c-ph" class="form-input" placeholder="Your Phone Number *">
+        <input id="c-wa" class="form-input" placeholder="Your WhatsApp Number (e.g., 94771234567) *">
+        <button class="btn btn-green" onclick="sendWhatsAppOrder()"><i class="fa-brands fa-whatsapp"></i> Send Inquiry via WhatsApp</button>
     </div>
 </div>
 
-<a id="wa-float-link" href="#" target="_blank" class="float-wa"><i class="fa-brands fa-whatsapp"></i></a>
+<a id="wa-link" href="#" target="_blank" class="float-wa"><i class="fa-brands fa-whatsapp"></i></a>
 
 <script>
     const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
@@ -246,24 +271,34 @@
     let shop = {};
     let reviews = [];
     let cart = [];
-    let currentProd = null;
+    let currentProd = null; // Holds the product object for the currently open modal
 
-    if(!uid) document.getElementById('app').innerHTML = "<p style='text-align:center; padding:50px; color:var(--red);'>Shop ID is missing. Please provide a valid shop ID.</p>";
+    if(!uid) document.getElementById('app').innerHTML = "<p style='text-align:center; padding:50px; color:var(--red-alert);'>Shop ID missing. Please go back to the marketplace.</p>";
     else {
-        // Real-time listener for Shop Data
+        // Real-time listener for Shop Data - ensures immediate updates from dashboard
         db.collection('users').doc(uid).onSnapshot(doc => {
             if(!doc.exists) {
-                document.getElementById('app').innerHTML = "<p style='text-align:center; padding:50px; color:var(--red);'>Shop not found or deleted.</p>";
+                document.getElementById('app').innerHTML = "<p style='text-align:center; padding:50px; color:var(--red-alert);'>This shop does not exist or has been removed.</p>";
                 return;
             }
             shop = doc.data();
             renderShop();
+            // Update WhatsApp floating button link if shop.whatsapp changes
+            document.getElementById('wa-link').href = `https://wa.me/+${shop.whatsapp}`;
+        }, error => {
+            console.error("Error fetching shop data:", error);
+            document.getElementById('app').innerHTML = `<p style='text-align:center; padding:50px; color:var(--red-alert);'>Error loading shop data. Please check your internet.</p>`;
         });
 
-        // Real-time listener for Published Reviews
+        // Real-time listener for Reviews - ensures immediate updates from dashboard
         db.collection('users').doc(uid).collection('reviews').where('status','==','published').onSnapshot(snap => {
-            reviews = snap.docs.map(d => d.data());
-            renderReviews(); // Only re-render reviews section
+            reviews = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            renderReviews();
+        }, error => {
+            console.error("Error fetching reviews:", error);
+            // Optionally show error for reviews only, without breaking shop page
+            const reviewsList = document.getElementById('reviews-list');
+            if (reviewsList) reviewsList.innerHTML = `<small style="color:var(--red-alert);">Error loading reviews.</small>`;
         });
     }
 
@@ -271,162 +306,168 @@
         const app = document.getElementById('app');
         const cats = [...new Set((shop.products||[]).map(p => p.category))];
         
-        // Set floating WhatsApp link
-        document.getElementById('wa-float-link').href = `https://wa.me/${shop.whatsapp || ''}`;
-        
-        // Main Shop HTML structure
         let html = `
-            <div class="hero">
-                <img src="${shop.logo || 'logo.png'}" class="logo" onerror="this.src='https://via.placeholder.com/120/FFCC80/3E2723?text=Shop+Logo'">
-                <h1 class="shop-name">${shop.shopName || 'Unknown Shop'}</h1>
+            <div class="hero" style="background-color: ${shop.themeColor || 'white'};"> <!-- Dynamic theme color -->
+                <img src="${shop.logo || 'logo.png'}" class="logo" onerror="this.src='https://via.placeholder.com/120/FF6D00/FFFFFF?text=Logo'">
+                <h1 class="shop-name">${shop.shopName || 'Untitled Shop'}</h1>
                 ${shop.isVerified ? '<div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Seller</div>' : ''}
-                <div class="shop-addr"><i class="fa-solid fa-location-dot" style="color:var(--primary)"></i> ${shop.address || 'No Address Provided'}</div>
+                <div class="shop-addr"><i class="fa-solid fa-location-dot"></i> ${shop.address || 'No address provided'}</div>
                 
                 <div class="contact-info">
-                    <div style="margin-bottom:5px;"><i class="fa-solid fa-phone"></i> ${shop.phone1 || 'No Phone'}</div>
-                    <div><i class="fa-brands fa-whatsapp"></i> ${shop.whatsapp || 'No WhatsApp'}</div>
+                    <div class="contact-info-item"><i class="fa-solid fa-phone"></i> ${shop.phone1 || 'No phone provided'}</div>
+                    <div class="contact-info-item"><i class="fa-brands fa-whatsapp"></i> +${shop.whatsapp || 'No WhatsApp provided'}</div>
                 </div>
 
-                ${shop.heroText ? `<p style="font-style:italic; color:#777; margin:15px 0;">"${shop.heroText}"</p>` : ''}
+                ${shop.heroText ? `<p style="font-style:italic; color:#777; margin:15px 0; max-width:80%; margin-left:auto; margin-right:auto; line-height:1.6;">"${shop.heroText}"</p>` : ''}
                 
-                <button class="hero-btn" onclick="scrollToContact()">Contact Us</button>
+                <button class="hero-btn" onclick="scrollToContact()"><i class="fa-solid fa-envelope"></i> Contact Us</button>
             </div>
         `;
 
         if(shop.emergencyClose) {
-            html += `<div style="background:#FFEBEE; color:var(--red); padding:20px; text-align:center; margin:20px; border-radius:15px; font-weight:bold;">🔴 SHOP IS TEMPORARILY CLOSED TODAY. Please check back later.</div>`;
-        } else if (shop.schedule && Object.keys(shop.schedule).length > 0) {
-            const today = new Date().toLocaleString('en-US', { weekday: 'long' });
-            const todaySchedule = shop.schedule[today];
-            if (todaySchedule && !todaySchedule.open) {
-                html += `<div style="background:#FFF3E0; color:#E65100; padding:20px; text-align:center; margin:20px; border-radius:15px; font-weight:bold;">🟡 SHOP IS CLOSED TODAY (${today}).</div>`;
-            } else if (shop.specialDates && shop.specialDates.includes(new Date().toISOString().split('T')[0])) {
-                html += `<div style="background:#FFF3E0; color:#E65100; padding:20px; text-align:center; margin:20px; border-radius:15px; font-weight:bold;">🟡 SHOP IS CLOSED FOR A SPECIAL DATE TODAY.</div>`;
-            }
+            html += `<div style="background:#FFEBEE; color:var(--red-alert); padding:20px; text-align:center; margin:20px; border-radius:15px; font-weight:bold; box-shadow: 0 4px 10px rgba(198,40,40,0.1);">🔴 SHOP IS TEMPORARILY CLOSED TODAY</div>`;
         }
+
+        // Check if shop is open based on schedule and current time
+        const now = new Date();
+        const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' }); // e.g., "Monday"
+        const currentTime = now.toTimeString().slice(0, 5); // e.g., "14:30"
+        const schedule = shop.schedule ? shop.schedule[currentDay] : null;
+
+        let shopStatusMessage = '';
+        if (shop.emergencyClose) {
+            shopStatusMessage = 'Currently Closed (Emergency)';
+        } else if (!schedule || !schedule.open) {
+            shopStatusMessage = 'Currently Closed (Scheduled)';
+        } else if (currentTime >= schedule.start && currentTime <= schedule.end) {
+            shopStatusMessage = `<span style="color:var(--green-verified); font-weight:bold;"><i class="fa-solid fa-circle-dot"></i> Open now until ${schedule.end}</span>`;
+        } else {
+            shopStatusMessage = 'Currently Closed (Scheduled)';
+        }
+
+        html += `<p style="text-align:center; font-size:0.9rem; color:#666; margin-top:10px;">${shopStatusMessage}</p>`;
 
 
         // Products Grid
-        if ((shop.products || []).length === 0) {
-            html += `<div class="section-box" style="text-align:center; color:#777;"><h3>No Products Available</h3><p>This shop has not added any products yet.</p></div>`;
-        } else {
+        if (shop.products && shop.products.length > 0) {
             cats.forEach(c => {
-                html += `<div class="cat-title">${c}</div><div class="prod-grid">`;
+                html += `<div class="section-container"><h3 class="cat-title">${c}</h3><div class="prod-grid">`;
                 shop.products.filter(p => p.category === c).forEach(p => {
                     const pStr = JSON.stringify(p).replace(/"/g, '&quot;');
                     html += `
                         <div class="card" onclick="openProd(${pStr})">
-                            <img src="${p.images[0]}" loading="lazy" onerror="this.src='https://via.placeholder.com/160/FFCC80/3E2723?text=Product'">
+                            <img src="${p.images[0]}" loading="lazy" onerror="this.src='https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'">
                             <div class="card-info">
+                                <div class="prod-promo">${p.promoText || '&nbsp;'}</div> <!-- Use non-breaking space for consistent height -->
                                 <div class="prod-name">${p.name}</div>
-                                ${p.promoText ? `<div class="promo">${p.promoText}</div>` : ''}
                                 <div class="prod-price">Rs. ${parseInt(p.price).toLocaleString()}</div>
-                                <button class="btn" style="background:var(--primary-dark); padding:6px 12px; font-size:0.8rem; margin-top:8px;" onclick="event.stopPropagation(); addToCart(${pStr});">Add to Inquiry</button>
+                                <button class="btn" onclick="event.stopPropagation(); addToInquiry(${pStr});"><i class="fa-solid fa-cart-plus"></i> Add to Inquiry</button>
                             </div>
                         </div>
                     `;
                 });
-                html += `</div>`;
+                html += `</div></div>`;
             });
+        } else {
+            html += `<div class="section-container"><p style="text-align:center; padding:50px; color:#777;">This shop has no products listed yet.</p></div>`;
         }
+        
 
         // Reviews Section
         html += `
-            <div class="section-box" style="margin-top:20px;">
+            <div class="section-container" style="background:white; padding:25px; border-radius:var(--radius); box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
                 <h3 style="color:var(--secondary)">Customer Reviews</h3>
                 <div id="reviews-list">Loading reviews...</div>
-                <div style="background:#FAFAFA; padding:15px; border-radius:15px; margin-top:25px;">
-                    <h4 style="margin-top:0;">Write a Review</h4>
+                <div class="review-form">
+                    <h4>Write a Review</h4>
                     <input id="r-name" class="form-input" placeholder="Your Name *" required>
-                    <textarea id="r-text" class="form-input" placeholder="How was your experience? *" rows="3" required></textarea>
+                    <textarea id="r-text" class="form-input" placeholder="Share your experience here... *" rows="3" required></textarea>
                     <div style="margin-bottom:10px; display:flex; align-items:center; gap:10px;">
                         <span>Rating:</span> 
-                        <select id="r-stars" class="form-input" style="width:auto; flex:none;"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select>
+                        <select id="r-stars" class="form-input" style="width:auto; flex-grow:0;">
+                            <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+                            <option value="4">⭐⭐⭐⭐ (Very Good)</option>
+                            <option value="3">⭐⭐⭐ (Good)</option>
+                            <option value="2">⭐⭐ (Fair)</option>
+                            <option value="1">⭐ (Poor)</option>
+                        </select>
                     </div>
-                    <button class="btn" onclick="submitReview()">Submit Review</button>
+                    <button class="btn" onclick="submitReview()"><i class="fa-solid fa-paper-plane"></i> Submit Review</button>
                 </div>
             </div>
         `;
 
         // Contact Form
         html += `
-            <div id="contact-area" class="section-box">
-                <h3 style="color:var(--primary); margin-top:0;">Contact Us Directly</h3>
-                <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Have questions? Fill this form to send a message directly to our dashboard.</p>
+            <div id="contact-area" class="contact-form contact-section">
+                <h3 style="color:var(--primary);">Contact Us Directly</h3>
+                <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Have a question or need a custom order? Fill this form to send a message directly to the seller's dashboard. The seller will reply via WhatsApp.</p>
                 <input id="msg-name" class="form-input" placeholder="Your Name *" required>
-                <input id="msg-ph" class="form-input" type="tel" placeholder="Your Phone Number *" required>
-                <input id="msg-wa" class="form-input" type="tel" placeholder="Your WhatsApp Number (+94...) *" required>
+                <input id="msg-ph" class="form-input" placeholder="Your Phone Number *" required type="tel">
+                <input id="msg-wa" class="form-input" placeholder="Your WhatsApp Number (e.g., 94771234567) *" required type="tel">
                 <textarea id="msg-text" class="form-input" rows="4" placeholder="Your Message *" required></textarea>
-                <button class="btn" onclick="submitContact()">Send Message</button>
+                <button class="btn" onclick="submitContact()"><i class="fa-solid fa-envelope"></i> Send Message</button>
             </div>
         `;
 
         // Map (Google Maps Embed)
-        if (shop.address) {
-            const mapQ = encodeURIComponent(shop.address + ", Sri Lanka"); // Ensure context for SL
-            html += `
-                <div class="section-box">
-                    <h3 style="color:var(--secondary)">Find Our Location</h3>
-                    <iframe width="100%" height="300" style="border:0; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1);" loading="lazy" allowfullscreen src="https://maps.google.com/maps?q=${mapQ}&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
-                </div>
-            `;
-        } else {
-            html += `<div class="section-box" style="text-align:center; color:#777;"><h3>Location Map</h3><p>Shop address not provided by seller.</p></div>`;
-        }
+        const mapQ = encodeURIComponent(shop.address);
+        html += `
+            <div class="map-container contact-section">
+                <h3 style="color:var(--secondary)">Find Our Location</h3>
+                <iframe class="map-iframe" loading="lazy" allowfullscreen 
+                        src="https://maps.google.com/maps?q=${mapQ}&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
+            </div>
+        `;
 
         // Footer
         html += `
             <footer>
-                <div class="logo-footer"><img src="logo.png" onerror="this.style.display='none'"> FurnicoHub</div>
-                <p>Your one-stop platform for all furniture needs in Sri Lanka.</p>
-                <p>&copy; ${new Date().getFullYear()} FurnicoHub. All rights reserved.</p>
+                <div class="footer-logo">
+                    <img src="icon.png" onerror="this.style.display='none'"> FurnicoHub
+                </div>
+                <p>${shop.shopName || 'FurnicoHub Shop'}</p>
+                <p>${shop.address || 'No address provided.'}</p>
+                <div class="social-links" style="margin-top: 20px;">
+                    ${shop.socialLinks?.fb ? `<a href="${shop.socialLinks.fb}" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>` : ''}
+                    ${shop.socialLinks?.ig ? `<a href="${shop.socialLinks.ig}" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>` : ''}
+                    ${shop.socialLinks?.tk ? `<a href="${shop.socialLinks.tk}" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>` : ''}
+                    ${shop.socialLinks?.yt ? `<a href="${shop.socialLinks.yt}" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>` : ''}
+                    ${shop.socialLinks?.li ? `<a href="${shop.socialLinks.li}" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>` : ''}
+                </div>
+                <p style="margin-top: 20px;">&copy; <span id="current-year"></span> FurnicoHub. All rights reserved.</p>
             </footer>
         `;
 
         app.innerHTML = html;
-        renderReviews(); // Ensure reviews are rendered after the main HTML is in place
+        document.getElementById('current-year').innerText = new Date().getFullYear(); // Update year in footer
+        renderReviews(); // Render reviews once container exists
     }
 
-    // Function to render reviews (called on initial load and snapshot updates)
-    function renderReviews() {
-        const list = document.getElementById('reviews-list');
-        if(!list) return; // Exit if reviews-list element is not yet in DOM
-
-        if(reviews.length === 0) list.innerHTML = "<small style='display:block; text-align:center; color:#777;'>No reviews published for this shop yet. Be the first to review!</small>";
-        else list.innerHTML = reviews.map(r => `
-            <div class="review-card">
-                <b>${r.name || 'Anonymous User'}</b> 
-                <span style="float:right;">${'★'.repeat(r.stars || 5)}</span><br>
-                <p>${r.text}</p>
-                <small style="display:block; text-align:right; color:#999;">${new Date(r.time).toLocaleDateString()}</small>
-            </div>
-        `).join('');
-    }
-
-    // --- PRODUCT LOGIC (Modal) ---
+    // --- PRODUCT LOGIC ---
     function openProd(item) {
         currentProd = item;
         document.getElementById('m-img').src = item.images[0];
         document.getElementById('m-title').innerText = item.name;
         document.getElementById('m-price').innerText = "Rs. " + parseInt(item.price).toLocaleString();
-        document.getElementById('m-desc').innerText = item.desc || "No detailed description available.";
+        document.getElementById('m-desc').innerText = item.desc || "No description available.";
         
         // Upsell/Downsell Logic: Find other products in same category
-        const others = (shop.products || []).filter(p => p.category === item.category && p.id !== item.id); // Filter out current item
+        const others = (shop.products || []).filter(p => p.category === item.category && p.id !== item.id); // Filter by id, not name
         const upsellDiv = document.getElementById('m-upsell');
-        if(others.length > 0) {
-            upsellDiv.innerHTML = others.slice(0,4).map(p => {
-                const pStr = JSON.stringify(p).replace(/"/g, '&quot;');
-                return `
-                <div style="min-width:100px; flex: 1 0 auto; cursor:pointer; text-align:center;" onclick='openProd(${pStr})'>
-                    <img src="${p.images[0]}" style="width:100px; height:80px; object-fit:cover; border-radius:8px;" onerror="this.src='https://via.placeholder.com/80/FFCC80/3E2723?text=Product'">
-                    <div style="font-size:0.75rem; font-weight:bold; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${p.name}</div>
-                    <div style="font-size:0.7rem; color:var(--primary); font-weight:600;">Rs. ${parseInt(p.price).toLocaleString()}</div>
-                </div>
-            `;
-            }).join('');
-        } else {
-            upsellDiv.innerHTML = "<small style='display:block; text-align:center; color:#777;'>No similar items in this category.</small>";
+        if(upsellDiv) { // Ensure element exists
+            if(others.length > 0) {
+                upsellDiv.innerHTML = others.slice(0,4).map(p => `
+                    <div style="min-width:100px; max-width:100px; text-align:center; cursor:pointer;" onclick='openProd(${JSON.stringify(p).replace(/"/g, '&quot;')})'>
+                        <img src="${p.images[0]}" style="width:100px; height:80px; object-fit:cover; border-radius:8px; border:1px solid #eee;" onerror="this.src='https://via.placeholder.com/80/FF6D00/FFFFFF?text=Img'">
+                        <div style="font-size:0.75rem; font-weight:bold; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">
+                            ${p.name}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                upsellDiv.innerHTML = "<p style='font-size:0.85rem; color:#999; width:100%; text-align:center;'>No similar items in this category.</p>";
+            }
         }
 
         document.getElementById('prod-modal').style.display = 'flex';
@@ -434,106 +475,125 @@
 
     function closeModal() { document.getElementById('prod-modal').style.display = 'none'; }
 
+    function addToInquiry(product) {
+        // This is called from the product card directly
+        cart.push(product);
+        alert(`'${product.name}' added to your inquiry list! Click the green WhatsApp icon to view.`);
+        document.getElementById('wa-link').classList.add('pulse'); // Animation hint
+        setTimeout(() => document.getElementById('wa-link').classList.remove('pulse'), 2000); // Remove pulse
+        event.stopPropagation(); // Prevent modal from opening if added from card
+    }
+
     function addToInquiryFromModal() {
         if(!currentProd) return;
         cart.push(currentProd);
         closeModal();
-        alert("Product added to your inquiry list! Click the green WhatsApp icon (bottom right) to finalize your inquiry.");
-        document.getElementById('wa-float-link').classList.add('pulse'); // Add pulse animation for feedback
-        setTimeout(() => document.getElementById('wa-float-link').classList.remove('pulse'), 3000); // Remove after 3 seconds
+        alert(`'${currentProd.name}' added to your inquiry list! Click the green WhatsApp icon to view.`);
+        document.getElementById('wa-link').classList.add('pulse'); // Animation hint
+        setTimeout(() => document.getElementById('wa-link').classList.remove('pulse'), 2000); // Remove pulse
     }
 
-    // --- WHATSAPP & CART LOGIC ---
-    document.getElementById('wa-float-link').onclick = function(e) {
+    // --- WHATSAPP & CART (Inquiry Modal) ---
+    document.getElementById('wa-link').onclick = function(e) {
         if(cart.length > 0) {
             e.preventDefault(); // Prevent direct WhatsApp link if cart is not empty
             document.getElementById('inquiry-modal').style.display = 'flex';
-            let t = 0;
-            document.getElementById('cart-list').innerHTML = cart.map(i => { t+=parseInt(i.price); return `<div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:5px 0;"><span>${i.name}</span> <span>Rs. ${parseInt(i.price).toLocaleString()}</span></div>`; }).join('');
-            document.getElementById('cart-total').innerText = parseInt(t).toLocaleString();
-        } else if (!shop.whatsapp) {
-            e.preventDefault();
-            alert("This shop has not provided a WhatsApp number.");
+            let total = 0;
+            const cartListDiv = document.getElementById('cart-list');
+            cartListDiv.innerHTML = cart.map(i => { 
+                total += parseInt(i.price); 
+                return `<div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:8px 0; font-size:0.95rem;">
+                            <span>${i.name}</span> 
+                            <span style="font-weight:bold;">Rs. ${parseInt(i.price).toLocaleString()}</span>
+                        </div>`; 
+            }).join('');
+            document.getElementById('cart-total').innerText = total.toLocaleString();
         }
+        // If cart is empty, default behavior (direct WhatsApp) will proceed
     }
 
     function sendWhatsAppOrder() {
         const name = document.getElementById('c-name').value;
-        if(!name) return alert("Please enter your name to send the inquiry.");
-        
-        let msg = `Hello ${shop.shopName || 'Seller'},\n\nMy name is ${name}. I am interested in the following furniture items:\n`;
+        const phone = document.getElementById('c-ph').value;
+        const waNumber = document.getElementById('c-wa').value;
+
+        if(!name || !phone || !waNumber) return alert("Please fill in your Name, Phone Number, and WhatsApp Number.");
+        if (!waNumber.startsWith('94') || waNumber.length < 11) {
+            alert("Your WhatsApp number must start with '94' and be a complete number (e.g., 94771234567). Do not include '+'.");
+            return;
+        }
+
+        let msg = `Hello ${shop.shopName},\n\nI am ${name} (Phone: ${phone}, WhatsApp: +${waNumber}).\nI am interested in the following items from your shop:\n\n`;
         let total = 0;
         cart.forEach(i => { msg += `- ${i.name} (Rs. ${parseInt(i.price).toLocaleString()})\n`; total += parseInt(i.price); });
-        msg += `\nEstimated Total: Rs. ${parseInt(total).toLocaleString()}\n\nPlease provide more details or confirm availability. Thank you!`;
+        msg += `\nTotal Estimated Price: Rs. ${total.toLocaleString()}`;
+        msg += `\n\nPlease contact me regarding these items.`;
 
-        // Save Order to Firestore for Seller Dashboard
+
+        // Save Order to Seller's Dashboard (Firestore)
         db.collection('users').doc(uid).collection('orders').add({
-            custName: name, custWa: shop.whatsapp || 'N/A', items: cart.map(item => ({name: item.name, price: item.price})), // Store simplified items
-            total: total, status: 'new', time: new Date().toISOString()
+            custName: name, 
+            custPhone: phone, // Save customer's phone
+            custWa: waNumber, // Save customer's WhatsApp (without +)
+            items: cart.map(item => ({name: item.name, price: item.price})), // Simplified cart items
+            total: total.toString(), 
+            status: 'new', 
+            time: new Date().toISOString()
         }).then(() => {
-            console.log("Order saved to Firestore.");
+            // Then open WhatsApp chat
+            window.open(`https://wa.me/+${shop.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
+            document.getElementById('inquiry-modal').style.display = 'none';
+            cart = []; // Clear cart after sending
+            alert("Your inquiry has been sent to the seller via WhatsApp!");
         }).catch(error => {
-            console.error("Error saving order:", error);
+            console.error("Error sending order inquiry:", error);
+            alert("Failed to send inquiry. Please try again.");
         });
-
-        if (shop.whatsapp) {
-            window.open(`https://wa.me/${shop.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
-        } else {
-            alert("Shop WhatsApp number is not available. Your inquiry has been sent to their dashboard.");
-        }
-        
-        document.getElementById('inquiry-modal').style.display = 'none';
-        cart = []; // Clear cart after sending
-        document.getElementById('c-name').value = ''; // Clear name input
     }
 
-    // --- CONTACT FORM & REVIEW FORM LOGIC ---
+    // --- FORMS & REVIEWS ---
     function submitReview() {
         const name = document.getElementById('r-name').value;
         const text = document.getElementById('r-text').value;
         const stars = document.getElementById('r-stars').value;
-        if(!name || !text) return alert("Please fill in your name and review text to submit.");
+        if(!name || !text) return alert("Please fill in your Name and your Review.");
         
         db.collection('users').doc(uid).collection('reviews').add({
             name, text, stars: parseInt(stars), status: 'pending', time: new Date().toISOString()
         }).then(() => { 
-            alert("Thank you! Your review has been submitted for approval and will appear here once published by the seller."); 
+            alert("Your review has been submitted for approval! Thank you."); 
             document.getElementById('r-name').value='';
             document.getElementById('r-text').value='';
             document.getElementById('r-stars').value='5';
-        }).catch(e => {
-            console.error("Error submitting review:", e);
-            alert("Error submitting review: " + e.message);
+        }).catch(error => {
+            console.error("Error submitting review:", error);
+            alert("Failed to submit review. Please try again.");
         });
     }
 
     function submitContact() {
         const name = document.getElementById('msg-name').value;
-        const ph = document.getElementById('msg-ph').value;
-        const wa = document.getElementById('msg-wa').value;
-        const msg = document.getElementById('msg-text').value;
+        const phone = document.getElementById('msg-ph').value;
+        const waNumber = document.getElementById('msg-wa').value;
+        const message = document.getElementById('msg-text').value;
         
-        if(!name || !ph || !wa || !msg) return alert("Please fill all required fields in the contact form.");
-        
-        // Basic WhatsApp validation for consistency
-        if (!wa.startsWith('94') || wa.length < 11 || !/^\d+$/.test(wa)) {
-            return alert("Your WhatsApp number must start with '94' and be a complete phone number (e.g., 94771234567).");
-        }
-        if (!/^\d+$/.test(ph) || ph.length < 9) {
-            return alert("Please enter a valid Phone Number (digits only, minimum 9 digits).");
+        if(!name || !phone || !waNumber || !message) return alert("Please fill in all required fields for the contact form.");
+        if (!waNumber.startsWith('94') || waNumber.length < 11) {
+            alert("Your WhatsApp number must start with '94' and be a complete number (e.g., 94771234567). Do not include '+'.");
+            return;
         }
 
         db.collection('users').doc(uid).collection('messages').add({
-            name, phone: ph, wa: wa, message: msg, time: new Date().toISOString()
+            name, phone: phone, wa: waNumber, message: message, time: new Date().toISOString()
         }).then(() => {
-            alert("Your message has been sent to the seller's dashboard! They will get back to you soon via WhatsApp.");
+            alert("Your message has been sent to the seller! They will reply to your WhatsApp number.");
             document.getElementById('msg-name').value = '';
             document.getElementById('msg-ph').value = '';
             document.getElementById('msg-wa').value = '';
             document.getElementById('msg-text').value = '';
-        }).catch(e => {
-            console.error("Error submitting contact message:", e);
-            alert("Error sending message: " + e.message);
+        }).catch(error => {
+            console.error("Error sending message:", error);
+            alert("Failed to send message. Please try again.");
         });
     }
 
