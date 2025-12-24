@@ -2,36 +2,159 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FurnicoHub Shop</title>
+    <meta name="theme-color" content="#FF6D00">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
     <style>
-        :root { --primary: #4E342E; --bg: #F5F5F5; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; }
-        .hero { background: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-        .hero img { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--primary); object-fit: cover; }
-        .verified { background: #27ae60; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        :root {
+            --primary: #FF6D00;
+            --primary-dark: #E65100;
+            --secondary: #3E2723;
+            --bg: #FFF3E0;
+            --surface: #FFFFFF;
+            --font: 'Poppins', sans-serif;
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); color: var(--secondary); padding-bottom: 80px; overflow-x: hidden; }
+
+        /* HEADER */
+        .hero { 
+            background: linear-gradient(180deg, #FFFFFF 0%, #FFF8E1 100%); 
+            padding: 40px 20px 20px; text-align: center; border-radius: 0 0 30px 30px; 
+            box-shadow: 0 5px 25px rgba(255, 109, 0, 0.15); margin-bottom: 20px;
+        }
+        .hero img.logo { 
+            width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--primary); 
+            object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px;
+        }
+        .shop-name { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin: 0; line-height: 1.2; }
+        .shop-addr { color: #5D4037; font-size: 0.9rem; margin: 5px 0 10px; padding: 0 20px; }
+        .verified-badge { 
+            display: inline-flex; align-items: center; gap: 5px; background: #2E7D32; color: white; 
+            padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 10px;
+        }
+        .contact-info { margin: 10px 0; font-size: 0.95rem; color: #4E342E; font-weight: 600; }
+        .contact-info i { color: var(--primary); width: 20px; }
         
-        .cat-title { margin: 30px 20px 10px; font-size: 1.2rem; color: var(--primary); border-bottom: 2px solid #ddd; display: inline-block; }
+        .hero-btn { 
+            background: var(--secondary); color: white; padding: 10px 25px; border-radius: 50px; 
+            border: none; font-weight: 600; margin-top: 15px; cursor: pointer; display: inline-block;
+        }
+
+        /* GRID */
+        .cat-title { 
+            margin: 20px 20px 5px; font-size: 1.3rem; font-weight: 700; 
+            color: var(--secondary); display: flex; align-items: center; gap: 10px;
+        }
+        .cat-title::after { content:''; flex:1; height:2px; background: #FFCC80; }
         
-        .prod-grid { display: grid; gap: 15px; padding: 20px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-        .card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .card img { width: 100%; height: 150px; object-fit: cover; }
-        .card-info { padding: 15px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 8px; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 5px; }
+        .prod-grid { 
+            display: grid; gap: 15px; padding: 0 20px 20px; 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+        }
         
-        .cart-float { position: fixed; bottom: 20px; right: 20px; background: #27ae60; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-end; }
-        .modal-content { background: white; width: 100%; max-width: 500px; padding: 20px; border-radius: 20px 20px 0 0; }
+        /* 250px Support */
+        @media (max-width: 320px) {
+            .prod-grid { grid-template-columns: 1fr; }
+            .hero img.logo { width: 90px; height: 90px; }
+            .shop-name { font-size: 1.4rem; }
+        }
+
+        .card { 
+            background: white; border-radius: var(--radius); overflow: hidden; 
+            box-shadow: 0 5px 15px rgba(62, 39, 35, 0.08); border: 1px solid white; transition: 0.2s;
+        }
+        .card:active { transform: scale(0.98); }
+        .card img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
+        .card-info { padding: 12px; }
+        .prod-name { font-weight: 700; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .prod-price { color: var(--primary); font-weight: 800; font-size: 1.1rem; }
+
+        /* BUTTONS & MODALS */
+        .btn { 
+            background: var(--primary); color: white; border: none; padding: 10px; width: 100%; 
+            border-radius: 10px; cursor: pointer; font-weight: 600; margin-top: 5px; 
+        }
+        .btn-green { background: #2E7D32; }
+        
+        .cart-float { 
+            position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; 
+            width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; 
+            align-items: center; font-size: 2rem; box-shadow: 0 5px 20px rgba(0,0,0,0.3); 
+            cursor: pointer; z-index: 100; transition: transform 0.2s;
+        }
+        .cart-float:active { transform: scale(0.9); }
+
+        .modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(62, 39, 35, 0.8); 
+            display: none; justify-content: center; align-items: flex-end; z-index: 2000; 
+            backdrop-filter: blur(5px);
+        }
+        .modal-content { 
+            background: white; width: 100%; max-width: 600px; padding: 25px; 
+            border-radius: 25px 25px 0 0; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        /* REVIEWS */
+        .review-card { background: #FFF3E0; padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+        
+        /* CONTACT FORM & MAP */
+        .contact-form { background: white; padding: 25px; margin: 20px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .form-input { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid #FFE0B2; border-radius: 10px; font-family: var(--font); }
+        
+        /* FOOTER */
+        footer { background: var(--secondary); color: #BCAAA4; text-align: center; padding: 30px 20px; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <div style="text-align:center; padding:50px;">Loading Shop...</div>
+    <div style="text-align:center; padding:50px; font-size:1.2rem; color:var(--primary);">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading Shop...
+    </div>
 </div>
+
+<!-- Product Detail Modal -->
+<div id="prod-modal" class="modal">
+    <div class="modal-content" id="pm-content">
+        <!-- Injected JS -->
+        <div style="display:flex; justify-content:flex-end;"><i class="fa-solid fa-times" style="font-size:1.5rem; color:#777; cursor:pointer;" onclick="closeModal()"></i></div>
+        <img id="m-img" style="width:100%; height:250px; object-fit:cover; border-radius:15px; margin-bottom:15px;">
+        <h2 id="m-title" style="margin:0; color:var(--secondary);"></h2>
+        <h3 id="m-price" style="color:var(--primary); margin:5px 0 15px;"></h3>
+        <p id="m-desc" style="color:#555; line-height:1.6; margin-bottom:20px;"></p>
+        <button class="btn" onclick="addToInquiryFromModal()">Add to Inquiry List</button>
+        
+        <div style="margin-top:30px; border-top:1px solid #eee; padding-top:15px;">
+            <b style="color:var(--primary);">You might also like:</b>
+            <div id="m-upsell" style="display:flex; gap:10px; overflow-x:auto; margin-top:10px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- INQUIRY MODAL -->
+<div id="inquiry-modal" class="modal">
+    <div class="modal-content">
+        <h3>Your Inquiry List</h3>
+        <div id="cart-list" style="margin-bottom:15px;"></div>
+        <div style="font-weight:800; text-align:right; margin-bottom:15px; font-size:1.1rem;">Total Est: Rs. <span id="cart-total">0</span></div>
+        <input id="c-name" class="form-input" placeholder="Your Name">
+        <button class="btn btn-green" onclick="sendWhatsAppOrder()">Send via WhatsApp</button>
+        <button class="btn" style="background:#777; margin-top:10px;" onclick="document.getElementById('inquiry-modal').style.display='none'">Close</button>
+    </div>
+</div>
+
+<a id="wa-link" href="#" target="_blank" class="cart-float"><i class="fa-brands fa-whatsapp"></i></a>
 
 <script>
     const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
@@ -41,115 +164,224 @@
     const params = new URLSearchParams(window.location.search);
     const uid = params.get('id');
     let shop = {};
+    let reviews = [];
     let cart = [];
+    let currentProd = null;
 
-    if(!uid) document.getElementById('app').innerHTML = "Shop ID missing.";
+    if(!uid) document.getElementById('app').innerHTML = "<p style='text-align:center; padding:50px;'>Shop ID missing.</p>";
     else {
-        db.collection('users').doc(uid).get().then(doc => {
+        // Real-time listener for Shop Data
+        db.collection('users').doc(uid).onSnapshot(doc => {
             if(!doc.exists) return;
             shop = doc.data();
             renderShop();
         });
+
+        // Real-time listener for Reviews
+        db.collection('users').doc(uid).collection('reviews').where('status','==','published').onSnapshot(snap => {
+            reviews = snap.docs.map(d => d.data());
+            renderReviews();
+        });
     }
 
     function renderShop() {
+        const app = document.getElementById('app');
         const cats = [...new Set((shop.products||[]).map(p => p.category))];
+        document.getElementById('wa-link').href = `https://wa.me/${shop.whatsapp}`;
         
-        document.getElementById('app').innerHTML = `
+        let html = `
             <div class="hero">
-                <img src="${shop.logo || 'logo.png'}">
-                <h1>${shop.shopName}</h1>
-                ${shop.verified ? '<span class="verified"><i class="fa-solid fa-check"></i> Verified Seller</span>' : ''}
-                <p>${shop.address}</p>
-                <a href="tel:${shop.phone1}" class="btn" style="display:inline-block; width:auto; margin-top:10px;"><i class="fa-solid fa-phone"></i> Call</a>
-            </div>
-            
-            ${cats.map(c => `
-                <div class="cat-title">${c}</div>
-                <div class="prod-grid">
-                    ${shop.products.filter(p => p.category === c).map((p, i) => `
-                        <div class="card">
-                            <img src="${p.images[0]}" onclick="viewImg('${p.images[0]}')">
-                            <div class="card-info">
-                                <b>${p.name}</b>
-                                <div style="color:#e67e22; font-size:0.8rem;">${p.promoText||''}</div>
-                                <div>Rs. ${p.price}</div>
-                                <button class="btn" onclick="addToCart('${p.name}', ${p.price})">Add to Inquiry</button>
-                            </div>
-                        </div>
-                    `).join('')}
+                <img src="${shop.logo || 'logo.png'}" class="logo" onerror="this.src='https://via.placeholder.com/120'">
+                <h1 class="shop-name">${shop.shopName}</h1>
+                ${shop.isVerified ? '<div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Seller</div>' : ''}
+                <div class="shop-addr"><i class="fa-solid fa-location-dot" style="color:var(--primary)"></i> ${shop.address}</div>
+                
+                <div class="contact-info">
+                    <div style="margin-bottom:5px;"><i class="fa-solid fa-phone"></i> ${shop.phone1}</div>
+                    <div><i class="fa-brands fa-whatsapp"></i> ${shop.whatsapp}</div>
                 </div>
-            `).join('')}
 
-            <!-- REVIEWS -->
-            <div style="padding:20px;">
-                <h3>Reviews</h3>
-                <div id="reviews">Loading reviews...</div>
-                <input id="r-name" placeholder="Your Name" style="width:100%; padding:10px; margin-bottom:5px;">
-                <textarea id="r-text" placeholder="Write review..." style="width:100%; padding:10px; margin-bottom:5px;"></textarea>
-                <button class="btn" onclick="sendReview()">Submit Review</button>
+                ${shop.heroText ? `<p style="font-style:italic; color:#777; margin:15px 0;">"${shop.heroText}"</p>` : ''}
+                
+                <button class="hero-btn" onclick="scrollToContact()">Contact Us</button>
             </div>
+        `;
 
-            <div class="cart-float" onclick="openCart()"><i class="fa-brands fa-whatsapp"></i></div>
-            
-            <div id="modal" class="modal">
-                <div class="modal-content">
-                    <h3>Inquiry List</h3>
-                    <div id="cart-items"></div>
-                    <p><b>Total Est: Rs. <span id="total">0</span></b></p>
-                    <input id="c-name" placeholder="Your Name" style="width:100%; padding:10px; margin-bottom:10px;">
-                    <button class="btn" style="background:#25D366" onclick="sendWhatsApp()">Send via WhatsApp</button>
-                    <button class="btn" style="background:#777" onclick="document.getElementById('modal').style.display='none'">Close</button>
+        if(shop.emergencyClose) {
+            html += `<div style="background:#FFEBEE; color:#C62828; padding:20px; text-align:center; margin:20px; border-radius:15px; font-weight:bold;">🔴 SHOP IS TEMPORARILY CLOSED TODAY</div>`;
+        }
+
+        // Products Grid
+        cats.forEach(c => {
+            html += `<div class="cat-title">${c}</div><div class="prod-grid">`;
+            shop.products.filter(p => p.category === c).forEach(p => {
+                const pStr = JSON.stringify(p).replace(/"/g, '&quot;');
+                html += `
+                    <div class="card" onclick="openProd(${pStr})">
+                        <img src="${p.images[0]}" loading="lazy">
+                        <div class="card-info">
+                            <div class="prod-name">${p.name}</div>
+                            <div class="prod-price">Rs. ${p.price}</div>
+                            <div style="font-size:0.75rem; color:#888; margin-top:5px;">Click for details</div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        });
+
+        // Reviews Section
+        html += `
+            <div style="padding:20px; background:white; margin-top:20px;">
+                <h3 style="color:var(--secondary)">Customer Reviews</h3>
+                <div id="reviews-list">Loading reviews...</div>
+                <div style="background:#FAFAFA; padding:15px; border-radius:15px; margin-top:15px;">
+                    <h4 style="margin-top:0;">Write a Review</h4>
+                    <input id="r-name" class="form-input" placeholder="Your Name">
+                    <textarea id="r-text" class="form-input" placeholder="How was your experience?" rows="3"></textarea>
+                    <div style="margin-bottom:10px;">Rating: <select id="r-stars" class="form-input" style="width:auto;"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option></select></div>
+                    <button class="btn" onclick="submitReview()">Submit Review</button>
                 </div>
             </div>
         `;
+
+        // Contact Form
+        html += `
+            <div id="contact-area" class="contact-form">
+                <h3 style="color:var(--primary); margin-top:0;">Contact Us</h3>
+                <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Fill this form to send a message directly to our dashboard.</p>
+                <input id="msg-name" class="form-input" placeholder="Your Name *">
+                <input id="msg-ph" class="form-input" placeholder="Phone Number *">
+                <input id="msg-wa" class="form-input" placeholder="WhatsApp Number *">
+                <textarea id="msg-text" class="form-input" rows="4" placeholder="Your Message *"></textarea>
+                <button class="btn" onclick="submitContact()">Send Message</button>
+            </div>
+        `;
+
+        // Map (Google Maps Embed)
+        const mapQ = encodeURIComponent(shop.address);
+        html += `
+            <div style="padding:0 20px 20px;">
+                <h3 style="color:var(--secondary)">Find Us</h3>
+                <iframe width="100%" height="300" style="border:0; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1);" loading="lazy" allowfullscreen src="https://maps.google.com/maps?q=${mapQ}&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
+            </div>
+        `;
+
+        // Footer
+        html += `
+            <footer>
+                <h2 style="color:white; margin-bottom:5px;">${shop.shopName}</h2>
+                <p>${shop.address}</p>
+                <p>&copy; ${new Date().getFullYear()} Powered by FurnicoHub</p>
+            </footer>
+        `;
+
+        app.innerHTML = html;
+        renderReviews();
+    }
+
+    function renderReviews() {
+        const list = document.getElementById('reviews-list');
+        if(!list) return;
+        if(reviews.length === 0) list.innerHTML = "<small>No reviews yet.</small>";
+        else list.innerHTML = reviews.map(r => `<div class="review-card"><b>${r.name}</b> <span style="color:#FFC107">${'★'.repeat(r.stars)}</span><br>${r.text}</div>`).join('');
+    }
+
+    // --- PRODUCT LOGIC ---
+    function openProd(item) {
+        currentProd = item;
+        document.getElementById('m-img').src = item.images[0];
+        document.getElementById('m-title').innerText = item.name;
+        document.getElementById('m-price').innerText = "Rs. " + item.price;
+        document.getElementById('m-desc').innerText = item.desc || "No description available.";
         
-        loadReviews();
+        // Upsell Logic: Find other products in same category
+        const others = (shop.products||[]).filter(p => p.category === item.category && p.name !== item.name);
+        const upsellDiv = document.getElementById('m-upsell');
+        if(others.length > 0) {
+            upsellDiv.innerHTML = others.slice(0,4).map(p => `
+                <div style="min-width:100px; cursor:pointer;" onclick='openProd(${JSON.stringify(p).replace(/"/g, '&quot;')})'>
+                    <img src="${p.images[0]}" style="width:100px; height:80px; object-fit:cover; border-radius:8px;">
+                    <div style="font-size:0.75rem; font-weight:bold; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100px;">${p.name}</div>
+                </div>
+            `).join('');
+        } else {
+            upsellDiv.innerHTML = "<small>No similar items.</small>";
+        }
+
+        document.getElementById('prod-modal').style.display = 'flex';
     }
 
-    function addToCart(name, price) {
-        cart.push({name, price});
-        alert("Added to inquiry list!");
+    function closeModal() { document.getElementById('prod-modal').style.display = 'none'; }
+
+    function addToInquiryFromModal() {
+        if(!currentProd) return;
+        cart.push(currentProd);
+        closeModal();
+        alert("Added to Inquiry List! Click the green WhatsApp icon to finish.");
+        document.getElementById('wa-link').classList.add('pulse'); // Animation hint
     }
 
-    function openCart() {
-        document.getElementById('modal').style.display = 'flex';
-        const list = document.getElementById('cart-items');
-        let t = 0;
-        list.innerHTML = cart.map(i => { t+=parseInt(i.price); return `<div>${i.name} - ${i.price}</div>`; }).join('');
-        document.getElementById('total').innerText = t;
+    // --- WHATSAPP & CART ---
+    document.getElementById('wa-link').onclick = function(e) {
+        if(cart.length > 0) {
+            e.preventDefault();
+            document.getElementById('inquiry-modal').style.display = 'flex';
+            let t = 0;
+            document.getElementById('cart-list').innerHTML = cart.map(i => { t+=parseInt(i.price); return `<div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:5px 0;"><span>${i.name}</span> <span>${i.price}</span></div>`; }).join('');
+            document.getElementById('cart-total').innerText = t;
+        }
     }
 
-    function sendWhatsApp() {
+    function sendWhatsAppOrder() {
         const name = document.getElementById('c-name').value;
-        if(!name) return alert("Enter Name");
+        if(!name) return alert("Please enter your name");
         
         let msg = `Hi ${shop.shopName}, I am ${name}. I am interested in:\n`;
-        cart.forEach(i => msg += `- ${i.name} (Rs. ${i.price})\n`);
-        
-        // Save order to Firestore for Seller Dashboard
+        let total = 0;
+        cart.forEach(i => { msg += `- ${i.name} (Rs. ${i.price})\n`; total += parseInt(i.price); });
+        msg += `\nTotal Estimate: Rs. ${total}`;
+
+        // Save Order
         db.collection('users').doc(uid).collection('orders').add({
-            custName: name, custPhone: 'WhatsApp', items: cart, total: document.getElementById('total').innerText, time: new Date().toISOString()
+            custName: name, custWa: 'WhatsApp', items: cart, total: total, status: 'new', time: new Date().toISOString()
         });
 
         window.open(`https://wa.me/${shop.whatsapp}?text=${encodeURIComponent(msg)}`);
+        document.getElementById('inquiry-modal').style.display = 'none';
+        cart = []; // Clear cart
     }
 
-    function loadReviews() {
-        db.collection('users').doc(uid).collection('reviews').get().then(snap => {
-            const div = document.getElementById('reviews');
-            if(snap.empty) div.innerHTML = "No reviews yet.";
-            else div.innerHTML = snap.docs.map(d => `<div style="background:white; padding:10px; border-radius:5px; margin-bottom:5px;"><b>${d.data().name}</b>: ${d.data().text}</div>`).join('');
+    // --- FORMS ---
+    function submitReview() {
+        const name = document.getElementById('r-name').value;
+        const text = document.getElementById('r-text').value;
+        const stars = document.getElementById('r-stars').value;
+        if(!name || !text) return alert("Required fields missing");
+        
+        db.collection('users').doc(uid).collection('reviews').add({
+            name, text, stars: parseInt(stars), status: 'pending', time: new Date().toISOString()
+        }).then(() => { alert("Review submitted for approval!"); document.getElementById('r-text').value=''; });
+    }
+
+    function submitContact() {
+        const name = document.getElementById('msg-name').value;
+        const ph = document.getElementById('msg-ph').value;
+        const wa = document.getElementById('msg-wa').value;
+        const msg = document.getElementById('msg-text').value;
+        
+        if(!name || !ph || !wa || !msg) return alert("All fields are required.");
+
+        db.collection('users').doc(uid).collection('messages').add({
+            name, phone: ph, wa: wa, message: msg, time: new Date().toISOString()
+        }).then(() => {
+            alert("Message Sent! Seller will reply via WhatsApp.");
+            document.getElementById('msg-text').value = '';
         });
     }
 
-    function sendReview() {
-        const name = document.getElementById('r-name').value;
-        const text = document.getElementById('r-text').value;
-        if(!name || !text) return;
-        db.collection('users').doc(uid).collection('reviews').add({name, text, stars:5});
-        alert("Review Sent!");
-        loadReviews();
+    function scrollToContact() {
+        document.getElementById('contact-area').scrollIntoView({behavior: 'smooth'});
     }
 </script>
 </body>
