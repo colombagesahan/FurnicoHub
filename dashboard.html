@@ -6,7 +6,7 @@
     <title>FurnicoHub | Seller Portal</title>
     
     <!-- PWA Meta -->
-    <meta name="theme-color" content="#FF6D00"> <!-- Updated Theme Color -->
+    <meta name="theme-color" content="#FF6D00">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="icon" type="image/png" href="icon.png">
 
@@ -1282,7 +1282,7 @@
                     alert("Upload failed: " + err.message);
                     if (uploadStatusElement) {
                         uploadStatusElement.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Upload Failed`;
-                        uploadStatusElement.style.color = var(--red);
+                        uploadStatusElement.style.color = 'var(--red)'; // FIXED: Added quotes
                     }
                 });
             }
