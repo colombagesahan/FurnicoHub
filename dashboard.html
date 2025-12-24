@@ -6,7 +6,7 @@
     <title>FurnicoHub | Seller Portal</title>
     
     <!-- PWA Meta -->
-    <meta name="theme-color" content="#E65100"> <!-- Updated theme color -->
+    <meta name="theme-color" content="#FF6D00"> <!-- Updated Theme Color -->
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="icon" type="image/png" href="icon.png">
 
@@ -24,22 +24,22 @@
 
     <style>
         :root {
-            /* --- COLOR PALETTE (Orange & Mahogany) --- */
-            --primary: #FF6D00;        /* Vibrant Orange */
+            /* --- COLOR PALETTE --- (Updated for Orange/Mahogany) */
+            --primary: #FF6D00;        /* Vivid Orange */
             --primary-light: #FF9E80;  /* Lighter Orange */
-            --accent: #E65100;         /* Darker Orange for accents */
-            --bg-body: #FFF3E0;        /* Light Cream background */
-            --surface: #FFFFFF;        /* White for cards/elements */
+            --accent: #E65100;         /* Deeper Orange for accents */
+            --bg-body: #FFF3E0;        /* Light Cream */
+            --surface: #FFFFFF;        /* White for cards */
             --text: #3E2723;           /* Dark Mahogany text */
-            --green: #2E7D32;          /* Dark Green for success */
-            --red: #C62828;            /* Dark Red for danger */
-            --gold: #FFC107;           /* Gold for stars/highlights */
+            --green: #2E7D32;          /* Darker Green for success */
+            --red: #C62828;            /* Darker Red for danger */
+            --gold: #FFC107;           /* Gold for ratings/highlights */
             
             /* Design System */
-            --shadow: 0 8px 24px rgba(62, 39, 35, 0.08); /* Card shadow */
-            --radius: 16px;            /* Border radius */
-            --font: 'Poppins', sans-serif; /* Font family */
-            --sidebar-w: 260px;        /* Desktop sidebar width */
+            --shadow: 0 8px 24px rgba(62, 39, 35, 0.08); /* Soft shadow for cards */
+            --radius: 16px;            /* Consistent border radius */
+            --font: 'Poppins', sans-serif;
+            --sidebar-w: 260px;        /* Width of desktop sidebar */
         }
 
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -48,7 +48,7 @@
         
         /* UTILS */
         .hidden { display: none !important; }
-        .flex { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; } /* Added flex-wrap for responsiveness */
+        .flex { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; } /* Added flex-wrap */
         .space-between { justify-content: space-between; }
         .col { flex-direction: column; }
         .center { text-align: center; }
@@ -65,55 +65,62 @@
             width: 100%; padding: 12px; border: none; border-radius: 12px;
             background: var(--primary); color: white; font-weight: 600;
             cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            font-size: 0.9rem; transition: 0.2s; margin-bottom: 10px;
-            box-shadow: 0 4px 10px rgba(255, 109, 0, 0.2); /* Orange shadow */
+            font-size: 0.9rem; transition: all 0.2s ease; margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(255, 109, 0, 0.2); /* Orange-tinted shadow */
             text-decoration: none;
         }
         .btn:active { transform: scale(0.97); }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
-        .btn-green { background: var(--green); color: white; }
-        .btn-red { background: var(--red); color: white; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+        .btn-green { background: var(--green); color: white; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2); }
+        .btn-red { background: var(--red); color: white; box-shadow: 0 4px 10px rgba(198, 40, 40, 0.2); }
         .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; margin: 0; }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); box-shadow: none; }
+        .btn-outline { 
+            background: transparent; border: 2px solid var(--primary); color: var(--primary); 
+            box-shadow: none; 
+        }
+        .btn-outline:hover { background: var(--primary-light); color: white; }
 
         .card {
             background: var(--surface); padding: 20px; border-radius: var(--radius);
             box-shadow: var(--shadow); margin-bottom: 15px;
-            border: 1px solid #FFE0B2; /* Lighter orange border */
+            border: 1px solid #FFE0B2; /* Lighter border for new theme */
             animation: slideUp 0.4s ease-out;
         }
+        .card h3 { color: var(--primary); margin-top: 0; }
 
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600; color: #5D4037; }
         .input-group input, .input-group select, .input-group textarea {
-            width: 100%; padding: 12px; border: 2px solid #FFE0B2; /* Lighter orange border */
-            border-radius: 12px;
-            font-family: var(--font); font-size: 0.95rem; background: #FFF8E1; /* Light cream background */
-            transition: 0.3s;
+            width: 100%; padding: 12px; border: 2px solid #FFE0B2; border-radius: 12px;
+            font-family: var(--font); font-size: 0.95rem; background: #FFF; /* White background for input */
+            transition: all 0.3s ease;
+        }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 109, 0, 0.2);
+            background: #fff;
         }
         /* Fix for Color Input */
         input[type="color"] { height: 50px; padding: 2px; cursor: pointer; border-radius: 8px; }
-        input[type="color"]:focus { border-color: var(--primary); background: var(--surface); } /* Added focus styles */
-        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
-            border-color: var(--primary);
-            background: var(--surface);
-        }
 
         /* FILE UPLOAD */
         .upload-box {
             border: 2px dashed #FFCC80; /* Orange dashed border */
             border-radius: 12px; padding: 20px;
             text-align: center; cursor: pointer; background: #FFF8E1; /* Light cream background */
-            position: relative; transition: 0.3s;
+            position: relative; transition: all 0.3s ease;
+            color: #795548;
         }
+        .upload-box:hover { background: #FFECB3; border-color: var(--primary); }
         .upload-box img { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; display: none; margin-top: 5px; }
 
         /* LOGIN SCREEN */
         #login-ui {
             height: 100vh; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; padding: 20px;
-            background: radial-gradient(circle at top right, #FFF3E0 0%, #FFCC80 100%); /* Orange gradient */
+            background: radial-gradient(circle at top right, #FFF3E0 0%, #FFCC80 100%); /* Warm radial gradient */
         }
+        #login-ui .card h2 { color: var(--primary); }
 
         /* NAVIGATION */
         .mobile-header {
@@ -121,21 +128,28 @@
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
+        .mobile-header .bold { color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .mobile-header .bold img { height: 28px; }
         
         .tabs-container {
             width: 100%; overflow-x: auto; background: white; 
             padding: 10px; display: flex; gap: 8px;
             scrollbar-width: none; -webkit-overflow-scrolling: touch;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #FFE0B2; /* Light orange border */
         }
+        .tabs-container::-webkit-scrollbar { display: none; }
         .tab-btn {
-            padding: 8px 18px; background: #FFF8E1; /* Light cream */
-            border: 1px solid #FFE0B2; /* Lighter orange */
+            padding: 8px 18px; background: #FFF8E1; border: 1px solid #FFE0B2;
             border-radius: 20px; white-space: nowrap; cursor: pointer;
             color: #5D4037; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;
-            transition: 0.2s;
+            transition: all 0.2s ease;
         }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(255, 109, 0, 0.3); } /* Orange active state */
+        .tab-btn.active { 
+            background: var(--primary); color: white; border-color: var(--primary); 
+            box-shadow: 0 4px 10px rgba(255, 109, 0, 0.3); 
+            transform: translateY(-2px);
+        }
+        .tab-btn:hover:not(.active) { background: #FFECB3; color: var(--primary); }
 
         /* DESKTOP SIDEBAR */
         @media (min-width: 900px) {
@@ -143,12 +157,12 @@
             #dashboard-ui { display: flex; }
             .tabs-container {
                 flex-direction: column; width: var(--sidebar-w); height: 100vh;
-                position: fixed; left: 0; top: 0; background: white; border-right: 1px solid #eee;
+                position: fixed; left: 0; top: 0; background: white; border-right: 1px solid #FFE0B2;
                 padding: 25px; gap: 8px; border-bottom: none;
             }
             .tabs-container::before {
                 content: 'FurnicoHub'; font-size: 1.8rem; font-weight: 800; color: var(--primary);
-                padding: 0 10px 30px; display: block; border-bottom: 1px solid #eee; margin-bottom: 15px;
+                padding: 0 10px 30px; display: block; border-bottom: 1px solid #FFE0B2; margin-bottom: 15px;
             }
             .tab-btn { width: 100%; border-radius: 10px; border: none; padding: 14px; justify-content: flex-start; background: transparent; }
             .tab-btn:hover { background: #FFF3E0; color: var(--primary); }
@@ -161,81 +175,98 @@
             h3 { font-size: 1.1rem; }
             .card { padding: 12px; }
             .btn { font-size: 0.8rem; padding: 10px; }
-            .nav-brand { font-size: 1rem; } /* This class doesn't exist in your HTML, keeping for consistency if added later */
-            .stat-grid { grid-template-columns: 1fr !important; } /* Stacks stats vertically */
-            .day-row { flex-direction: column; align-items: flex-start; gap: 5px; } /* Stacks day elements vertically */
+            .mobile-header .bold { font-size: 1rem; }
+            .mobile-header .bold img { height: 24px; }
+            .stat-grid { grid-template-columns: 1fr !important; /* Forces single column on very small screens */ }
+            .day-row { flex-direction: column; align-items: flex-start; gap: 5px; }
             .day-row input, .day-row select { width: 100%; }
-            .mobile-header .bold { font-size: 0.9rem; }
-            .mobile-header .btn { padding: 4px 10px; font-size: 0.7rem; }
-            .tabs-container { padding: 5px; }
-            .tab-btn { padding: 6px 12px; font-size: 0.8rem; }
             .input-group label { font-size: 0.8rem; }
             .input-group input, .input-group select, .input-group textarea { padding: 10px; font-size: 0.85rem; }
+            .upload-box { padding: 15px; font-size: 0.85rem; }
+            .toggle-opt { padding: 5px 10px; font-size: 0.8rem; }
+            .status-badge { font-size: 0.7rem; padding: 4px 10px; }
         }
 
         /* STATUS & GRID */
-        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
-        .st-verified { background: #E8F5E9; /* Light green */ color: var(--green); border: 1px solid var(--green); }
-        .st-pending { background: #FFF3E0; /* Light cream */ color: #E65100; /* Dark orange */ border: 1px solid #FFCC80; /* Lighter orange */ }
-        
+        .status-badge { 
+            padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; 
+            display: inline-flex; align-items: center; gap: 5px; text-transform: uppercase;
+        }
+        .st-verified { background: #E8F5E9; color: var(--green); border: 1px solid var(--green); }
+        .st-pending { background: #FFF3E0; color: #E65100; border: 1px solid #FFCC80; }
+        .st-new { background: #FFE0B2; color: #FF6D00; border: 1px solid #FF9800; }
+        .st-published { background: #E8F5E9; color: var(--green); border: 1px solid var(--green); }
+
         .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .stat-card { 
             background: white; padding: 15px; border-radius: 16px; text-align: center; cursor: pointer; 
-            border-bottom: 4px solid transparent; box-shadow: var(--shadow); transition: 0.2s; 
-            display: flex; flex-direction: column; justify-content: space-between; /* Ensures buttons are at bottom */
+            border-bottom: 4px solid transparent; box-shadow: var(--shadow); transition: all 0.2s ease; 
         }
-        .stat-card:hover { transform: translateY(-3px); }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 12px 28px rgba(62, 39, 35, 0.12); }
+        .stat-card h2 { margin: 0; font-size: 1.8rem; color: var(--secondary); }
+        .stat-card small { color: #777; font-size: 0.85rem; }
+        .stat-card .btn-outline { border-width: 1px; padding: 5px 10px; font-size: 0.75rem; margin-top: 10px; }
 
         .toggle-switch { display: flex; background: #eee; border-radius: 50px; padding: 4px; width: fit-content; margin: 0 auto 15px; }
-        .toggle-opt { padding: 6px 16px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #777; transition: 0.2s; }
+        .toggle-opt { padding: 6px 16px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #777; transition: all 0.2s ease; }
         .toggle-opt.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-        .day-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-        .date-chip { display: inline-flex; align-items: center; background: #FFEBEE; /* Light red */ padding: 5px 10px; border-radius: 20px; margin: 2px; font-size: 0.8rem; color: #C62828; /* Dark red */ }
+        .day-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #FFE0B2; }
+        .date-chip { 
+            display: inline-flex; align-items: center; background: #FFEBEE; padding: 5px 10px; 
+            border-radius: 20px; margin: 2px; font-size: 0.8rem; color: #C62828; 
+            border: 1px solid #FFCCBC;
+        }
         
-        /* Category Header in Feed */
-        .cat-header { grid-column: 1 / -1; font-weight: 800; color: var(--primary); margin: 20px 0 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        /* Category Header in Feed (Marketplace) */
+        .cat-header { 
+            grid-column: 1 / -1; font-weight: 800; color: var(--primary); 
+            margin: 20px 0 10px; border-bottom: 2px solid #FFE0B2; padding-bottom: 5px; 
+            font-size: 1.2rem;
+        }
 
-        /* Animation for cards */
         @keyframes slideUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
     </style>
 </head>
 <body>
 
-<!-- 1. LOGIN SCREEN -->
-<div id="login-ui">
-    <div class="card" style="width: 100%; max-width: 350px; text-align: center; padding: 40px 25px;">
-        <img src="logo.png" onerror="this.src='https://via.placeholder.com/90/FFCC80/3E2723?text=Logo'" style="width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 4px solid var(--primary); margin-bottom: 20px;">
-        <h2 style="color:var(--primary); margin-bottom: 5px;">Seller Portal</h2>
-        <p style="color:#666; margin-bottom: 30px; line-height: 1.5;">Manage your furniture shop, inventory, and orders.</p>
-        <button class="btn" onclick="login()"><i class="fa-brands fa-google"></i> Login with Google</button>
-        <a href="index.html" class="btn btn-outline" style="margin-top: 10px;">Back to Marketplace</a>
-    </div>
-</div>
-
-<!-- 2. DASHBOARD UI -->
-<div id="dashboard-ui" class="hidden">
-    <div class="mobile-header">
-        <div class="bold" style="font-size:1.1rem; display:flex; align-items:center; gap:8px; color:var(--primary);">
-            <img src="icon.png" height="28" onerror="this.src='https://via.placeholder.com/28/FFCC80/3E2723?text=FH'"> FurnicoHub
-        </div>
-        <button class="btn" style="width:auto; padding:6px 14px; margin:0; background:rgba(255, 109, 0, 0.1); color:var(--primary);" onclick="logout()">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </button>
-    </div>
-
-    <div class="tabs-container" id="tabs-nav">
-        <!-- Injected via JS -->
-    </div>
-
-    <div id="content-area" style="padding: 20px;">
-        <div style="text-align:center; padding:50px; color:#aaa;">
-            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+    <!-- 1. LOGIN SCREEN -->
+    <div id="login-ui">
+        <div class="card" style="width: 100%; max-width: 350px; text-align: center; padding: 40px 25px;">
+            <img src="logo.png" style="width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 4px solid var(--primary); margin-bottom: 20px;">
+            <h2 style="color:var(--primary); margin-bottom: 5px;">Seller Portal</h2>
+            <p style="color:#666; margin-bottom: 30px; line-height: 1.5;">Manage your furniture shop, inventory, and orders.</p>
+            <button class="btn" onclick="login()"><i class="fa-brands fa-google"></i> Login with Google</button>
+            <a href="index.html" class="btn btn-outline" style="margin-top: 10px;">Back to Marketplace</a>
         </div>
     </div>
-</div>
 
-<iframe id="printFrame" style="display:none;"></iframe>
+    <!-- 2. DASHBOARD UI -->
+    <div id="dashboard-ui" class="hidden">
+        <div class="mobile-header">
+            <div class="bold"> <!-- Changed to use common styling for brand -->
+                <img src="icon.png" height="28"> FurnicoHub
+            </div>
+            <button class="btn" style="width:auto; padding:6px 14px; margin:0; background:rgba(255, 109, 0, 0.1); color:var(--primary);" onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+
+        <div class="tabs-container" id="tabs-nav">
+            <!-- Injected via JS -->
+            <!-- Desktop Logout for larger screens -->
+            <button class="tab-btn" onclick="logout()" style="margin-top:auto; color:var(--red); display:none;" id="desktop-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        </div>
+
+        <div id="content-area" style="padding: 20px;">
+            <div style="text-align:center; padding:50px; color:#aaa;">
+                <i class="fa-solid fa-spinner fa-spin fa-2x"></i> Loading content...
+            </div>
+        </div>
+    </div>
+
+    <iframe id="printFrame" style="display:none;"></iframe>
+
 <script>
     // --- 1. FIREBASE CONFIG ---
     const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
@@ -248,7 +279,7 @@
     let shopData = {};
     let shopOrders = [];
     let shopReviews = [];
-    let shopMessages = []; /* Added for messages tab */
+    let shopMessages = []; // Added for new messages tab
     let currentTab = 'Dashboard';
     let tempImages = [null, null, null]; 
     let discountType = 'amount';
@@ -262,17 +293,17 @@
     ];
 
     const TABS = [
-        { id: 'Dashboard', icon: 'fa-chart-pie' }, // New Home
-        { id: 'Smart POS', icon: 'fa-calculator' }, // Renamed
-        { id: 'Marketplace', icon: 'fa-store' },    
-        { id: 'Profile', icon: 'fa-user-gear' },     
-        { id: 'Get Verified', icon: 'fa-certificate' }, 
-        { id: 'Open/Close', icon: 'fa-clock' },     
-        { id: 'Products', icon: 'fa-couch' },       
-        { id: 'My Webpage', icon: 'fa-globe' },     
-        { id: 'Orders', icon: 'fa-box-open' },      
-        { id: 'Messages', icon: 'fa-comments' },    /* Added icon for Messages tab */
-        { id: 'Reviews', icon: 'fa-star' }          
+        { id: 'Dashboard', icon: 'fa-chart-pie', text: 'Dashboard' }, // New Home
+        { id: 'Smart POS', icon: 'fa-calculator', text: 'Smart POS' }, // Renamed
+        { id: 'Marketplace', icon: 'fa-store', text: 'Marketplace' },    
+        { id: 'Profile', icon: 'fa-user-gear', text: 'Profile' },     
+        { id: 'Get Verified', icon: 'fa-certificate', text: 'Get Verified' }, 
+        { id: 'Open/Close', icon: 'fa-clock', text: 'Open/Close' },     
+        { id: 'Products', icon: 'fa-couch', text: 'Products' },       
+        { id: 'My Webpage', icon: 'fa-globe', text: 'My Webpage' },     
+        { id: 'Orders', icon: 'fa-box-open', text: 'Orders' },      
+        { id: 'Messages', icon: 'fa-comments', text: 'Messages' },    
+        { id: 'Reviews', icon: 'fa-star', text: 'Reviews' }          
     ];
 
     // --- 2. AUTH ---
@@ -294,12 +325,13 @@
     function logout() { auth.signOut(); }
 
     async function loadShopData() {
+        // Fetch current shop data or initialize if new user
         const doc = await db.collection('users').doc(user.uid).get();
         if (doc.exists) {
             shopData = doc.data();
             currentTab = shopData.profileCompleted ? 'Dashboard' : 'Profile';
         } else {
-            // Default Data Structure
+            // Default Data Structure for new sellers
             shopData = { 
                 role: 'seller', 
                 profileCompleted: false, 
@@ -308,23 +340,22 @@
                 isOpen: false, 
                 emergencyClose: false, 
                 schedule: {},
-                specialDates: [] 
+                specialDates: [],
+                shopName: user.displayName || 'My Shop', // Default with user's name
+                address: '',
+                ownerName: user.displayName || '',
+                nic: '',
+                phone1: '',
+                whatsapp: '+94',
+                logo: user.photoURL || 'logo.png', // Default with user's photo
+                heroText: 'Welcome to my furniture store!'
             };
             await db.collection('users').doc(user.uid).set(shopData);
-            currentTab = 'Profile';
+            currentTab = 'Profile'; // Force profile completion for new users
         }
         
-        // Listeners for real-time updates
-        db.collection('users').doc(user.uid).onSnapshot(docSnapshot => { // Listen for shopData changes
-            if (docSnapshot.exists) {
-                shopData = docSnapshot.data();
-                // Re-render content if crucial data changed for current tab
-                if (currentTab === 'Profile' || currentTab === 'Open/Close' || currentTab === 'My Webpage' || currentTab === 'Products' || currentTab === 'Dashboard') {
-                    renderContent();
-                }
-            }
-        });
-
+        // --- REAL-TIME LISTENERS ---
+        // Orders Listener
         db.collection('users').doc(user.uid).collection('orders').orderBy('time', 'desc').onSnapshot(snap => {
             const newOrders = snap.docs.map(d => ({id:d.id, ...d.data()}));
             if (newOrders.length > shopOrders.length && shopOrders.length > 0) alert("🔔 New Order Received!");
@@ -332,16 +363,28 @@
             if(currentTab === 'Orders' || currentTab === 'Dashboard') renderContent();
         });
 
+        // Reviews Listener
         db.collection('users').doc(user.uid).collection('reviews').onSnapshot(snap => {
             shopReviews = snap.docs.map(d => ({id:d.id, ...d.data()}));
             if(currentTab === 'Reviews' || currentTab === 'Dashboard') renderContent();
         });
 
-        // Listener for Messages from shop.html contact form
+        // Messages Listener (from shop.html contact form)
         db.collection('users').doc(user.uid).collection('messages').orderBy('time', 'desc').onSnapshot(snap => {
-            shopMessages = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            const newMessages = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            if (newMessages.length > shopMessages.length && shopMessages.length > 0) alert("✉️ New Customer Message!");
+            shopMessages = newMessages;
             if(currentTab === 'Messages' || currentTab === 'Dashboard') renderContent();
         });
+
+        // Shop Data Listener (for immediate UI updates from other dashboard changes)
+        db.collection('users').doc(user.uid).onSnapshot(s => {
+            shopData = s.data();
+            // Re-render current tab if it's one that depends on shopData (most do)
+            if (currentTab !== 'Login') renderContent(); // Avoid re-rendering login
+            renderTabs(); // Also update tabs if any status changes (e.g., profile completion)
+        });
+
 
         renderTabs();
         renderContent();
@@ -352,15 +395,26 @@
         const nav = document.getElementById('tabs-nav');
         let html = TABS.map(t => 
             `<button class="tab-btn ${currentTab === t.id ? 'active' : ''}" onclick="switchTab('${t.id}')">
-                <i class="fa-solid ${t.icon}"></i> ${t.id}
+                <i class="fa-solid ${t.icon}"></i> ${t.text}
              </button>`
         ).join('');
-        if(window.innerWidth > 900) html += `<button class="tab-btn" onclick="logout()" style="margin-top:auto; color:#C62828;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>`; // Using var(--red) for logout
+        // This desktop-specific logout button is now hidden by default and shown by CSS for >900px
+        html += `<button class="tab-btn" onclick="logout()" style="margin-top:auto; color:var(--red);" id="desktop-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>`;
         nav.innerHTML = html;
+        // Ensure desktop logout is handled by CSS for visibility on larger screens
+        if (window.innerWidth > 900) {
+            document.getElementById('desktop-logout-btn').style.display = 'flex';
+        } else {
+            document.getElementById('desktop-logout-btn').style.display = 'none';
+        }
     }
 
     function switchTab(id) {
-        if(!shopData.profileCompleted && id !== 'Profile') return alert("Please complete Profile first to access other tabs!");
+        if(!shopData.profileCompleted && id !== 'Profile') {
+            alert("Please complete your Profile first to access other features!");
+            currentTab = 'Profile'; // Force user to profile tab
+            renderTabs();
+        }
         currentTab = id;
         renderTabs();
         renderContent();
@@ -368,7 +422,7 @@
 
     function renderContent() {
         const c = document.getElementById('content-area');
-        c.innerHTML = '';
+        c.innerHTML = ''; // Clear previous content
         
         switch(currentTab) {
             case 'Dashboard': renderHome(c); break;
@@ -382,6 +436,7 @@
             case 'Orders': renderOrders(c); break;
             case 'Messages': renderMessages(c); break;
             case 'Reviews': renderReviews(c); break;
+            default: c.innerHTML = `<div style="text-align:center; padding:50px; color:#aaa;"><i class="fa-solid fa-triangle-exclamation fa-2x"></i><p>Unknown tab selected.</p></div>`; break;
         }
     }
 
@@ -396,13 +451,13 @@
         
         const todaysOrders = shopOrders.filter(o => o.time.startsWith(today)).length;
         const pendingReviews = shopReviews.filter(r => r.status !== 'published').length;
-        const unreadMsgs = shopMessages.length; // Correctly using shopMessages count
+        const unreadMsgs = shopMessages.length; // Now uses actual messages count
         const isOpen = !shopData.emergencyClose && (shopData.isOpen || false); 
         
         // Group Products
         const prodCounts = {};
         (shopData.products || []).forEach(p => { prodCounts[p.category] = (prodCounts[p.category] || 0) + 1; });
-        const prodHtml = Object.keys(prodCounts).map(cat => `<div class="flex space-between" style="border-bottom:1px solid #eee; padding:5px 0;"><span>${cat}</span><b>${prodCounts[cat]}</b></div>`).join('');
+        const prodHtml = Object.keys(prodCounts).map(cat => `<div class="flex space-between" style="border-bottom:1px solid #eee; padding:5px 0;"><span>${cat}</span><b>${prodCounts[cat]}</b></div>`).join('') || '<p style="color:#999; text-align:center;">No products added yet.</p>';
 
         // Webpage Link
         const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
@@ -410,27 +465,27 @@
 
         div.innerHTML = `
             <!-- Time Widget -->
-            <div class="card flex space-between" style="background:var(--primary); color:white; border:none;">
+            <div class="card flex space-between" style="background:var(--primary); color:white; border:none; padding:15px 20px;">
                 <div id="live-clock" style="font-size:1.2rem; font-weight:bold;">Loading...</div>
                 <div style="font-size:0.9rem;">${new Date().toDateString()}</div>
             </div>
 
             <!-- Status Widget -->
-            <div class="card flex space-between" style="border-left:5px solid ${isOpen?'var(--green)':'var(--red)'}">
+            <div class="card flex space-between" style="border-left:5px solid ${isOpen?'var(--green)':'var(--red)'}; padding:15px 20px;">
                 <div>
                     <h3 style="margin:0; color:${isOpen?'var(--green)':'var(--red)'}">${isOpen ? 'Your shop is Open' : 'Your shop is Closed'}</h3>
                     <small style="color:#777;">Based on schedule & emergency status</small>
                 </div>
-                <button class="btn btn-sm btn-outline" onclick="switchTab('Open/Close')">Edit</button>
+                <button class="btn btn-sm btn-outline" onclick="switchTab('Open/Close')">Edit Status</button>
             </div>
 
             <!-- Webpage Widget -->
-            <div class="card">
+            <div class="card" style="padding:15px 20px;">
                 <div class="flex space-between">
                     <b>Public Webpage</b>
-                    <button class="btn btn-sm btn-outline" onclick="switchTab('My Webpage')">Edit</button>
+                    <button class="btn btn-sm btn-outline" onclick="switchTab('My Webpage')">Customize</button>
                 </div>
-                <a href="${url}" target="_blank" class="btn btn-primary mt-1" style="width:100%;">See Your Webpage</a>
+                <a href="${url}" target="_blank" class="btn btn-primary mt-1" style="width:100%;"><i class="fa-solid fa-eye"></i> View Your Webpage</a>
             </div>
 
             <!-- Stats Grid -->
@@ -438,27 +493,32 @@
                 <div class="stat-card" style="border-bottom:4px solid var(--primary);">
                     <h2>${todaysOrders}</h2>
                     <small>Orders Today</small>
-                    <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Orders')">See</button>
+                    <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Orders')">View Orders</button>
                 </div>
                 <div class="stat-card" style="border-bottom:4px solid var(--gold);">
                     <h2>${unreadMsgs}</h2>
                     <small>New Messages</small>
-                    <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Messages')">See</button>
+                    <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Messages')">Read Messages</button>
                 </div>
                 <div class="stat-card" style="border-bottom:4px solid var(--green);">
                     <h2>${shopReviews.length}</h2>
                     <small>${pendingReviews} Pending Reviews</small>
-                    <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Reviews')">See</button>
+                    <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Reviews')">Manage Reviews</button>
+                </div>
+                <div class="stat-card" style="border-bottom:4px solid var(--accent);">
+                    <h2>${(shopData.products||[]).length}</h2>
+                    <small>Total Products</small>
+                    <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Products')">View Products</button>
                 </div>
             </div>
 
             <!-- Products Overview -->
-            <div class="card">
+            <div class="card" style="padding:15px 20px;">
                 <div class="flex space-between mb-1">
-                    <h3>Products (${(shopData.products||[]).length})</h3>
-                    <button class="btn btn-sm btn-outline" onclick="switchTab('Products')">Edit</button>
+                    <h3>Products by Category</h3>
+                    <button class="btn btn-sm btn-outline" onclick="switchTab('Products')">Manage Products</button>
                 </div>
-                ${prodHtml || '<p style="color:#999;">No products added yet. Go to Products tab to add your first item.</p>'}
+                ${prodHtml}
             </div>
         `;
         
@@ -466,7 +526,7 @@
         if(window.clockInterval) clearInterval(window.clockInterval);
         window.clockInterval = setInterval(() => {
             const el = document.getElementById('live-clock');
-            if(el) el.innerText = new Date().toLocaleTimeString();
+            if(el) el.innerText = new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
         }, 1000);
     }
 
@@ -475,6 +535,7 @@
         div.innerHTML = `
             <div class="card">
                 <h3><i class="fa-solid fa-calculator"></i> Smart POS</h3>
+                <p style="color:#666; margin-bottom: 20px;">Quickly generate invoices for in-store sales.</p> <!-- Original text preserved -->
                 <div class="input-group">
                     <label>Select Product</label>
                     <select id="pos-item" onchange="calcPos()">
@@ -490,14 +551,14 @@
                         <div class="toggle-opt ${discountType==='amount'?'active':''}" onclick="setDiscType('amount')">Rs. Amount</div>
                         <div class="toggle-opt ${discountType==='percent'?'active':''}" onclick="setDiscType('percent')">% Percent</div>
                     </div>
-                    <input type="number" id="pos-disc" value="0" oninput="calcPos()" placeholder="Enter value">
+                    <input type="number" id="pos-disc" value="0" oninput="calcPos()" placeholder="Enter discount value">
                 </div>
                 
                 <div class="text-center" style="margin:20px 0; background:#FFF8E1; padding:15px; border-radius:12px;">
                     <small>Total Payable</small><br>
                     <span style="font-size:1.8rem; font-weight:800; color:var(--primary);" id="pos-total">Rs. 0</span>
                 </div>
-                <button class="btn btn-green" onclick="printInv()">Generate Invoice & Print</button>
+                <button class="btn btn-green" onclick="printInv()"><i class="fa-solid fa-print"></i> Generate Invoice & Print</button>
             </div>
         `;
     }
@@ -515,32 +576,51 @@
         let final = 0;
         if (discountType === 'amount') final = price - discVal;
         else final = price - (price * (discVal / 100));
-        document.getElementById('pos-total').innerText = "Rs. " + Math.max(0, final).toLocaleString(); // Ensure currency formatting
+        document.getElementById('pos-total').innerText = "Rs. " + Math.max(0, final).toLocaleString();
     }
 
     function printInv() {
         const [price, name] = document.getElementById('pos-item').value.split('|');
-        if(name === 'Select') return alert("Please select a product first.");
-        const customerName = document.getElementById('pos-cust').value || "Customer";
-        const discountText = discountType === 'amount' ? `Discount: Rs. ${parseInt(document.getElementById('pos-disc').value || 0).toLocaleString()}` : `Discount: ${parseInt(document.getElementById('pos-disc').value || 0)}%`;
+        if(name === 'Select') { alert("Please select a product first."); return; }
+        const custName = document.getElementById('pos-cust').value || "Customer";
         const total = document.getElementById('pos-total').innerText;
-        const w = window.open('','','width=300,height=500');
-        w.document.write(`
-            <body style="font-family:monospace; text-align:center; padding:10px;">
-                <h3>${shopData.shopName}</h3>
-                <p>Date: ${new Date().toLocaleDateString()}</p>
+        const discType = discountType === 'amount' ? 'Rs. ' : '% ';
+        const discVal = document.getElementById('pos-disc').value || '0';
+
+        const printContent = `
+            <style>
+                body { font-family: 'Poppins', sans-serif; margin: 0; padding: 10px; color: #3E2723; }
+                h3 { text-align: center; color: #FF6D00; margin-bottom: 5px; }
+                p { margin: 3px 0; font-size: 0.9em; }
+                hr { border: 0; border-top: 1px dashed #ccc; margin: 10px 0; }
+                .item-details { display: flex; justify-content: space-between; margin-bottom: 5px; }
+                .total-line { display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1em; margin-top: 10px; }
+                .text-center { text-align: center; }
+            </style>
+            <body>
+                <h3>${shopData.shopName || 'FurnicoHub Seller'}</h3>
+                <p class="text-center">Invoice for ${custName}</p>
+                <p class="text-center">Date: ${new Date().toLocaleDateString()}</p>
                 <hr>
-                <p>Customer: ${customerName}</p>
-                <p>Item: ${name}</p>
-                <p>Unit Price: Rs. ${parseInt(price).toLocaleString()}</p>
-                <p>${discountText}</p>
+                <div class="item-details">
+                    <span>${name}</span>
+                    <span>Rs. ${parseInt(price).toLocaleString()}</span>
+                </div>
+                ${discVal !== '0' ? `<div class="item-details"><span>Discount (${discType}${discVal}):</span> <span>- Rs. ${parseInt(price - parseFloat(total.replace('Rs. ', '').replace(/,/g, ''))).toLocaleString()}</span></div>` : ''}
                 <hr>
-                <h3>Total: ${total}</h3>
-                <p style="margin-top:20px;">Thank you for your purchase!</p>
-                <script>window.print();<\/script>
+                <div class="total-line">
+                    <span>Total:</span>
+                    <span>${total}</span>
+                </div>
+                <p class="text-center" style="margin-top: 20px;">Thank you for your purchase!</p>
             </body>
-        `);
-        w.document.close(); // Close the document stream
+        `;
+
+        const printFrame = document.getElementById('printFrame');
+        printFrame.contentWindow.document.open();
+        printFrame.contentWindow.document.write(printContent);
+        printFrame.contentWindow.document.close();
+        printFrame.contentWindow.print();
     }
 
     // --- 3) MARKETPLACE ---
@@ -548,31 +628,33 @@
         div.innerHTML = `
             <div class="card">
                 <h3>Marketplace Feed</h3>
-                <div class="flex mt-1" style="gap: 15px;">
+                <p style="color:#666; margin-bottom: 15px;">Explore furniture from other sellers on FurnicoHub.</p> <!-- Original text preserved -->
+                <div class="flex mt-1">
                     <input id="search-shop" placeholder="Search Shop Name..." class="w-100" onkeyup="filterFeed()">
                     <input id="search-prod" placeholder="Search Product Name..." class="w-100" onkeyup="filterFeed()">
                 </div>
             </div>
-            <div id="feed-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:15px;">Loading...</div>
+            <div id="feed-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:15px;">
+                <div style="grid-column:1/-1; text-align:center; padding:50px; color:#aaa;">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x"></i> Loading marketplace items...
+                </div>
+            </div>
         `;
         
         try {
-            const snapshot = await db.collection('users').where('role', '==', 'seller').get();
-            marketItems = [];
-            snapshot.forEach(doc => {
+            const snap = await db.collection('users').where('role', '==', 'seller').get();
+            let items = [];
+            snap.forEach(doc => {
                 const d = doc.data();
-                if(d.products) d.products.forEach(p => marketItems.push({
-                    ...p, 
-                    seller: d.shopName, 
-                    logo: d.logo, 
-                    verified: d.isVerified, /* Using correct field name */
-                    sellerId: doc.id
-                }));
+                if(d.products && d.products.length > 0) {
+                    d.products.forEach(p => items.push({...p, seller: d.shopName, logo: d.logo, verified: d.isVerified, sellerId: doc.id}));
+                }
             });
-            window.filterFeed();
+            window.marketItems = items;
+            window.filterFeed(); // Initial render after fetching
         } catch(e) {
             console.error("Error loading marketplace feed:", e);
-            document.getElementById('feed-grid').innerHTML = '<p class="text-red center w-100" style="grid-column: 1/-1;">Error loading marketplace feed. Please try again.</p>';
+            document.getElementById('feed-grid').innerHTML = '<p class="text-red" style="grid-column:1/-1; text-align:center;">Error loading feed. Please check your internet connection.</p>';
         }
     }
 
@@ -595,25 +677,21 @@
         });
 
         let html = '';
-        if (filtered.length === 0) {
-            html = '<p class="text-center w-100" style="grid-column: 1/-1;">No items found matching your search.</p>';
-        } else {
-            Object.keys(grouped).forEach(cat => {
-                html += `<div class="cat-header">${cat}</div>`;
-                grouped[cat].forEach(i => {
-                    html += `
-                    <div class="card" style="padding:0; overflow:hidden; cursor:pointer;" onclick="window.open('shop.html?id=${i.sellerId}','_blank')">
-                        <img src="${i.images[0]}" style="width:100%; height:120px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/120/FFCC80/3E2723?text=Product'">
-                        <div style="padding:10px;">
-                            <div class="bold">${i.name}</div>
-                            <div class="text-primary">Rs. ${parseInt(i.price).toLocaleString()}</div>
-                            <div style="font-size:0.75rem; color:#777; margin-top:5px;">${i.seller}</div>
-                        </div>
-                    </div>`;
-                });
+        Object.keys(grouped).forEach(cat => {
+            html += `<div class="cat-header">${cat}</div>`;
+            grouped[cat].forEach(i => {
+                html += `
+                <div class="card" style="padding:0; overflow:hidden; cursor:pointer;" onclick="window.open('shop.html?id=${i.sellerId}','_blank')">
+                    <img src="${i.images[0]}" style="width:100%; height:120px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'">
+                    <div style="padding:10px;">
+                        <div class="bold">${i.name}</div>
+                        <div class="text-primary">Rs. ${parseInt(i.price).toLocaleString()}</div>
+                        <div style="font-size:0.75rem; color:#777; margin-top:5px;"><i class="fa-solid fa-store" style="margin-right:5px; color:#FF9800;"></i>${i.seller}</div>
+                    </div>
+                </div>`;
             });
-        }
-        grid.innerHTML = html;
+        });
+        grid.innerHTML = html || '<p class="text-center w-100" style="color:#777; padding:40px;">No items found matching your search criteria.</p>';
     }
 
     // --- 4) PROFILE ---
@@ -623,17 +701,17 @@
         div.innerHTML = `
             <div class="card">
                 <h3>Shop Profile</h3>
-                ${d.isVerified ? '<div style="background:#E8F5E9; color:var(--green); padding:10px; border-radius:8px; text-align:center;">🔒 Locked (Verified)</div>' : ''}
+                ${d.isVerified ? '<div style="background:#E8F5E9; color:var(--green); padding:10px; border-radius:8px; text-align:center; margin-bottom:15px;">🔒 Locked (Verified) - Changes disabled</div>' : ''}
                 <div class="text-center mb-2 mt-1">
-                    <img id="p-logo" src="${d.logo||'logo.png'}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);" onerror="this.src='https://via.placeholder.com/100/FFCC80/3E2723?text=Logo'">
+                    <img id="p-logo" src="${d.logo||'logo.png'}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);">
                     ${!d.isVerified ? `<br><label class="btn btn-outline" style="width:auto; display:inline-block; margin-top:10px; padding:6px 15px;">Upload Logo <input type="file" hidden onchange="upImg(this, 'logo')"></label>` : ''}
                 </div>
-                <div class="input-group"><label>Shop Name *</label><input id="s-name" value="${d.shopName||''}" ${lock}></div>
-                <div class="input-group"><label>Address *</label><textarea id="s-addr" ${lock}>${d.address||''}</textarea></div>
-                <div class="input-group"><label>Owner Name *</label><input id="s-own" value="${d.ownerName||''}" ${lock}></div>
-                <div class="input-group"><label>NIC *</label><input id="s-nic" value="${d.nic||''}" ${lock}></div>
-                <div class="input-group"><label>Phone 1 *</label><input type="tel" id="s-ph1" value="${d.phone1||''}" placeholder="e.g., 0712345678" ${lock}></div>
-                <div class="input-group"><label>WhatsApp Number (+94...) *</label><input type="tel" id="s-wa" value="${d.whatsapp||''}" placeholder="e.g., 94771234567" ${lock}></div>
+                <div class="input-group"><label>Shop Name</label><input id="s-name" value="${d.shopName||''}" ${lock} placeholder="Your shop's public name"></div>
+                <div class="input-group"><label>Address</label><textarea id="s-addr" ${lock} rows="3" placeholder="Full address for your shop">${d.address||''}</textarea></div>
+                <div class="input-group"><label>Owner Name</label><input id="s-own" value="${d.ownerName||''}" ${lock} placeholder="Owner's full name"></div>
+                <div class="input-group"><label>NIC</label><input id="s-nic" value="${d.nic||''}" ${lock} placeholder="National Identity Card number"></div>
+                <div class="input-group"><label>Phone (e.g., 0771234567)</label><input type="tel" id="s-ph1" value="${d.phone1||''}" ${lock} placeholder="Primary contact number"></div>
+                <div class="input-group"><label>WhatsApp (e.g., 94771234567 - No +)</label><input type="tel" id="s-wa" value="${d.whatsapp||'94'}" ${lock} placeholder="WhatsApp number without '+', starting with 94"></div>
                 ${!d.isVerified ? `<button class="btn" onclick="saveProfile(this)">Save Profile</button>` : ''}
             </div>
         `;
@@ -647,18 +725,20 @@
         const phone1 = document.getElementById('s-ph1').value;
         const whatsapp = document.getElementById('s-wa').value;
 
-        // Basic validation for required fields
+        // Validation for all fields
         if (!shopName || !address || !ownerName || !nic || !phone1 || !whatsapp) {
-            return alert("All fields marked with * are required.");
+            alert("All profile fields (Shop Name, Address, Owner Name, NIC, Phone, WhatsApp) are required.");
+            return;
         }
-
-        // Validate WhatsApp number format
-        if (!whatsapp.startsWith('94') || whatsapp.length < 11 || !/^\d+$/.test(whatsapp)) { // Check for starts with 94, minimum length, and digits only
-            return alert("WhatsApp number must start with '94' and be a complete phone number (e.g., 94771234567).");
+        // Specific WhatsApp validation (no +, starts with 94, minimum length)
+        if (!whatsapp.startsWith('94') || whatsapp.length < 11) { // 94 + 9 digits = 11
+            alert("WhatsApp number must start with '94' and be a complete number (e.g., 94771234567). Do not include '+'.");
+            return;
         }
-        // Validate Phone 1 format (simple digit check for now)
-        if (!/^\d+$/.test(phone1) || phone1.length < 9) { // Simple check for digits and min length
-            return alert("Please enter a valid Phone 1 number (digits only, minimum 9 digits).");
+        // Basic Phone validation
+        if (phone1.length < 9) { // Assuming 0771234567 is 10 digits, minimum could be 9
+             alert("Please enter a valid phone number.");
+             return;
         }
         
         const originalText = btn.innerText;
@@ -672,14 +752,13 @@
                 ownerName: ownerName,
                 nic: nic,
                 phone1: phone1,
-                whatsapp: whatsapp,
-                logo: shopData.temp_logo || shopData.logo || '',
+                whatsapp: whatsapp, // Saved without '+' as per instruction, will add in shop.html
+                logo: shopData.temp_logo || shopData.logo || user.photoURL || 'logo.png',
                 profileCompleted: true
             });
-            // Update local data immediately after successful save
-            shopData = (await db.collection('users').doc(user.uid).get()).data();
-            alert("Profile saved successfully!");
-            switchTab('Dashboard'); // Redirect to dashboard after saving
+            // shopData will be updated by the onSnapshot listener
+            alert("Profile Saved Successfully! Your public shop page is now updated.");
+            switchTab('Dashboard');
         } catch(e) {
             console.error("Error saving profile:", e);
             alert("Error saving profile: " + e.message);
@@ -691,54 +770,70 @@
 
     // --- 5) GET VERIFIED ---
     function renderVerify(div) {
-        if(shopData.isVerified) return div.innerHTML = `<div class="card text-center" style="padding:40px;"><h1 class="text-green"><i class="fa-solid fa-circle-check"></i> Verified! Your shop has the green badge.</h1></div>`;
+        if(shopData.isVerified) return div.innerHTML = `<div class="card text-center" style="padding:40px;"><h1 class="text-green"><i class="fa-solid fa-circle-check"></i> Your Shop is Verified!</h1><p style="color:#666;">You now have the official green badge.</p></div>`;
         
         div.innerHTML = `
             <div class="card">
-                <h3>Get Verified (One-time fee: Rs. 5000)</h3>
-                <p style="color:#666; margin-bottom:15px;">Follow these steps to get your shop's green 'Verified' badge.</p>
-                <button class="btn btn-outline" onclick="printProf()">1. Download Shop Profile PDF</button>
-                <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0;">
-                    <b>2. Certify Document:</b> Get the downloaded PDF certified by a Grama Niladhari (GN) or Justice of Peace (JP).<br>
-                    <b>3. Make Payment:</b> Pay the one-time verification fee of <b>Rs. 5000</b> to:<br>
-                    Bank: Commercial Bank, Homagama<br>
-                    Account Name: Colombage S.D.<br>
-                    Account Number: 8750053306
+                <h3>Get Verified (Rs. 5000)</h3>
+                <p style="color:#666; margin-bottom:15px;">Follow these steps to get the official green 'Verified' badge on your shop profile and products.</p>
+                <button class="btn btn-outline" onclick="printProf()"><i class="fa-solid fa-download"></i> 1. Download Profile PDF</button>
+                <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0; border:1px dashed #FFCC80;">
+                    <b>2. Certify Document:</b> Get the downloaded PDF document certified by a Grama Niladhari (GN) or Justice of the Peace (JP).<br><br>
+                    <b>3. Make Payment:</b> Pay Rs. 5000 to the following bank account:<br>
+                    <strong>Bank:</strong> Commercial Bank, Homagama<br>
+                    <strong>Account No:</strong> 8750053306 (Colombage SD)
                 </div>
                 <div class="input-group">
-                    <label>4. Upload Certified Document *</label>
-                    <div class="upload-box" onclick="document.getElementById('v-doc').click()">Click to Upload Certified PDF/Image <input type="file" id="v-doc" hidden onchange="upImg(this, 'doc')"></div>
-                    <small id="st-doc" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded Successfully</small>
+                    <label>4. Upload Certified Document</label>
+                    <div class="upload-box" onclick="document.getElementById('v-doc').click()">Click to Upload Certified PDF/Image <i class="fa-solid fa-cloud-arrow-up"></i><input type="file" id="v-doc" hidden onchange="upImg(this, 'doc')"></div>
+                    <small id="st-doc" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;"><i class="fa-solid fa-check-circle"></i> Certified Document Uploaded</small>
                 </div>
                 <div class="input-group">
-                    <label>5. Upload Payment Slip/Screenshot *</label>
-                    <div class="upload-box" onclick="document.getElementById('v-slip').click()">Click to Upload Payment Proof <input type="file" id="v-slip" hidden onchange="upImg(this, 'slip')"></div>
-                    <small id="st-slip" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded Successfully</small>
+                    <label>5. Upload Payment Slip</label>
+                    <div class="upload-box" onclick="document.getElementById('v-slip').click()">Click to Upload Payment Proof <i class="fa-solid fa-cloud-arrow-up"></i><input type="file" id="v-slip" hidden onchange="upImg(this, 'slip')"></div>
+                    <small id="st-slip" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;"><i class="fa-solid fa-check-circle"></i> Payment Slip Uploaded</small>
                 </div>
-                <button class="btn btn-green" onclick="subVerify(this)">Submit for Review</button>
+                <button class="btn btn-green" onclick="subVerify(this)"><i class="fa-solid fa-paper-plane"></i> Submit for Review</button>
             </div>
         `;
+        // Initial check for existing temp files
+        if (shopData.temp_doc) document.getElementById('st-doc').classList.remove('hidden');
+        if (shopData.temp_slip) document.getElementById('st-slip').classList.remove('hidden');
     }
       
     function printProf() {
-        const w = window.open('','','width=600,height=600');
-        w.document.write(`
-            <html lang="en"><head><title>Shop Profile - ${shopData.shopName}</title><style>body{font-family: 'Poppins', sans-serif; padding: 20px;} h2{color:#FF6D00;} p{margin-bottom: 5px;}</style></head>
+        // Ensuring all profile data is available for PDF
+        const d = shopData;
+        const printWindow = window.open('','','width=600,height=600');
+        printWindow.document.write(`
+            <style>
+                body { font-family: 'Poppins', sans-serif; margin: 20px; color: #3E2723; }
+                h2 { color: #FF6D00; text-align: center; margin-bottom: 20px; }
+                p { margin-bottom: 8px; line-height: 1.5; }
+                b { color: #5D4037; }
+                hr { border: 0; border-top: 1px dashed #ccc; margin: 20px 0; }
+                .certification-area { border: 1px solid #ddd; padding: 20px; margin-top: 30px; text-align: center; height: 150px; }
+            </style>
             <body>
-                <h2>FurnicoHub Seller Profile</h2>
-                <p><b>Shop Name:</b> ${shopData.shopName || 'N/A'}</p>
-                <p><b>Owner Name:</b> ${shopData.ownerName || 'N/A'}</p>
-                <p><b>NIC:</b> ${shopData.nic || 'N/A'}</p>
-                <p><b>Address:</b> ${shopData.address || 'N/A'}</p>
-                <p><b>Phone:</b> ${shopData.phone1 || 'N/A'}</p>
-                <p><b>WhatsApp:</b> ${shopData.whatsapp || 'N/A'}</p>
-                <p style="margin-top:20px; font-style:italic;">Please get this document certified by a Grama Niladhari or Justice of Peace.</p>
-                <p style="text-align:center; margin-top:40px;">------------------------------------</p>
-                <p style="text-align:center;">(Official Stamp & Signature)</p>
-            </body></html>
+                <h2>FurnicoHub Seller Profile for Certification</h2>
+                <p><b>Shop Name:</b> ${d.shopName || 'N/A'}</p>
+                <p><b>Owner Name:</b> ${d.ownerName || 'N/A'}</p>
+                <p><b>NIC:</b> ${d.nic || 'N/A'}</p>
+                <p><b>Address:</b> ${d.address || 'N/A'}</p>
+                <p><b>Primary Phone:</b> ${d.phone1 || 'N/A'}</p>
+                <p><b>WhatsApp:</b> +${d.whatsapp || 'N/A'}</p>
+                <hr>
+                <p>This document verifies the details of the seller for FurnicoHub platform.</p>
+                <div class="certification-area">
+                    <p><b>Grama Niladhari (GN) / Justice of Peace (JP) Certification Area</b></p>
+                    <p style="margin-top: 30px;">Signature: _________________________</p>
+                    <p>Date: _________________________</p>
+                </div>
+                <p style="text-align:center; margin-top:30px; font-size:0.8em; color:#888;">FurnicoHub | Sri Lanka's #1 Furniture Platform</p>
+            </body>
         `);
-        w.document.close();
-        w.print();
+        printWindow.document.close();
+        printWindow.print();
     }
 
     async function subVerify(btn) {
@@ -754,16 +849,16 @@
                 doc: shopData.temp_doc, 
                 slip: shopData.temp_slip, 
                 time: new Date().toISOString(),
-                status: 'pending' // Add a status for admin review
+                status: 'pending' // Add a status
             });
-            alert("Verification request submitted successfully! We will review it shortly.");
-            // Optionally clear temp_doc and temp_slip or update UI
-            delete shopData.temp_doc;
-            delete shopData.temp_slip;
-            renderVerify(document.getElementById('content-area')); // Refresh the verification tab
+            alert("Application Submitted! Your verification request has been sent for review. We will contact you soon.");
+            // Optionally clear temp urls or update UI to show pending status
+            shopData.temp_doc = null;
+            shopData.temp_slip = null;
+            renderVerify(document.getElementById('content-area')); // Re-render to show submission status
         } catch(e) {
-            console.error("Error submitting verification request:", e);
-            alert("Error submitting for review: " + e.message);
+            console.error("Error submitting verification:", e);
+            alert("Error submitting verification: " + e.message);
         } finally {
             btn.innerText = "Submit for Review";
             btn.disabled = false;
@@ -780,36 +875,37 @@
             const s = schedule[d] || {open: true, start: "09:00", end: "20:00"};
             return `
             <div class="day-row">
-                <div style="width:90px; font-weight:bold;">${d}</div>
-                <select id="st-${d}" class="w-100" style="flex: 1;"><option value="open" ${s.open?'selected':''}>Open</option><option value="closed" ${!s.open?'selected':''}>Closed</option></select>
-                <input type="time" id="start-${d}" value="${s.start}" class="w-100" style="flex: 1;"> to <input type="time" id="end-${d}" value="${s.end}" class="w-100" style="flex: 1;">
+                <div style="min-width:90px; font-weight:bold; color:var(--secondary);">${d}</div>
+                <select id="st-${d}" class="w-100" style="flex:1;"><option value="open" ${s.open?'selected':''}>Open</option><option value="closed" ${!s.open?'selected':''}>Closed</option></select>
+                <input type="time" id="start-${d}" value="${s.start}" class="w-100" style="flex:1;"> <span style="color:#777;">to</span> <input type="time" id="end-${d}" value="${s.end}" class="w-100" style="flex:1;">
             </div>`;
         }).join('');
 
         const specialDates = (shopData.specialDates || []).map((sd, i) => `
-            <span class="date-chip">${sd} <i class="fa-solid fa-times" style="cursor:pointer; margin-left:5px;" onclick="removeDate(${i})"></i></span>
+            <span class="date-chip">${new Date(sd).toDateString()} <i class="fa-solid fa-times" style="cursor:pointer; margin-left:5px;" onclick="removeDate(${i})"></i></span>
         `).join('');
 
         div.innerHTML = `
             <div class="card" style="border:2px solid ${isEmergency?'var(--red)':'var(--green)'}">
                 <h3>Emergency Control</h3>
-                <p>${isEmergency ? "🔴 YOUR SHOP IS TEMPORARILY CLOSED TODAY" : "🟢 Your shop is currently operating normally"}</p>
-                <button class="btn btn-${isEmergency?'green':'red'}" onclick="toggleEmergency(!${isEmergency})">${isEmergency?'Re-Open Shop Now':'Close Shop Today'}</button>
+                <p style="color:#666; margin-bottom:15px;">This allows you to quickly close or re-open your shop for today, overriding the regular schedule.</p> <!-- Original text preserved -->
+                <p class="bold" style="color:${isEmergency?'var(--red)':'var(--green)'}">${isEmergency ? "🔴 YOUR SHOP IS CURRENTLY CLOSED" : "🟢 YOUR SHOP IS CURRENTLY OPEN"}</p>
+                <button class="btn btn-${isEmergency?'green':'red'}" onclick="toggleEmergency(!${isEmergency})"><i class="fa-solid ${isEmergency?'fa-door-open':'fa-door-closed'}"></i> ${isEmergency?'Re-Open Shop Now':'Close Shop for Today'}</button>
             </div>
             <div class="card">
                 <h3>Weekly Schedule</h3>
-                <p style="color:#777; margin-bottom:15px;">Set your regular opening and closing times for each day.</p>
+                <p style="color:#666; margin-bottom:15px;">Set your regular opening and closing times for each day of the week.</p> <!-- Original text preserved -->
                 ${rows}
-                <button class="btn mt-1" onclick="saveSchedule(this)">Save Weekly Settings</button>
+                <button class="btn mt-1" onclick="saveSchedule(this)"><i class="fa-solid fa-save"></i> Save Weekly Settings</button>
             </div>
             <div class="card">
                 <h3>Special Closed Dates</h3>
-                <p style="color:#777; margin-bottom:15px;">Add specific dates when your shop will be closed (e.g., holidays).</p>
-                <div class="flex mb-1" style="flex-wrap: nowrap; gap: 5px;">
-                    <input type="date" id="sp-date" class="w-100">
-                    <button class="btn btn-sm btn-outline" onclick="addDate()">Add Date</button>
+                <p style="color:#666; margin-bottom:15px;">Add specific dates (e.g., holidays) when your shop will be closed, overriding the weekly schedule.</p> <!-- Original text preserved -->
+                <div class="flex mb-1">
+                    <input type="date" id="sp-date" class="w-100" style="flex:1;">
+                    <button class="btn btn-sm btn-outline" onclick="addDate()" style="flex-shrink:0;"><i class="fa-solid fa-plus"></i> Add Date</button>
                 </div>
-                <div style="margin-top: 10px;">${specialDates || '<p style="color:#999;">No special closed dates added.</p>'}</div>
+                <div style="margin-top:10px;">${specialDates || '<p style="color:#999; text-align:center;">No special closed dates added.</p>'}</div>
             </div>
         `;
     }
@@ -829,41 +925,37 @@
         btn.disabled = true;
         try {
             await db.collection('users').doc(user.uid).update({ schedule });
-            shopData.schedule = schedule; // Update local shopData immediately
-            alert("Weekly Schedule Saved!");
+            // shopData.schedule will be updated by the onSnapshot listener
+            alert("Weekly Schedule Saved Successfully!");
         } catch(e) { 
             console.error("Error saving schedule:", e);
             alert("Error saving schedule: " + e.message); 
-        } finally { 
-            btn.innerText = "Save Weekly Settings"; 
-            btn.disabled = false;
         }
+        finally { btn.innerText = "Save Weekly Settings"; btn.disabled = false; }
     }
 
     async function toggleEmergency(state) {
         try {
             await db.collection('users').doc(user.uid).update({ emergencyClose: state });
-            shopData.emergencyClose = state; // Update local shopData immediately
-            renderOpenClose(document.getElementById('content-area')); // Re-render the UI
-            alert(`Shop is now ${state ? 'CLOSED' : 'OPEN'}.`);
+            // shopData.emergencyClose will be updated by the onSnapshot listener
+            alert(`Shop is now ${state ? 'CLOSED' : 'OPEN'} for today.`);
         } catch(e) { 
-            console.error("Error toggling emergency close:", e);
-            alert("Error toggling emergency status: " + e.message); 
+            console.error("Error toggling emergency status:", e);
+            alert("Error updating emergency status: " + e.message); 
         }
     }
 
     async function addDate() {
         const d = document.getElementById('sp-date').value;
-        if(!d) return alert("Please select a date first.");
+        if(!d) { alert("Please select a date to add."); return; }
         const arr = shopData.specialDates || [];
-        if (arr.includes(d)) return alert("This date is already added.");
+        if (arr.includes(d)) { alert("This date is already added."); return; } // Prevent duplicates
         arr.push(d);
         try {
             await db.collection('users').doc(user.uid).update({ specialDates: arr });
-            shopData.specialDates = arr; // Update local shopData immediately
-            renderOpenClose(document.getElementById('content-area')); // Re-render the UI
-            document.getElementById('sp-date').value = ''; // Clear input
+            // shopData.specialDates will be updated by the onSnapshot listener
             alert("Special date added!");
+            document.getElementById('sp-date').value = ''; // Clear input
         } catch(e) { 
             console.error("Error adding special date:", e);
             alert("Error adding special date: " + e.message); 
@@ -876,9 +968,8 @@
         arr.splice(i, 1);
         try {
             await db.collection('users').doc(user.uid).update({ specialDates: arr });
-            shopData.specialDates = arr; // Update local shopData immediately
-            renderOpenClose(document.getElementById('content-area')); // Re-render the UI
-            alert("Special date removed!");
+            // shopData.specialDates will be updated by the onSnapshot listener
+            alert("Special date removed.");
         } catch(e) { 
             console.error("Error removing special date:", e);
             alert("Error removing special date: " + e.message); 
@@ -887,18 +978,18 @@
 
     // --- 7) PRODUCTS (Strict Cats) ---
     function renderProducts(div) {
-        tempImages = [null,null,null]; // Reset temp images on render
+        tempImages = [null,null,null]; // Reset temp images on tab load
         div.innerHTML = `
             <div class="card">
                 <h3>Add New Product</h3>
-                <p style="color:#777; margin-bottom:15px;">Upload up to 3 images, choose a category, and fill in product details.</p>
+                <p style="color:#666; margin-bottom:15px;">Fill in the details below to add a new furniture product to your shop.</p> <!-- Original text preserved -->
                 <div class="input-group">
                     <label>Images (Max 3) *</label>
-                    <div class="flex" style="flex-wrap: nowrap; overflow-x: auto;">
-                        ${[0,1,2].map(i=>`<div class="upload-box" style="padding:10px; min-width:70px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center;" onclick="document.getElementById('f-p${i}').click()">
-                            <i class="fa-solid fa-plus" style="font-size: 1.2rem; color: var(--primary);"></i>
+                    <div class="flex">
+                        ${[0,1,2].map(i=>`<div class="upload-box" style="padding:10px; min-width:70px; flex:1;" onclick="document.getElementById('f-p${i}').click()">
+                            <i class="fa-solid fa-image" style="font-size:1.5rem; margin-bottom:5px; color:#FF9800;"></i><br>Add Image ${i+1}
                             <input type="file" id="f-p${i}" hidden onchange="upImg(this, 'prod', ${i})">
-                            <img id="prev-p${i}" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius: 8px; display:none;">
+                            <img id="prev-p${i}" style="display:none; width:100%; height:60px; object-fit:cover; margin-top:5px; border-radius:5px;">
                         </div>`).join('')}
                     </div>
                 </div>
@@ -909,26 +1000,21 @@
                     </select>
                 </div>
                 <div class="input-group"><label>Product Name *</label><input id="p-name" placeholder="e.g., Modern Sofa Set"></div>
-                <div class="input-group"><label>Description</label><textarea id="p-desc" rows="3" placeholder="Detailed product description..."></textarea></div>
+                <div class="input-group"><label>Description</label><textarea id="p-desc" rows="4" placeholder="Detailed description of your product"></textarea></div>
                 <div class="input-group"><label>Price (Rs) *</label><input type="number" id="p-price" placeholder="e.g., 50000"></div>
-                <div class="input-group"><label>Promotion Text (Optional)</label><input id="p-promo" placeholder="e.g., 10% Off, Free Delivery"></div>
-                <button class="btn" onclick="saveProd(this)">Save Product</button>
+                <div class="input-group"><label>Promotional Text (Optional)</label><input id="p-promo" placeholder="e.g., 10% Off for limited time!"></div>
+                <button class="btn" onclick="saveProd(this)"><i class="fa-solid fa-plus-circle"></i> Save Product</button>
             </div>
-            <h3>Your Inventory (${(shopData.products||[]).length} items)</h3>
-            ${(shopData.products||[]).length === 0 ? '<p style="color:#999; text-align:center;">No products added yet.</p>' : ''}
-            ${(shopData.products||[]).map((p,i)=>`
+            <h3 style="margin-top:30px;">Current Inventory</h3>
+            <p style="color:#666; margin-bottom:15px;">Here are all the products currently listed in your shop.</p> <!-- Original text preserved -->
+            ${(shopData.products && shopData.products.length > 0) ? shopData.products.map((p,i)=>`
                 <div class="card flex space-between" style="padding:15px;">
-                    <div class="flex" style="align-items:flex-start;">
-                        <img src="${p.images[0]}" style="width:60px; height:60px; border-radius:8px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/60/FFCC80/3E2723?text=Prod'"> 
-                        <div style="flex:1;">
-                            <b style="display:block;">${p.name}</b>
-                            <span style="display:block; font-size:0.9rem; color:var(--primary);">Rs. ${parseInt(p.price).toLocaleString()}</span>
-                            ${p.promoText ? `<span style="display:block; font-size:0.75rem; color:#E65100;">${p.promoText}</span>` : ''}
-                        </div>
+                    <div class="flex" style="flex-grow:1;"><img src="${p.images[0]}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;"> 
+                        <div style="flex-grow:1;"><b>${p.name}</b><br>Rs. ${parseInt(p.price).toLocaleString()}</div>
                     </div>
-                    <button class="btn btn-outline btn-sm" style="width:auto; padding:5px 10px; border-color:var(--red); color:var(--red);" onclick="delProd(${i})"><i class="fa-solid fa-trash"></i> Delete</button>
+                    <button class="btn btn-outline" style="width:auto; padding:5px 10px; border-color:var(--red); color:var(--red); flex-shrink:0;" onclick="delProd(${i})"><i class="fa-solid fa-trash"></i> Delete</button>
                 </div>
-            `).join('')}
+            `).join('') : '<p style="color:#999; text-align:center;">No products added yet. Start by adding one above!</p>'}
         `;
     }
 
@@ -936,15 +1022,13 @@
         const imgs = tempImages.filter(x=>x);
         const cat = document.getElementById('p-cat').value;
         const name = document.getElementById('p-name').value;
-        const desc = document.getElementById('p-desc').value;
         const price = document.getElementById('p-price').value;
         const promoText = document.getElementById('p-promo').value;
 
-        if(!imgs.length) return alert("At least one image is required for the product.");
+        if(!imgs.length) return alert("Please upload at least one image for the product.");
         if(!cat) return alert("Product category is required.");
         if(!name) return alert("Product name is required.");
-        if(!price) return alert("Product price is required.");
-        if(isNaN(price) || Number(price) <= 0) return alert("Please enter a valid positive number for price.");
+        if(!price || isNaN(price) || Number(price) <= 0) return alert("A valid price is required.");
         
         btn.innerText = "Saving Product...";
         btn.disabled = true;
@@ -953,7 +1037,7 @@
             id: Date.now(),
             category: cat,
             name: name,
-            desc: desc,
+            desc: document.getElementById('p-desc').value,
             price: Number(price),
             promoText: promoText,
             images: imgs
@@ -962,9 +1046,9 @@
         try {
             const newArr = [...(shopData.products||[]), prod];
             await db.collection('users').doc(user.uid).update({products: newArr});
-            shopData.products = newArr; // Update local shopData
-            alert("Product added successfully!");
-            renderProducts(document.getElementById('content-area')); // Re-render product list
+            // shopData.products will be updated by onSnapshot listener
+            alert("Product Added Successfully!");
+            renderProducts(document.getElementById('content-area')); // Re-render to clear form and update list
         } catch(e) {
             console.error("Error saving product:", e);
             alert("Error saving product: " + e.message);
@@ -978,12 +1062,10 @@
         if(!confirm("Are you sure you want to delete this product? This action cannot be undone.")) return;
         try {
             const productToDelete = shopData.products[i];
-            const updatedProducts = shopData.products.filter((_, index) => index !== i); // Create new array without the deleted product
-
+            const updatedProducts = shopData.products.filter((_, index) => index !== i);
             await db.collection('users').doc(user.uid).update({products: updatedProducts});
-            shopData.products = updatedProducts; // Update local shopData
-            alert(`Product "${productToDelete.name}" deleted successfully!`);
-            renderProducts(document.getElementById('content-area')); // Re-render product list
+            // shopData.products will be updated by onSnapshot listener
+            alert(`Product '${productToDelete.name}' deleted successfully.`);
         } catch(e) { 
             console.error("Error deleting product:", e);
             alert("Error deleting product: " + e.message); 
@@ -998,133 +1080,143 @@
 
         div.innerHTML = `
             <div class="card text-center">
-                <h3>Public Shop Link</h3>
-                <p style="color:#777; margin-bottom:15px;">Share this link with your customers to showcase your products.</p>
+                <h3>Your Public Shop Link</h3>
+                <p style="color:#666; margin-bottom:15px;">Share this link with your customers to direct them to your personalized shop webpage.</p> <!-- Original text preserved -->
                 <input value="${url}" readonly class="w-100 text-center mb-1" style="background:#eee; border:none; padding:10px; border-radius:10px;">
-                <div class="flex center" style="flex-wrap: nowrap;">
-                    <a href="${url}" target="_blank" class="btn btn-outline" style="text-decoration:none;">Open Page</a>
-                    <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${url}'); alert('Shop link copied to clipboard!')">Copy Link</button>
+                <div class="flex center">
+                    <a href="${url}" target="_blank" class="btn btn-primary" style="text-decoration:none;"><i class="fa-solid fa-eye"></i> Open Page</a>
+                    <button class="btn btn-outline" onclick="navigator.clipboard.writeText('${url}'); alert('Link copied to clipboard!')"><i class="fa-solid fa-copy"></i> Copy Link</button>
                 </div>
             </div>
             
             <div class="card">
-                <h3>Visual Editor (Shop Page Customization)</h3>
-                <p style="color:#777; margin-bottom:15px;">Customize the look and feel of your public shop page.</p>
-                <div class="input-group"><label>Brand Color (Primary Color for Shop Page)</label><input type="color" id="w-col" value="${shopData.themeColor||'#FF6D00'}" onchange="saveWeb()"></div>
-                <div class="input-group"><label>Welcome Text (Displayed below contact info on Shop Page)</label><input id="w-txt" value="${shopData.heroText||''}" placeholder="e.g., Welcome to our exclusive collection!" onchange="saveWeb()"></div>
+                <h3>Visual Editor</h3>
+                <p style="color:#666; margin-bottom:15px;">Customize the look and feel of your public shop page.</p> <!-- Original text preserved -->
+                <div class="input-group"><label>Brand Color</label><input type="color" id="w-col" value="${shopData.themeColor||'#FF6D00'}" onchange="saveWeb('themeColor')"></div>
+                <div class="input-group"><label>Welcome Text on Page Header</label><input id="w-txt" value="${shopData.heroText||''}" onchange="saveWeb('heroText')" placeholder="e.g., Discover our exquisite collection!"></div>
             </div>
 
             <div class="card">
                 <h3>Social Media Links</h3>
-                <p style="color:#777; margin-bottom:15px;">Add your social media profiles to connect with more customers.</p>
-                <div class="input-group"><label>Facebook Profile/Page URL</label><input id="sl-fb" value="${sl.fb||''}" placeholder="https://facebook.com/yourshop" onchange="saveWeb()"></div>
-                <div class="input-group"><label>Instagram Profile URL</label><input id="sl-ig" value="${sl.ig||''}" placeholder="https://instagram.com/yourshop" onchange="saveWeb()"></div>
-                <div class="input-group"><label>TikTok Profile URL</label><input id="sl-tk" value="${sl.tk||''}" placeholder="https://tiktok.com/@yourshop" onchange="saveWeb()"></div>
-                <div class="input-group"><label>YouTube Channel URL</label><input id="sl-yt" value="${sl.yt||''}" placeholder="https://youtube.com/yourchannel" onchange="saveWeb()"></div>
+                <p style="color:#666; margin-bottom:15px;">Connect your social media profiles to your shop page. Use full URLs (e.g., https://facebook.com/yourpage).</p> <!-- Original text preserved -->
+                <div class="input-group"><label>Facebook Profile/Page URL</label><input id="sl-fb" value="${sl.fb||''}" placeholder="https://facebook.com/..." onchange="saveWeb('socialLinks.fb')"></div>
+                <div class="input-group"><label>Instagram Profile URL</label><input id="sl-ig" value="${sl.ig||''}" placeholder="https://instagram.com/..." onchange="saveWeb('socialLinks.ig')"></div>
+                <div class="input-group"><label>TikTok Profile URL</label><input id="sl-tk" value="${sl.tk||''}" placeholder="https://tiktok.com/..." onchange="saveWeb('socialLinks.tk')"></div>
+                <div class="input-group"><label>YouTube Channel URL</label><input id="sl-yt" value="${sl.yt||''}" placeholder="https://youtube.com/..." onchange="saveWeb('socialLinks.yt')"></div>
+                <div class="input-group"><label>LinkedIn Profile/Page URL</label><input id="sl-li" value="${sl.li||''}" placeholder="https://linkedin.com/..." onchange="saveWeb('socialLinks.li')"></div> <!-- Added LinkedIn -->
             </div>
         `;
     }
     
-    function saveWeb() {
-        // Debounce or add a "Save" button for more explicit saving if desired for better UX.
-        // For now, it saves on every change to see immediate effect.
-        db.collection('users').doc(user.uid).update({
-            themeColor: document.getElementById('w-col').value,
-            heroText: document.getElementById('w-txt').value,
-            socialLinks: {
-                fb: document.getElementById('sl-fb').value,
-                ig: document.getElementById('sl-ig').value,
-                tk: document.getElementById('sl-tk').value,
-                yt: document.getElementById('sl-yt').value
-            }
-        }).then(()=>console.log("Webpage settings updated successfully.")).catch(e=>{
-            console.error("Error updating webpage settings:", e);
-            alert("Error saving webpage settings: " + e.message);
-        });
+    function saveWeb(field) {
+        let updateData = {};
+        if (field === 'themeColor') {
+            updateData.themeColor = document.getElementById('w-col').value;
+        } else if (field === 'heroText') {
+            updateData.heroText = document.getElementById('w-txt').value;
+        } else if (field.startsWith('socialLinks.')) {
+            // Ensure socialLinks object exists
+            updateData.socialLinks = shopData.socialLinks || {};
+            const socialKey = field.split('.')[1];
+            updateData.socialLinks[socialKey] = document.getElementById('sl-' + socialKey).value;
+        }
+
+        db.collection('users').doc(user.uid).update(updateData)
+            .then(() => console.log("Webpage settings updated."))
+            .catch(e => console.error("Error updating webpage settings:", e));
+        // shopData will be updated by onSnapshot listener, triggering re-render if necessary
     }
 
     // --- 9) ORDERS ---
     function renderOrders(div) {
-        if(!shopOrders.length) return div.innerHTML = `<div class="card text-center"><h3>No Orders Yet</h3><p style="color:#777;">New customer inquiries will appear here.</p></div>`;
-        div.innerHTML = shopOrders.map(o => `
-            <div class="card" style="border-left:5px solid ${o.status==='new'?'var(--accent)':'var(--green)'}">
-                <div class="flex space-between">
-                    <b>${o.custName || 'Anonymous Customer'}</b> 
-                    <span class="status-badge" style="background:#FFF8E1; color:var(--text);">${(o.status||'new').toUpperCase()}</span>
+        if(!shopOrders.length) return div.innerHTML = `<div class="card text-center"><h3>No Orders Yet</h3><p style="color:#777;">You haven't received any orders from your public shop page.</p></div>`;
+        div.innerHTML = `
+            <h3>Recent Orders</h3>
+            <p style="color:#666; margin-bottom:15px;">Manage incoming inquiries and orders from your customers.</p> <!-- Original text preserved -->
+            ${shopOrders.map(o => `
+                <div class="card" style="border-left:5px solid ${o.status==='new'?'var(--accent)':'var(--green)'};">
+                    <div class="flex space-between">
+                        <b>${o.custName}</b> 
+                        <span class="status-badge st-${o.status||'new'}">${(o.status||'new').toUpperCase()}</span>
+                    </div>
+                    <div class="flex space-between" style="margin-top:10px;">
+                        <b style="color:var(--primary)">Rs. ${parseInt(o.total).toLocaleString()}</b>
+                        <a href="https://wa.me/+${o.custWa}" target="_blank" class="btn btn-green btn-sm"><i class="fa-brands fa-whatsapp"></i> Chat with Customer</a>
+                    </div>
+                    <p style="font-size:0.85rem; color:#666; margin-top:10px;">Items: ${(o.items||[]).map(i=>i.name).join(', ')}</p>
+                    <small style="color:#aaa;">Placed on: ${new Date(o.time).toLocaleString()}</small>
                 </div>
-                <div class="flex space-between" style="margin-top:10px;">
-                    <b style="color:var(--primary)">Total: Rs. ${parseInt(o.total).toLocaleString()}</b>
-                    <a href="https://wa.me/${o.custWa || shopData.whatsapp}?text=${encodeURIComponent('Hi ' + (o.custName || 'there') + ', regarding your inquiry for ' + (o.items||[]).map(i=>i.name).join(', ') + ' from ' + shopData.shopName + '.')}" target="_blank" class="btn btn-green btn-sm" style="width: auto;">
-                        <i class="fa-brands fa-whatsapp"></i> Chat
-                    </a>
-                </div>
-                <p style="font-size:0.85rem; color:#666; margin-top:10px;">Items: ${(o.items||[]).map(i=>i.name).join(', ') || 'N/A'}</p>
-                <small style="display:block; text-align:right; color:#999;">Received: ${new Date(o.time).toLocaleString()}</small>
-            </div>
-        `).join('');
+            `).join('')}
+        `;
     }
 
-    // --- 10) MESSAGES (Updated to show contact form messages) ---
+    // --- 10) MESSAGES --- (Updated to display actual messages)
     function renderMessages(div) {
-        if(!shopMessages.length) return div.innerHTML = `<div class="card text-center"><h3>No Messages Yet</h3><p style="color:#777;">Customer inquiries from your shop's contact form will appear here.</p></div>`;
-        div.innerHTML = shopMessages.map(m => `
-            <div class="card" style="border-left:5px solid var(--primary);">
-                <div class="flex space-between">
-                    <b>${m.name || 'Anonymous User'}</b>
-                    <small style="color:#777;">${new Date(m.time).toLocaleString()}</small>
+        if(!shopMessages.length) return div.innerHTML = `<div class="card text-center"><h3>No Messages Yet</h3><p style="color:#777;">You haven't received any messages from your public shop's contact form.</p></div>`;
+        div.innerHTML = `
+            <h3>Customer Messages</h3>
+            <p style="color:#666; margin-bottom:15px;">Respond to customer inquiries sent via your shop's contact form.</p> <!-- Original text preserved -->
+            ${shopMessages.map(m => `
+                <div class="card" style="border-left:5px solid var(--primary);">
+                    <div class="flex space-between">
+                        <b>${m.name}</b>
+                        <small style="color:#777">${new Date(m.time).toLocaleString()}</small>
+                    </div>
+                    <p style="background:#FFF8E1; padding:10px; border-radius:8px; margin:10px 0; border:1px dashed #FFCC80;">"${m.message}"</p>
+                    <div class="flex space-between">
+                        <div><i class="fa-solid fa-phone" style="color:var(--primary-light); margin-right:5px;"></i> ${m.phone}</div>
+                        <a href="https://wa.me/+${m.wa}" target="_blank" class="btn btn-green btn-sm"><i class="fa-brands fa-whatsapp"></i> Reply via WhatsApp</a>
+                    </div>
                 </div>
-                <p style="background:#FFF8E1; padding:12px; border-radius:8px; margin:10px 0; line-height:1.6;">"${m.message || 'No message content.'}"</p>
-                <div class="flex space-between" style="font-size:0.9rem; color:#555;">
-                    <span><i class="fa-solid fa-phone"></i> ${m.phone || 'N/A'}</span>
-                    <a href="https://wa.me/${m.wa || ''}?text=${encodeURIComponent('Hi ' + (m.name || 'there') + ', regarding your message from FurnicoHub. ')}" target="_blank" class="btn btn-green btn-sm" style="width:auto;">
-                        <i class="fa-brands fa-whatsapp"></i> Reply
-                    </a>
-                </div>
-            </div>
-        `).join('');
+            `).join('')}
+        `;
     }
 
     // --- 11) REVIEWS ---
     function renderReviews(div) {
-        if(!shopReviews.length) return div.innerHTML = `<div class="card text-center"><h3>No Reviews Yet</h3><p style="color:#777;">Customer reviews for your shop will appear here.</p></div>`;
-        div.innerHTML = shopReviews.map(r => `
-            <div class="card">
-                <div class="flex space-between">
-                    <b>${r.name || 'Anonymous'}</b>
-                    <div style="color:var(--gold)">${'★'.repeat(r.stars || 5)}</div>
-                </div>
-                <p style="margin:10px 0; font-style:italic; line-height:1.6;">"${r.text}"</p>
-                <div class="flex space-between">
-                    <span class="status-badge" style="background:${r.status==='published'?'#E8F5E9':'#FFF3E0'}; color:${r.status==='published'?'var(--green)':'#E65100'}; border-color:${r.status==='published'?'var(--green)':'#FFCC80'};">${(r.status || 'Pending').toUpperCase()}</span>
-                    <div class="flex" style="gap: 5px;">
-                        ${r.status !== 'published' ? `<button class="btn btn-green btn-sm" style="width:auto;" onclick="pubRev('${r.id}')">Publish</button>` : ''}
-                        <button class="btn btn-outline btn-sm" style="width:auto; border-color:var(--red); color:var(--red);" onclick="delRev('${r.id}')">Delete</button>
+        if(!shopReviews.length) return div.innerHTML = `<div class="card text-center"><h3>No Reviews Yet</h3><p style="color:#777;">Your shop has no customer reviews yet.</p></div>`;
+        div.innerHTML = `
+            <h3>Customer Reviews</h3>
+            <p style="color:#666; margin-bottom:15px;">Manage reviews from your customers. Published reviews appear on your shop page.</p> <!-- Original text preserved -->
+            ${shopReviews.map(r => `
+                <div class="card" style="border-left:5px solid ${r.status==='published'?'var(--green)':'var(--gold)'};">
+                    <div class="flex space-between">
+                        <b>${r.name}</b>
+                        <div style="color:var(--gold); font-size:1.1rem;">${'★'.repeat(r.stars || 5)}</div>
+                    </div>
+                    <p style="margin:10px 0; font-style:italic; background:#FAFAFA; padding:10px; border-radius:8px; border:1px solid #eee;">"${r.text}"</p>
+                    <div class="flex space-between">
+                        <span class="status-badge st-${r.status||'pending'}">${r.status || 'Pending'}</span>
+                        <div class="flex" style="gap:5px;">
+                            ${r.status !== 'published' ? `<button class="btn btn-green btn-sm" onclick="pubRev('${r.id}')"><i class="fa-solid fa-check"></i> Publish</button>` : ''}
+                            <button class="btn btn-outline btn-sm" style="color:var(--red); border-color:var(--red);" onclick="delRev('${r.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `).join('');
+            `).join('')}
+        `;
     }
 
     function pubRev(id) {
-        if(confirm("Are you sure you want to publish this review? It will be visible on your public shop page.")) {
-            db.collection('users').doc(user.uid).collection('reviews').doc(id).update({status: 'published'})
-            .then(() => alert("Review published successfully!"))
+        if (!confirm("Are you sure you want to publish this review? It will be visible on your public shop page.")) return;
+        db.collection('users').doc(user.uid).collection('reviews').doc(id).update({status: 'published'})
+            .then(() => alert("Review Published Successfully!"))
             .catch(e => { console.error("Error publishing review:", e); alert("Error publishing review: " + e.message); });
-        }
     }
 
     function delRev(id) {
-        if(confirm("Are you sure you want to delete this review? This action cannot be undone.")) {
-            db.collection('users').doc(user.uid).collection('reviews').doc(id).delete()
-            .then(() => alert("Review deleted successfully!"))
+        if(!confirm("Are you sure you want to delete this review? This action cannot be undone.")) return;
+        db.collection('users').doc(user.uid).collection('reviews').doc(id).delete()
+            .then(() => alert("Review Deleted Successfully!"))
             .catch(e => { console.error("Error deleting review:", e); alert("Error deleting review: " + e.message); });
-        }
     }
 
     // --- UTILS ---
     function upImg(input, type, idx) {
         const file = input.files[0];
-        if(!file) return;
+        if(!file) { alert("No file selected."); return; }
+        if (!file.type.startsWith('image/')) { alert("Please upload an image file."); return; }
+        if (file.size > 2 * 1024 * 1024) { alert("Image size should not exceed 2MB."); return; } // 2MB limit
 
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -1134,56 +1226,81 @@
             img.onload = () => {
                 const cvs = document.createElement('canvas');
                 const MAX_WIDTH = 800; // Max width for uploaded images
-                const scale = MAX_WIDTH / img.width;
-                cvs.width = MAX_WIDTH; 
-                cvs.height = img.height * scale;
-                if (img.width < MAX_WIDTH) { // If image is smaller, don't upscale
-                    cvs.width = img.width;
-                    cvs.height = img.height;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
                 }
+                cvs.width = width; 
+                cvs.height = height;
                 cvs.getContext('2d').drawImage(img,0,0,cvs.width,cvs.height);
                 
-                // Show a loading indicator
-                const uploadBox = input.parentElement;
-                const originalContent = uploadBox.innerHTML;
-                uploadBox.innerHTML = '<i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--primary);"></i> Uploading...';
+                const uploadDataUrl = cvs.toDataURL('image/jpeg',0.8); // Compress image to JPEG, 80% quality
+                const uploadPath = `img/${user.uid}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`; // Clean filename
+
+                const task = storage.ref(uploadPath).putString(uploadDataUrl, 'data_url');
                 
-                const task = storage.ref(`img/${user.uid}/${Date.now()}_${file.name}`).putString(cvs.toDataURL('image/jpeg',0.7), 'data_url');
+                // Show uploading progress or spinner if desired
+                let uploadStatusElement = null;
+                if (type === 'doc') uploadStatusElement = document.getElementById('st-doc');
+                else if (type === 'slip') uploadStatusElement = document.getElementById('st-slip');
+                // For prod, individual elements
+                
+                if (uploadStatusElement) {
+                    uploadStatusElement.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Uploading...`;
+                    uploadStatusElement.classList.remove('hidden');
+                }
+
                 task.then(s => s.ref.getDownloadURL().then(url => {
                     if(type==='logo') { 
                         shopData.temp_logo = url; 
                         document.getElementById('p-logo').src = url; 
+                        alert("Logo uploaded successfully!"); 
                     }
                     else if(type==='doc') { 
                         shopData.temp_doc = url; 
-                        document.getElementById('st-doc').classList.remove('hidden'); 
+                        document.getElementById('st-doc').innerHTML = `<i class="fa-solid fa-check-circle"></i> Certified Document Uploaded`;
+                        document.getElementById('st-doc').classList.remove('hidden');
+                        alert("Certified Document uploaded successfully!"); 
                     }
                     else if(type==='slip') { 
                         shopData.temp_slip = url; 
-                        document.getElementById('st-slip').classList.remove('hidden'); 
+                        document.getElementById('st-slip').innerHTML = `<i class="fa-solid fa-check-circle"></i> Payment Slip Uploaded`;
+                        document.getElementById('st-slip').classList.remove('hidden');
+                        alert("Payment Slip uploaded successfully!"); 
                     }
                     else if(type==='prod') { 
                         tempImages[idx] = url; 
                         document.getElementById(`prev-p${idx}`).src = url; 
-                        document.getElementById(`prev-p${idx}`).style.display='block'; 
-                        uploadBox.style.border = `2px solid var(--green)`; // Green border on success
+                        document.getElementById(`prev-p${idx}`).style.display='block';
+                        alert(`Product image ${idx+1} uploaded successfully!`); 
                     }
-                    alert("Image uploaded successfully!");
                 })).catch(err => {
                     console.error("Upload failed:", err);
                     alert("Upload failed: " + err.message);
-                }).finally(() => {
-                    if (type !== 'prod') { // For product images, we show the image itself, not restore generic text
-                        uploadBox.innerHTML = originalContent; // Restore original content
-                    } else { // For prod images, restore the + icon, keeping the image shown
-                        // Small fix: need to re-attach the event listener if innerHTML is reset fully.
-                        // For product images, let's just make the image visible.
-                        document.getElementById(`prev-p${idx}`).parentElement.style.border = '2px dashed #FFCC80'; // Reset border
+                    if (uploadStatusElement) {
+                        uploadStatusElement.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Upload Failed`;
+                        uploadStatusElement.style.color = var(--red);
                     }
                 });
             }
         }
+        reader.onerror = error => {
+            console.error("FileReader error:", error);
+            alert("Error reading file.");
+        };
     }
+
+    // Adjust desktop logout button visibility on window resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 900) {
+            document.getElementById('desktop-logout-btn').style.display = 'flex';
+        } else {
+            document.getElementById('desktop-logout-btn').style.display = 'none';
+        }
+    });
 </script>
 </body>
 </html>
