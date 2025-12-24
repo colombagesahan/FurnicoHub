@@ -25,7 +25,7 @@
             --gold-star: #FFC107; /* Gold for stars */
             --red-alert: #C62828; /* Red for alerts/closed status */
         }
-        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; outline: none; }
         body { 
             margin: 0; font-family: var(--font); background: var(--bg); color: var(--secondary); 
             padding-bottom: 80px; /* Space for footer */ overflow-x: hidden; 
@@ -263,7 +263,11 @@
 
 <script>
     const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
-    firebase.initializeApp(firebaseConfig);
+    
+    // Fix: Check if app is already initialized
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const db = firebase.firestore();
 
     const params = new URLSearchParams(window.location.search);
@@ -304,6 +308,7 @@
 
     function renderShop() {
         const app = document.getElementById('app');
+        // Fix: safe access to products array
         const cats = [...new Set((shop.products||[]).map(p => p.category))];
         
         let html = `
@@ -356,7 +361,7 @@
                     const pStr = JSON.stringify(p).replace(/"/g, '&quot;');
                     html += `
                         <div class="card" onclick="openProd(${pStr})">
-                            <img src="${p.images[0]}" loading="lazy" onerror="this.src='https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'">
+                            <img src="${(p.images && p.images.length>0) ? p.images[0] : 'https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'}" loading="lazy" onerror="this.src='https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'">
                             <div class="card-info">
                                 <div class="prod-promo">${p.promoText || '&nbsp;'}</div> <!-- Use non-breaking space for consistent height -->
                                 <div class="prod-name">${p.name}</div>
@@ -411,7 +416,7 @@
         `;
 
         // Map (Google Maps Embed)
-        const mapQ = encodeURIComponent(shop.address);
+        const mapQ = encodeURIComponent(shop.address || '');
         html += `
             <div class="map-container contact-section">
                 <h3 style="color:var(--secondary)">Find Our Location</h3>
@@ -447,7 +452,9 @@
     // --- PRODUCT LOGIC ---
     function openProd(item) {
         currentProd = item;
-        document.getElementById('m-img').src = item.images[0];
+        // Fix: Safe access to images array
+        const mainImg = (item.images && item.images.length > 0) ? item.images[0] : 'https://via.placeholder.com/250/FF6D00/FFFFFF?text=No+Image';
+        document.getElementById('m-img').src = mainImg;
         document.getElementById('m-title').innerText = item.name;
         document.getElementById('m-price').innerText = "Rs. " + parseInt(item.price).toLocaleString();
         document.getElementById('m-desc').innerText = item.desc || "No description available.";
@@ -459,7 +466,7 @@
             if(others.length > 0) {
                 upsellDiv.innerHTML = others.slice(0,4).map(p => `
                     <div style="min-width:100px; max-width:100px; text-align:center; cursor:pointer;" onclick='openProd(${JSON.stringify(p).replace(/"/g, '&quot;')})'>
-                        <img src="${p.images[0]}" style="width:100px; height:80px; object-fit:cover; border-radius:8px; border:1px solid #eee;" onerror="this.src='https://via.placeholder.com/80/FF6D00/FFFFFF?text=Img'">
+                        <img src="${(p.images && p.images.length>0) ? p.images[0] : 'https://via.placeholder.com/80/FF6D00/FFFFFF?text=Img'}" style="width:100px; height:80px; object-fit:cover; border-radius:8px; border:1px solid #eee;" onerror="this.src='https://via.placeholder.com/80/FF6D00/FFFFFF?text=Img'">
                         <div style="font-size:0.75rem; font-weight:bold; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">
                             ${p.name}
                         </div>
