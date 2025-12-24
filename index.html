@@ -4,87 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FurnicoHub | Sri Lanka's #1 Furniture Platform</title>
-    <meta name="theme-color" content="#4E342E">
+    <meta name="theme-color" content="#E65100">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
     <style>
         :root {
-            --primary: #4E342E; /* Mahogany */
-            --primary-light: #6D4C41;
-            --secondary: #3E2723;
-            --gold: #D4AF37;
-            --bg-body: #F5F5F5;
+            /* NEW THEME: ORANGE & DARK WOOD */
+            --primary: #FF6D00; /* Vivid Orange */
+            --primary-dark: #E65100;
+            --secondary: #3E2723; /* Mahogany */
+            --bg-body: #FFF8E1; /* Light Cream */
             --surface: #FFFFFF;
-            --shadow-card: 0 10px 20px rgba(62, 39, 35, 0.1);
+            --shadow-card: 0 8px 20px rgba(62, 39, 35, 0.1);
             --font: 'Poppins', sans-serif;
-            --radius: 12px;
+            --radius: 15px;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg-body); color: var(--secondary); padding-bottom: 60px; }
+        body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg-body); color: var(--secondary); padding-bottom: 60px; overflow-x: hidden; }
         a { text-decoration: none; color: inherit; }
 
         /* NAV */
         nav {
             position: fixed; top: 0; width: 100%; z-index: 1000;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px);
             padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(255, 109, 0, 0.1);
         }
-        .logo { font-size: 1.2rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-        .logo img { height: 30px; }
+        .logo { font-size: 1.1rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .logo img { height: 28px; }
         
         /* HERO */
         .hero {
             margin-top: 60px; padding: 40px 5%; text-align: center;
-            background: linear-gradient(135deg, #EFEBE9 0%, #FFFFFF 100%);
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFFFFF 100%);
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
         }
-        h1 { font-size: 2rem; line-height: 1.2; margin-bottom: 15px; color: var(--secondary); }
-        h1 span { color: var(--primary-light); }
-        p.sub { font-size: 0.95rem; color: #5D4037; margin-bottom: 25px; }
+        h1 { font-size: 1.8rem; line-height: 1.2; margin-bottom: 15px; color: var(--secondary); }
+        h1 span { color: var(--primary); }
+        p.sub { font-size: 0.9rem; color: #5D4037; margin-bottom: 25px; }
 
         .cta-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
         .btn { 
-            padding: 10px 20px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; 
+            padding: 10px 24px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; 
             border: none; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px;
         }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(78, 52, 46, 0.3); }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(255, 109, 0, 0.3); }
+        .btn-primary:hover { background: var(--primary-dark); transform: scale(1.02); }
         .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
 
         /* FEED */
         .filters { display: flex; gap: 10px; overflow-x: auto; padding: 20px 5%; scrollbar-width: none; }
         .chip { 
-            padding: 8px 16px; background: white; border: 1px solid #D7CCC8; border-radius: 20px; 
-            white-space: nowrap; font-size: 0.85rem; color: var(--secondary); cursor: pointer;
+            padding: 8px 18px; background: white; border: 1px solid #FFCC80; border-radius: 25px; 
+            white-space: nowrap; font-size: 0.85rem; color: var(--secondary); cursor: pointer; transition: 0.3s;
         }
-        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(255, 109, 0, 0.2); }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 0 5%; }
         
+        /* Responsive 250px adjustment */
+        @media (max-width: 350px) {
+            .grid { grid-template-columns: 1fr; } 
+            h1 { font-size: 1.5rem; }
+            .hero { padding: 30px 10px; }
+        }
+
         .card { 
             background: white; border-radius: var(--radius); overflow: hidden; 
             box-shadow: var(--shadow-card); position: relative; cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s; border: 1px solid #FFF3E0;
         }
-        .card:hover { transform: translateY(-5px); }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
         .card-img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
         .verified-badge { 
-            position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.95); 
-            padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; 
-            color: #27ae60; display: flex; align-items: center; gap: 4px;
+            position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.95); 
+            padding: 4px 10px; border-radius: 15px; font-size: 0.7rem; font-weight: 800; 
+            color: #2E7D32; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .card-body { padding: 12px; }
-        .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-seller { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #795548; margin-bottom: 8px; }
-        .card-seller img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
+        .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; color: var(--secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-seller { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: #795548; margin-bottom: 8px; }
+        .card-seller img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary); }
         .price { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
-        .promo { font-size: 0.7rem; color: #E65100; margin-bottom: 5px; font-weight: 600; height: 16px; }
+        .promo { font-size: 0.7rem; color: #D84315; margin-bottom: 5px; font-weight: 700; min-height: 16px; }
 
         @media (min-width: 900px) {
             .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
@@ -95,8 +106,8 @@
 <body>
 
     <nav>
-        <div class="logo"><img src="logo.png"> FurnicoHub</div>
-        <a href="dashboard.html" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.8rem;">Seller Login</a>
+        <div class="logo"><img src="logo.png" onerror="this.style.display='none'"><i class="fa-solid fa-couch" style="color:var(--primary)"></i> FurnicoHub</div>
+        <a href="dashboard.html" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.8rem;">Seller Login</a>
     </nav>
 
     <section class="hero">
@@ -116,6 +127,7 @@
         <div class="chip" onclick="filter('Dining', this)">Dining</div>
         <div class="chip" onclick="filter('Office', this)">Office</div>
         <div class="chip" onclick="filter('Outdoor', this)">Outdoor</div>
+        <div class="chip" onclick="filter('Kitchen', this)">Kitchen</div>
     </div>
 
     <div id="grid" class="grid">
@@ -149,7 +161,7 @@
                                 sellerId: doc.id,
                                 sellerName: d.shopName,
                                 sellerLogo: d.logo || 'logo.png',
-                                verified: d.verified // Verified status from seller profile
+                                verified: d.isVerified // Using correct field name from dashboard
                             });
                         });
                     }
@@ -165,18 +177,18 @@
         function render(items) {
             const grid = document.getElementById('grid');
             if(items.length === 0) {
-                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px;">No furniture found.</div>`;
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#777;">No furniture found.</div>`;
                 return;
             }
             grid.innerHTML = items.map(item => `
                 <div class="card" onclick="location.href='shop.html?id=${item.sellerId}'">
                     ${item.verified ? `<div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</div>` : ''}
-                    <img src="${item.images[0]}" class="card-img" loading="lazy">
+                    <img src="${item.images[0]}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
                     <div class="card-body">
                         <div class="promo">${item.promoText || ''}</div>
                         <div class="card-title">${item.name}</div>
                         <div class="card-seller">
-                            <img src="${item.sellerLogo}"> ${item.sellerName}
+                            <img src="${item.sellerLogo}" onerror="this.src='icon.png'"> ${item.sellerName}
                         </div>
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
                             <div class="price">Rs. ${parseInt(item.price).toLocaleString()}</div>
