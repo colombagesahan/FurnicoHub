@@ -270,6 +270,7 @@
 <script>
     // --- 1. FIREBASE CONFIG ---
     const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
+    // Fix: Check before initializing
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -329,6 +330,9 @@
         const doc = await db.collection('users').doc(user.uid).get();
         if (doc.exists) {
             shopData = doc.data();
+            // Ensure array fields exist
+            shopData.products = shopData.products || [];
+            shopData.socialLinks = shopData.socialLinks || {};
             currentTab = shopData.profileCompleted ? 'Dashboard' : 'Profile';
         } else {
             // Default Data Structure for new sellers
@@ -341,6 +345,7 @@
                 emergencyClose: false, 
                 schedule: {},
                 specialDates: [],
+                socialLinks: {}, // Fix: Initialize empty object
                 shopName: user.displayName || 'My Shop', // Default with user's name
                 address: '',
                 ownerName: user.displayName || '',
@@ -682,7 +687,7 @@
             grouped[cat].forEach(i => {
                 html += `
                 <div class="card" style="padding:0; overflow:hidden; cursor:pointer;" onclick="window.open('shop.html?id=${i.sellerId}','_blank')">
-                    <img src="${i.images[0]}" style="width:100%; height:120px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'">
+                    <img src="${(i.images && i.images.length>0) ? i.images[0] : 'https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'}" style="width:100%; height:120px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'">
                     <div style="padding:10px;">
                         <div class="bold">${i.name}</div>
                         <div class="text-primary">Rs. ${parseInt(i.price).toLocaleString()}</div>
@@ -723,13 +728,17 @@
         const ownerName = document.getElementById('s-own').value;
         const nic = document.getElementById('s-nic').value;
         const phone1 = document.getElementById('s-ph1').value;
-        const whatsapp = document.getElementById('s-wa').value;
+        let whatsapp = document.getElementById('s-wa').value;
 
         // Validation for all fields
         if (!shopName || !address || !ownerName || !nic || !phone1 || !whatsapp) {
             alert("All profile fields (Shop Name, Address, Owner Name, NIC, Phone, WhatsApp) are required.");
             return;
         }
+        
+        // Remove '+' if user typed it
+        whatsapp = whatsapp.replace('+', '');
+
         // Specific WhatsApp validation (no +, starts with 94, minimum length)
         if (!whatsapp.startsWith('94') || whatsapp.length < 11) { // 94 + 9 digits = 11
             alert("WhatsApp number must start with '94' and be a complete number (e.g., 94771234567). Do not include '+'.");
@@ -1009,7 +1018,7 @@
             <p style="color:#666; margin-bottom:15px;">Here are all the products currently listed in your shop.</p> <!-- Original text preserved -->
             ${(shopData.products && shopData.products.length > 0) ? shopData.products.map((p,i)=>`
                 <div class="card flex space-between" style="padding:15px;">
-                    <div class="flex" style="flex-grow:1;"><img src="${p.images[0]}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;"> 
+                    <div class="flex" style="flex-grow:1;"><img src="${(p.images && p.images.length > 0) ? p.images[0] : 'https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;"> 
                         <div style="flex-grow:1;"><b>${p.name}</b><br>Rs. ${parseInt(p.price).toLocaleString()}</div>
                     </div>
                     <button class="btn btn-outline" style="width:auto; padding:5px 10px; border-color:var(--red); color:var(--red); flex-shrink:0;" onclick="delProd(${i})"><i class="fa-solid fa-trash"></i> Delete</button>
@@ -1115,10 +1124,9 @@
         } else if (field === 'heroText') {
             updateData.heroText = document.getElementById('w-txt').value;
         } else if (field.startsWith('socialLinks.')) {
-            // Ensure socialLinks object exists
-            updateData.socialLinks = shopData.socialLinks || {};
+            // Fix: Use direct dot notation which Firestore supports safely for updating map fields
             const socialKey = field.split('.')[1];
-            updateData.socialLinks[socialKey] = document.getElementById('sl-' + socialKey).value;
+            updateData[`socialLinks.${socialKey}`] = document.getElementById('sl-' + socialKey).value;
         }
 
         db.collection('users').doc(user.uid).update(updateData)
