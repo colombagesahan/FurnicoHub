@@ -9,204 +9,248 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
-    <style>
-        :root {
-            /* NEW THEME: ORANGE & DARK WOOD */
-            --primary: #FF6D00; /* Vivid Orange */
-            --primary-dark: #E65100;
-            --secondary: #3E2723; /* Mahogany */
-            --bg-body: #FFF8E1; /* Light Cream */
-            --surface: #FFFFFF;
-            --shadow-card: 0 8px 20px rgba(62, 39, 35, 0.1);
-            --font: 'Poppins', sans-serif;
-            --radius: 15px;
-        }
+<style>
+    :root {
+        /* NEW THEME: ORANGE & DARK WOOD */
+        --primary: #FF6D00; /* Vivid Orange */
+        --primary-dark: #E65100; /* Darker Orange */
+        --secondary: #3E2723; /* Mahogany */
+        --gold: #FFC107; /* Gold for highlights */
+        --bg-body: #FFF8E1; /* Light Cream background */
+        --surface: #FFFFFF; /* White for cards */
+        --shadow-card: 0 8px 20px rgba(62, 39, 35, 0.1); /* Subtle card shadow */
+        --font: 'Poppins', sans-serif;
+        --radius: 15px; /* Rounded corners */
+    }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg-body); color: var(--secondary); padding-bottom: 60px; overflow-x: hidden; }
-        a { text-decoration: none; color: inherit; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+    body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg-body); color: var(--secondary); padding-bottom: 60px; overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
 
-        /* NAV */
-        nav {
-            position: fixed; top: 0; width: 100%; z-index: 1000;
-            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px);
-            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 15px rgba(255, 109, 0, 0.1);
-        }
-        .logo { font-size: 1.1rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-        .logo img { height: 28px; }
-        
-        /* HERO */
-        .hero {
-            margin-top: 60px; padding: 40px 5%; text-align: center;
-            background: linear-gradient(135deg, #FFF3E0 0%, #FFFFFF 100%);
-            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
-        }
-        h1 { font-size: 1.8rem; line-height: 1.2; margin-bottom: 15px; color: var(--secondary); }
-        h1 span { color: var(--primary); }
-        p.sub { font-size: 0.9rem; color: #5D4037; margin-bottom: 25px; }
+    /* NAV */
+    nav {
+        position: fixed; top: 0; width: 100%; z-index: 1000;
+        background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px);
+        padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+        box-shadow: 0 4px 15px rgba(255, 109, 0, 0.1); /* Orange-tinted shadow */
+    }
+    .logo { font-size: 1.1rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    .logo img { height: 28px; }
+    
+    /* HERO */
+    .hero {
+        margin-top: 60px; padding: 40px 5%; text-align: center;
+        background: linear-gradient(135deg, #FFF3E0 0%, #FFFFFF 100%); /* Light gradient */
+        border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+    }
+    h1 { font-size: 1.8rem; line-height: 1.2; margin-bottom: 15px; color: var(--secondary); }
+    h1 span { color: var(--primary); } /* Highlighted orange */
+    p.sub { font-size: 0.9rem; color: #5D4037; margin-bottom: 25px; }
 
-        .cta-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        .btn { 
-            padding: 10px 24px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; 
-            border: none; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px;
-        }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(255, 109, 0, 0.3); }
-        .btn-primary:hover { background: var(--primary-dark); transform: scale(1.02); }
-        .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
+    .cta-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .btn { 
+        padding: 10px 24px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; 
+        border: none; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(255, 109, 0, 0.3); }
+    .btn-primary:hover { background: var(--primary-dark); transform: scale(1.02); }
+    .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
 
-        /* FEED */
-        .filters { display: flex; gap: 10px; overflow-x: auto; padding: 20px 5%; scrollbar-width: none; }
-        .chip { 
-            padding: 8px 18px; background: white; border: 1px solid #FFCC80; border-radius: 25px; 
-            white-space: nowrap; font-size: 0.85rem; color: var(--secondary); cursor: pointer; transition: 0.3s;
-        }
-        .chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(255, 109, 0, 0.2); }
+    /* FEED */
+    .filters { display: flex; gap: 10px; overflow-x: auto; padding: 20px 5%; scrollbar-width: none; }
+    .chip { 
+        padding: 8px 18px; background: white; border: 1px solid #FFCC80; border-radius: 25px; 
+        white-space: nowrap; font-size: 0.85rem; color: var(--secondary); cursor: pointer; transition: 0.3s;
+    }
+    .chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(255, 109, 0, 0.2); }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 0 5%; }
-        
-        /* Responsive 250px adjustment */
-        @media (max-width: 350px) {
-            .grid { grid-template-columns: 1fr; } 
-            h1 { font-size: 1.5rem; }
-            .hero { padding: 30px 10px; }
-        }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 0 5%; }
+    
+    /* Responsive 250px adjustment for grid and hero */
+    @media (max-width: 350px) {
+        .grid { grid-template-columns: 1fr; } 
+        h1 { font-size: 1.5rem; }
+        p.sub { font-size: 0.85rem; }
+        .hero { padding: 30px 10px; }
+        .btn { padding: 8px 18px; font-size: 0.8rem; }
+    }
 
-        .card { 
-            background: white; border-radius: var(--radius); overflow: hidden; 
-            box-shadow: var(--shadow-card); position: relative; cursor: pointer;
-            transition: transform 0.2s; border: 1px solid #FFF3E0;
-        }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .card-img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
-        .verified-badge { 
-            position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.95); 
-            padding: 4px 10px; border-radius: 15px; font-size: 0.7rem; font-weight: 800; 
-            color: #2E7D32; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .card-body { padding: 12px; }
-        .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; color: var(--secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-seller { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: #795548; margin-bottom: 8px; }
-        .card-seller img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary); }
-        .price { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
-        .promo { font-size: 0.7rem; color: #D84315; margin-bottom: 5px; font-weight: 700; min-height: 16px; }
+    .card { 
+        background: white; border-radius: var(--radius); overflow: hidden; 
+        box-shadow: var(--shadow-card); position: relative; cursor: pointer;
+        transition: transform 0.2s; border: 1px solid #FFF3E0; /* Subtle border */
+    }
+    .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+    .card-img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
+    .verified-badge { 
+        position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.95); 
+        padding: 4px 10px; border-radius: 15px; font-size: 0.7rem; font-weight: 800; 
+        color: #2E7D32; /* Dark green */
+        display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .card-body { padding: 12px; }
+    .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; color: var(--secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-seller { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: #795548; margin-bottom: 8px; }
+    .card-seller img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary); }
+    .price { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
+    .promo { font-size: 0.7rem; color: #D84315; /* Dark orange */ margin-bottom: 5px; font-weight: 700; min-height: 16px; }
 
-        @media (min-width: 900px) {
-            .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
-            .card-img { height: 200px; }
-        }
-    </style>
+    @media (min-width: 900px) {
+        .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
+        .card-img { height: 200px; }
+    }
+
+    /* FOOTER */
+    footer {
+        background: var(--secondary);
+        color: #D7CCC8; /* Light brown-grey */
+        text-align: center;
+        padding: 30px 20px;
+        font-size: 0.85rem;
+        margin-top: 50px;
+    }
+    footer .logo-footer {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    footer .logo-footer img {
+        height: 30px;
+        filter: brightness(0) invert(1); /* Makes logo white */
+    }
+    footer p {
+        margin: 5px 0;
+        line-height: 1.6;
+    }
+    footer a {
+        color: var(--primary-light);
+        text-decoration: underline;
+    }
+</style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo"><img src="logo.png" onerror="this.style.display='none'"><i class="fa-solid fa-couch" style="color:var(--primary)"></i> FurnicoHub</div>
-        <a href="dashboard.html" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.8rem;">Seller Login</a>
-    </nav>
+<nav>
+    <div class="logo"><img src="logo.png" onerror="this.style.display='none'"><i class="fa-solid fa-couch" style="color:var(--primary)"></i> FurnicoHub</div>
+    <a href="dashboard.html" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.8rem;">Seller Login</a>
+</nav>
 
-    <section class="hero">
-        <h1>Furnish Your <br><span>Dream Home</span></h1>
-        <p class="sub">Sri Lanka's #1 Marketplace. Connect directly with island-wide Verified Furniture Sellers.</p>
-        
-        <div class="cta-group">
-            <a href="#feed" class="btn btn-primary">Find Furniture</a>
-            <a href="dashboard.html" class="btn btn-outline">Start Selling</a>
-        </div>
-    </section>
-
-    <div class="filters">
-        <div class="chip active" onclick="filter('All', this)">All</div>
-        <div class="chip" onclick="filter('Living Room', this)">Living Room</div>
-        <div class="chip" onclick="filter('Bedroom', this)">Bedroom</div>
-        <div class="chip" onclick="filter('Dining', this)">Dining</div>
-        <div class="chip" onclick="filter('Office', this)">Office</div>
-        <div class="chip" onclick="filter('Outdoor', this)">Outdoor</div>
-        <div class="chip" onclick="filter('Kitchen', this)">Kitchen</div>
+<section class="hero">
+    <h1>Furnish Your <br><span>Dream Home</span></h1>
+    <p class="sub">Sri Lanka's #1 Marketplace. Connect directly with island-wide Verified Furniture Sellers.</p>
+    
+    <div class="cta-group">
+        <a href="#feed" class="btn btn-primary">Find Furniture</a>
+        <a href="dashboard.html" class="btn btn-outline">Start Selling</a>
     </div>
+</section>
 
-    <div id="grid" class="grid">
-        <!-- Products injected here -->
-        <div style="grid-column:1/-1; text-align:center; padding:50px;">
-            <i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--primary)"></i>
-        </div>
+<div class="filters">
+    <div class="chip active" onclick="filter('All', this)">All</div>
+    <div class="chip" onclick="filter('Living Room', this)">Living Room</div>
+    <div class="chip" onclick="filter('Bedroom', this)">Bedroom</div>
+    <div class="chip" onclick="filter('Dining', this)">Dining</div>
+    <div class="chip" onclick="filter('Office', this)">Office</div>
+    <div class="chip" onclick="filter('Outdoor', this)">Outdoor</div>
+    <div class="chip" onclick="filter('Kitchen', this)">Kitchen</div> <!-- Added kitchen -->
+    <div class="chip" onclick="filter('Bathroom', this)">Bathroom</div>
+    <div class="chip" onclick="filter('Study Room', this)">Study Room</div>
+    <div class="chip" onclick="filter('Kids Room', this)">Kids Room</div>
+    <div class="chip" onclick="filter('Baby Room', this)">Baby Room</div>
+    <div class="chip" onclick="filter('Other', this)">Other</div>
+</div>
+
+<div id="grid" class="grid">
+    <!-- Products injected here -->
+    <div style="grid-column:1/-1; text-align:center; padding:50px;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--primary)"></i>
     </div>
+</div>
 
-    <script>
-        const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+<footer>
+    <div class="logo-footer"><img src="logo.png" onerror="this.style.display='none'"> FurnicoHub</div>
+    <p>Your one-stop platform for all furniture needs in Sri Lanka.</p>
+    <p>&copy; 2025 FurnicoHub. All rights reserved.</p>
+</footer>
 
-        let allProducts = [];
+<script>
+    const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        window.onload = async () => {
-            const grid = document.getElementById('grid');
-            try {
-                // Fetch sellers to give everyone a reasonable chance
-                const snapshot = await db.collection('users').where('role', '==', 'seller').get();
-                allProducts = [];
+    let allProducts = [];
 
-                snapshot.forEach(doc => {
-                    const d = doc.data();
-                    if (d.products && d.products.length > 0) {
-                        d.products.forEach(p => {
-                            // Only show verified badge logic
-                            allProducts.push({
-                                ...p,
-                                sellerId: doc.id,
-                                sellerName: d.shopName,
-                                sellerLogo: d.logo || 'logo.png',
-                                verified: d.isVerified // Using correct field name from dashboard
-                            });
+    window.onload = async () => {
+        const grid = document.getElementById('grid');
+        try {
+            // Fetch sellers to give everyone a reasonable chance
+            const snapshot = await db.collection('users').where('role', '==', 'seller').get();
+            allProducts = [];
+
+            snapshot.forEach(doc => {
+                const d = doc.data();
+                if (d.products && d.products.length > 0) {
+                    d.products.forEach(p => {
+                        allProducts.push({
+                            ...p,
+                            sellerId: doc.id,
+                            sellerName: d.shopName,
+                            sellerLogo: d.logo || 'logo.png',
+                            verified: d.isVerified // Using 'isVerified' from dashboard.html
                         });
-                    }
-                });
+                    });
+                }
+            });
 
-                // Shuffle for fairness
-                allProducts.sort(() => Math.random() - 0.5);
-                render(allProducts);
+            // Shuffle for fairness
+            allProducts.sort(() => Math.random() - 0.5);
+            render(allProducts);
 
-            } catch (e) { console.error(e); grid.innerHTML = `<p style="text-align:center">Error loading items.</p>`; }
-        };
+        } catch (e) { console.error(e); grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:50px; color:#c00;">Error loading items. Please try again later.</p>`; }
+    };
 
-        function render(items) {
-            const grid = document.getElementById('grid');
-            if(items.length === 0) {
-                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#777;">No furniture found.</div>`;
-                return;
-            }
-            grid.innerHTML = items.map(item => `
-                <div class="card" onclick="location.href='shop.html?id=${item.sellerId}'">
-                    ${item.verified ? `<div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</div>` : ''}
-                    <img src="${item.images[0]}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
-                    <div class="card-body">
-                        <div class="promo">${item.promoText || ''}</div>
-                        <div class="card-title">${item.name}</div>
-                        <div class="card-seller">
-                            <img src="${item.sellerLogo}" onerror="this.src='icon.png'"> ${item.sellerName}
-                        </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
-                            <div class="price">Rs. ${parseInt(item.price).toLocaleString()}</div>
-                            <button class="btn btn-primary" style="padding:4px 10px; font-size:0.75rem;">View</button>
-                        </div>
+    function render(items) {
+        const grid = document.getElementById('grid');
+        if(items.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#777;">No furniture found in this category.</div>`;
+            return;
+        }
+        grid.innerHTML = items.map(item => `
+            <div class="card" onclick="location.href='shop.html?id=${item.sellerId}'">
+                ${item.verified ? `<div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</div>` : ''}
+                <img src="${item.images[0]}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/150/FFCC80/3E2723?text=No+Image'">
+                <div class="card-body">
+                    <div class="promo">${item.promoText || ''}</div>
+                    <div class="card-title">${item.name}</div>
+                    <div class="card-seller">
+                        <img src="${item.sellerLogo}" onerror="this.src='icon.png'"> ${item.sellerName}
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
+                        <div class="price">Rs. ${parseInt(item.price).toLocaleString()}</div>
+                        <button class="btn btn-primary" style="padding:4px 10px; font-size:0.75rem;">View</button>
                     </div>
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join('');
+    }
 
-        function filter(cat, el) {
-            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            if(cat === 'All') render(allProducts);
-            else render(allProducts.filter(i => i.category === cat));
-        }
-        
-        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-    </script>
+    function filter(cat, el) {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        if(cat === 'All') render(allProducts);
+        else render(allProducts.filter(i => i.category === cat));
+    }
+    
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+</script>
 </body>
 </html>
