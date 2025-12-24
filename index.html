@@ -248,7 +248,12 @@
         document.getElementById('current-year').innerText = new Date().getFullYear();
 
         const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
-        firebase.initializeApp(firebaseConfig);
+        
+        // Fix: Check if app is already initialized
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
         const db = firebase.firestore();
 
         let allProducts = [];
@@ -262,13 +267,14 @@
 
                 snapshot.forEach(doc => {
                     const d = doc.data();
+                    // Fix: Check if products array exists using optional chaining or logical OR
                     if (d.products && d.products.length > 0) {
                         d.products.forEach(p => {
                             // Only show verified badge logic
                             allProducts.push({
                                 ...p,
                                 sellerId: doc.id,
-                                sellerName: d.shopName,
+                                sellerName: d.shopName || 'Unknown Shop',
                                 sellerLogo: d.logo || 'logo.png',
                                 verified: d.isVerified // Corrected to use 'isVerified' from dashboard data
                             });
@@ -292,7 +298,7 @@
             grid.innerHTML = items.map(item => `
                 <div class="card" onclick="location.href='shop.html?id=${item.sellerId}'">
                     ${item.verified ? `<div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</div>` : ''}
-                    <img src="${item.images[0]}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'">
+                    <img src="${(item.images && item.images.length > 0) ? item.images[0] : 'https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'">
                     <div class="card-body">
                         <div class="promo">${item.promoText || ''}</div>
                         <div class="card-title">${item.name}</div>
@@ -301,7 +307,7 @@
                         </div>
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
                             <div class="price">Rs. ${parseInt(item.price).toLocaleString()}</div>
-                            <button class="btn btn-primary" style="padding:6px 14px; font-size:0.8rem; border-radius: 30px;">View</button>
+                            <button class="btn btn-primary" style="padding:6px 14px; font-size:0.8rem; border-radius: 8px;">View</button>
                         </div>
                     </div>
                 </div>
