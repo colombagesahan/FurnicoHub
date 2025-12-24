@@ -592,18 +592,28 @@
     function renderVerify(div) {
         if(shopData.isVerified) return div.innerHTML = `<div class="card text-center" style="padding:40px;"><h1 class="text-green"><i class="fa-solid fa-circle-check"></i> Verified</h1></div>`;
         div.innerHTML = `
+            div.innerHTML = `
             <div class="card">
                 <h3>Get Verified (Rs. 5000)</h3>
-                <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0;">
-                    <b>* GN:</b> Grama Niladhari<br><b>* JP:</b> Justice of Peace<br><b>* Bank:</b> Commercial Bank, Homagama (Colombage SD) - 8750053306
-                </div>
+                <p style="color:#666; margin-bottom:15px;">Follow steps to get the Green Badge.</p>
                 <button class="btn btn-outline" onclick="printProf()">1. Download Profile PDF</button>
-                <div class="input-group mt-1"><label>2. Certified Doc</label><div class="upload-box" onclick="document.getElementById('v-doc').click()">Upload <input type="file" id="v-doc" hidden onchange="upImg(this, 'doc')"></div></div>
-                <div class="input-group"><label>3. Payment Slip</label><div class="upload-box" onclick="document.getElementById('v-slip').click()">Upload <input type="file" id="v-slip" hidden onchange="upImg(this, 'slip')"></div></div>
-                <button class="btn btn-green" onclick="subVerify()">Submit</button>
+                <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0;">
+                    <b>2. Certify:</b> GN or JP Stamp.<br>
+                    <b>3. Pay Rs. 5000:</b><br>Bank: Commercial Bank, Homagama<br>Acc: 8750053306 (Colombage SD)
+                </div>
+                <div class="input-group">
+                    <label>4. Upload Certified Doc</label>
+                    <div class="upload-box" onclick="document.getElementById('v-doc').click()">Click to Upload <input type="file" id="v-doc" hidden onchange="upImg(this, 'doc')"></div>
+                    <small id="st-doc" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded</small>
+                </div>
+                <div class="input-group">
+                    <label>5. Upload Payment Slip</label>
+                    <div class="upload-box" onclick="document.getElementById('v-slip').click()">Click to Upload <input type="file" id="v-slip" hidden onchange="upImg(this, 'slip')"></div>
+                    <small id="st-slip" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded</small>
+                </div>
+                <button class="btn btn-green" onclick="subVerify()">Submit for Review</button>
             </div>
         `;
-    }
     
     function printProf() {
         const w = window.open('','','width=600,height=600');
