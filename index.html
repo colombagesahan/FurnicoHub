@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
@@ -19,7 +18,7 @@
         :root {
             /* THEME: ORANGE & MAHOGANY */
             --primary: #FF6D00;        /* Vivid Orange */
-            --primary-dark: #E65100;   /* Darker Orange */
+            --primary-dark: #E65100;   
             --secondary: #3E2723;      /* Mahogany */
             --gold: #FFC107;
             --bg-body: #FFF8E1;        /* Light Cream */
@@ -148,7 +147,7 @@
     </div>
 
     <footer>
-        <div class="f-logo"><img src="icon.png" onerror="this.style.display='none'"> FurnicoHub</div>
+        <div class="f-logo"><img src="logo.png" onerror="this.style.display='none'"> FurnicoHub</div>
         <p>The best place to buy and sell furniture in Sri Lanka. <br>Connect with verified sellers today.</p>
         <div class="socials">
             <a href="#"><i class="fa-brands fa-facebook"></i></a>
@@ -168,7 +167,6 @@
         window.onload = async () => {
             const grid = document.getElementById('grid');
             try {
-                // Fetch sellers
                 const snapshot = await db.collection('users').where('role', '==', 'seller').get();
                 allProducts = [];
 
@@ -181,13 +179,12 @@
                                 sellerId: doc.id,
                                 sellerName: d.shopName,
                                 sellerLogo: d.logo || 'logo.png',
-                                verified: d.isVerified // From dashboard logic
+                                verified: d.isVerified
                             });
                         });
                     }
                 });
 
-                // Shuffle
                 allProducts.sort(() => Math.random() - 0.5);
                 render(allProducts);
 
