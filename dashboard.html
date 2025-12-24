@@ -6,7 +6,7 @@
     <title>FurnicoHub | Seller Portal</title>
     
     <!-- PWA Meta -->
-    <meta name="theme-color" content="#E65100">
+    <meta name="theme-color" content="#E65100"> <!-- Updated theme color -->
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="icon" type="image/png" href="icon.png">
 
@@ -24,21 +24,22 @@
 
     <style>
         :root {
-            /* COLOR PALETTE - ORANGE */
-            --primary: #FF6D00;        
-            --primary-light: #FF9E80;
-            --accent: #E65100;         
-            --bg-body: #FFF3E0;
-            --surface: #FFFFFF;
-            --text: #3E2723;
-            --green: #2E7D32;
-            --red: #C62828;
-            --gold: #FFC107;
+            /* --- COLOR PALETTE (Orange & Mahogany) --- */
+            --primary: #FF6D00;        /* Vibrant Orange */
+            --primary-light: #FF9E80;  /* Lighter Orange */
+            --accent: #E65100;         /* Darker Orange for accents */
+            --bg-body: #FFF3E0;        /* Light Cream background */
+            --surface: #FFFFFF;        /* White for cards/elements */
+            --text: #3E2723;           /* Dark Mahogany text */
+            --green: #2E7D32;          /* Dark Green for success */
+            --red: #C62828;            /* Dark Red for danger */
+            --gold: #FFC107;           /* Gold for stars/highlights */
             
-            --shadow: 0 4px 12px rgba(62, 39, 35, 0.1);
-            --radius: 12px;
-            --font: 'Poppins', sans-serif;
-            --sidebar-w: 260px;
+            /* Design System */
+            --shadow: 0 8px 24px rgba(62, 39, 35, 0.08); /* Card shadow */
+            --radius: 16px;            /* Border radius */
+            --font: 'Poppins', sans-serif; /* Font family */
+            --sidebar-w: 260px;        /* Desktop sidebar width */
         }
 
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -47,14 +48,17 @@
         
         /* UTILS */
         .hidden { display: none !important; }
-        .flex { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .flex { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; } /* Added flex-wrap for responsiveness */
         .space-between { justify-content: space-between; }
+        .col { flex-direction: column; }
         .center { text-align: center; }
         .bold { font-weight: 700; }
         .w-100 { width: 100%; }
         .mb-1 { margin-bottom: 10px; }
         .mt-1 { margin-top: 10px; }
         .text-primary { color: var(--primary); }
+        .text-green { color: var(--green); }
+        .text-red { color: var(--red); }
 
         /* COMPONENTS */
         .btn {
@@ -62,33 +66,45 @@
             background: var(--primary); color: white; font-weight: 600;
             cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
             font-size: 0.9rem; transition: 0.2s; margin-bottom: 10px;
-            box-shadow: 0 4px 10px rgba(230, 81, 0, 0.2); text-decoration: none;
+            box-shadow: 0 4px 10px rgba(255, 109, 0, 0.2); /* Orange shadow */
+            text-decoration: none;
         }
         .btn:active { transform: scale(0.97); }
         .btn:disabled { background: #ccc; cursor: not-allowed; }
-        .btn-green { background: var(--green); }
-        .btn-red { background: var(--red); }
+        .btn-green { background: var(--green); color: white; }
+        .btn-red { background: var(--red); color: white; }
         .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; margin: 0; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); box-shadow: none; }
 
         .card {
-            background: var(--surface); padding: 15px; border-radius: var(--radius);
+            background: var(--surface); padding: 20px; border-radius: var(--radius);
             box-shadow: var(--shadow); margin-bottom: 15px;
-            border: 1px solid #FFE0B2; animation: slideUp 0.4s ease-out;
+            border: 1px solid #FFE0B2; /* Lighter orange border */
+            animation: slideUp 0.4s ease-out;
         }
 
-        .input-group { margin-bottom: 15px; width: 100%; }
+        .input-group { margin-bottom: 15px; }
         .input-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600; color: #5D4037; }
         .input-group input, .input-group select, .input-group textarea {
-            width: 100%; padding: 12px; border: 2px solid #FFE0B2; border-radius: 12px;
-            font-family: var(--font); font-size: 0.95rem; background: #FFF; transition: 0.3s;
+            width: 100%; padding: 12px; border: 2px solid #FFE0B2; /* Lighter orange border */
+            border-radius: 12px;
+            font-family: var(--font); font-size: 0.95rem; background: #FFF8E1; /* Light cream background */
+            transition: 0.3s;
         }
-        .input-group input:focus { border-color: var(--primary); }
+        /* Fix for Color Input */
+        input[type="color"] { height: 50px; padding: 2px; cursor: pointer; border-radius: 8px; }
+        input[type="color"]:focus { border-color: var(--primary); background: var(--surface); } /* Added focus styles */
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            border-color: var(--primary);
+            background: var(--surface);
+        }
 
         /* FILE UPLOAD */
         .upload-box {
-            border: 2px dashed #FFCC80; border-radius: 12px; padding: 15px;
-            text-align: center; cursor: pointer; background: #FFF8E1; position: relative;
+            border: 2px dashed #FFCC80; /* Orange dashed border */
+            border-radius: 12px; padding: 20px;
+            text-align: center; cursor: pointer; background: #FFF8E1; /* Light cream background */
+            position: relative; transition: 0.3s;
         }
         .upload-box img { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; display: none; margin-top: 5px; }
 
@@ -96,7 +112,7 @@
         #login-ui {
             height: 100vh; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; padding: 20px;
-            background: radial-gradient(circle at center, #FFF3E0 0%, #FFCC80 100%);
+            background: radial-gradient(circle at top right, #FFF3E0 0%, #FFCC80 100%); /* Orange gradient */
         }
 
         /* NAVIGATION */
@@ -109,15 +125,19 @@
         .tabs-container {
             width: 100%; overflow-x: auto; background: white; 
             padding: 10px; display: flex; gap: 8px;
-            scrollbar-width: none; border-bottom: 1px solid #FFE0B2;
+            scrollbar-width: none; -webkit-overflow-scrolling: touch;
+            border-bottom: 1px solid #eee;
         }
         .tab-btn {
-            padding: 8px 18px; background: #FFF8E1; border: 1px solid #FFE0B2;
+            padding: 8px 18px; background: #FFF8E1; /* Light cream */
+            border: 1px solid #FFE0B2; /* Lighter orange */
             border-radius: 20px; white-space: nowrap; cursor: pointer;
             color: #5D4037; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;
+            transition: 0.2s;
         }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(255, 109, 0, 0.3); }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(255, 109, 0, 0.3); } /* Orange active state */
 
+        /* DESKTOP SIDEBAR */
         @media (min-width: 900px) {
             .mobile-header { display: none; }
             #dashboard-ui { display: flex; }
@@ -126,62 +146,98 @@
                 position: fixed; left: 0; top: 0; background: white; border-right: 1px solid #eee;
                 padding: 25px; gap: 8px; border-bottom: none;
             }
+            .tabs-container::before {
+                content: 'FurnicoHub'; font-size: 1.8rem; font-weight: 800; color: var(--primary);
+                padding: 0 10px 30px; display: block; border-bottom: 1px solid #eee; margin-bottom: 15px;
+            }
+            .tab-btn { width: 100%; border-radius: 10px; border: none; padding: 14px; justify-content: flex-start; background: transparent; }
+            .tab-btn:hover { background: #FFF3E0; color: var(--primary); }
+            .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(255, 109, 0, 0.2); }
             #content-area { margin-left: var(--sidebar-w); padding: 40px; width: calc(100% - var(--sidebar-w)); max-width: 1200px; }
         }
 
         /* 250px RESPONSIVENESS */
         @media (max-width: 350px) {
+            h3 { font-size: 1.1rem; }
             .card { padding: 12px; }
-            .stat-grid { grid-template-columns: 1fr !important; }
-            .day-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .btn { font-size: 0.8rem; padding: 10px; }
+            .nav-brand { font-size: 1rem; } /* This class doesn't exist in your HTML, keeping for consistency if added later */
+            .stat-grid { grid-template-columns: 1fr !important; } /* Stacks stats vertically */
+            .day-row { flex-direction: column; align-items: flex-start; gap: 5px; } /* Stacks day elements vertically */
             .day-row input, .day-row select { width: 100%; }
-            h2, h3 { font-size: 1.1rem; }
+            .mobile-header .bold { font-size: 0.9rem; }
+            .mobile-header .btn { padding: 4px 10px; font-size: 0.7rem; }
+            .tabs-container { padding: 5px; }
+            .tab-btn { padding: 6px 12px; font-size: 0.8rem; }
+            .input-group label { font-size: 0.8rem; }
+            .input-group input, .input-group select, .input-group textarea { padding: 10px; font-size: 0.85rem; }
         }
 
+        /* STATUS & GRID */
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+        .st-verified { background: #E8F5E9; /* Light green */ color: var(--green); border: 1px solid var(--green); }
+        .st-pending { background: #FFF3E0; /* Light cream */ color: #E65100; /* Dark orange */ border: 1px solid #FFCC80; /* Lighter orange */ }
+        
         .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: white; padding: 15px; border-radius: 16px; text-align: center; border-bottom: 4px solid transparent; box-shadow: var(--shadow); }
-        .toggle-switch { display: flex; background: #eee; border-radius: 50px; padding: 4px; width: fit-content; margin: 0 auto 15px; }
-        .toggle-opt { padding: 6px 16px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
-        .toggle-opt.active { background: var(--primary); color: white; }
-        .day-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .stat-card { 
+            background: white; padding: 15px; border-radius: 16px; text-align: center; cursor: pointer; 
+            border-bottom: 4px solid transparent; box-shadow: var(--shadow); transition: 0.2s; 
+            display: flex; flex-direction: column; justify-content: space-between; /* Ensures buttons are at bottom */
+        }
+        .stat-card:hover { transform: translateY(-3px); }
 
+        .toggle-switch { display: flex; background: #eee; border-radius: 50px; padding: 4px; width: fit-content; margin: 0 auto 15px; }
+        .toggle-opt { padding: 6px 16px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #777; transition: 0.2s; }
+        .toggle-opt.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+        .day-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .date-chip { display: inline-flex; align-items: center; background: #FFEBEE; /* Light red */ padding: 5px 10px; border-radius: 20px; margin: 2px; font-size: 0.8rem; color: #C62828; /* Dark red */ }
+        
+        /* Category Header in Feed */
+        .cat-header { grid-column: 1 / -1; font-weight: 800; color: var(--primary); margin: 20px 0 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+
+        /* Animation for cards */
         @keyframes slideUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
     </style>
 </head>
 <body>
 
-    <!-- 1. LOGIN SCREEN -->
-    <div id="login-ui">
-        <div class="card" style="width: 100%; max-width: 350px; text-align: center; padding: 40px 25px;">
-            <img src="logo.png" onerror="this.src='https://via.placeholder.com/100'" style="width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 4px solid var(--primary); margin-bottom: 20px;">
-            <h2 style="color:var(--primary); margin-bottom: 5px;">Seller Portal</h2>
-            <p style="color:#666; margin-bottom: 30px;">Manage your furniture shop.</p>
-            <button class="btn" onclick="login()"><i class="fa-brands fa-google"></i> Login with Google</button>
-            <a href="index.html" class="btn btn-outline" style="margin-top: 10px;">Back to Marketplace</a>
+<!-- 1. LOGIN SCREEN -->
+<div id="login-ui">
+    <div class="card" style="width: 100%; max-width: 350px; text-align: center; padding: 40px 25px;">
+        <img src="logo.png" onerror="this.src='https://via.placeholder.com/90/FFCC80/3E2723?text=Logo'" style="width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 4px solid var(--primary); margin-bottom: 20px;">
+        <h2 style="color:var(--primary); margin-bottom: 5px;">Seller Portal</h2>
+        <p style="color:#666; margin-bottom: 30px; line-height: 1.5;">Manage your furniture shop, inventory, and orders.</p>
+        <button class="btn" onclick="login()"><i class="fa-brands fa-google"></i> Login with Google</button>
+        <a href="index.html" class="btn btn-outline" style="margin-top: 10px;">Back to Marketplace</a>
+    </div>
+</div>
+
+<!-- 2. DASHBOARD UI -->
+<div id="dashboard-ui" class="hidden">
+    <div class="mobile-header">
+        <div class="bold" style="font-size:1.1rem; display:flex; align-items:center; gap:8px; color:var(--primary);">
+            <img src="icon.png" height="28" onerror="this.src='https://via.placeholder.com/28/FFCC80/3E2723?text=FH'"> FurnicoHub
         </div>
+        <button class="btn" style="width:auto; padding:6px 14px; margin:0; background:rgba(255, 109, 0, 0.1); color:var(--primary);" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
     </div>
 
-    <!-- 2. DASHBOARD UI -->
-    <div id="dashboard-ui" class="hidden">
-        <div class="mobile-header">
-            <div class="bold" style="font-size:1.1rem; display:flex; align-items:center; gap:8px; color:var(--primary);">
-                FurnicoHub
-            </div>
-            <button class="btn" style="width:auto; padding:6px 14px; margin:0; background:#FFF3E0; color:var(--primary);" onclick="logout()">
-                <i class="fa-solid fa-right-from-bracket"></i>
-            </button>
-        </div>
-
-        <div class="tabs-container" id="tabs-nav"></div>
-
-        <div id="content-area" style="padding: 20px;">
-            <div style="text-align:center; padding:50px; color:#aaa;">
-                <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-            </div>
-        </div>
+    <div class="tabs-container" id="tabs-nav">
+        <!-- Injected via JS -->
     </div>
 
+    <div id="content-area" style="padding: 20px;">
+        <div style="text-align:center; padding:50px; color:#aaa;">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        </div>
+    </div>
+</div>
+
+<iframe id="printFrame" style="display:none;"></iframe>
 <script>
+    // --- 1. FIREBASE CONFIG ---
     const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -192,16 +248,22 @@
     let shopData = {};
     let shopOrders = [];
     let shopReviews = [];
-    let shopMessages = [];
+    let shopMessages = []; /* Added for messages tab */
     let currentTab = 'Dashboard';
     let tempImages = [null, null, null]; 
     let discountType = 'amount';
-    let marketItems = []; 
+    let marketItems = []; // For Marketplace search
 
-    const CATEGORIES = ["Living Room", "Bedroom", "Dining Room", "Kitchen", "Bathroom", "Study Room", "Kids Room", "Outdoor & Garden", "Office", "Other"];
+    // --- CONFIG DATA ---
+    const CATEGORIES = [
+        "Living Room", "Bedroom", "Dining Room", "Kitchen", 
+        "Bathroom", "Study Room", "Kids Room", "Baby Room", 
+        "Outdoor & Garden", "Office", "Other"
+    ];
+
     const TABS = [
-        { id: 'Dashboard', icon: 'fa-chart-pie' },
-        { id: 'Smart POS', icon: 'fa-calculator' },
+        { id: 'Dashboard', icon: 'fa-chart-pie' }, // New Home
+        { id: 'Smart POS', icon: 'fa-calculator' }, // Renamed
         { id: 'Marketplace', icon: 'fa-store' },    
         { id: 'Profile', icon: 'fa-user-gear' },     
         { id: 'Get Verified', icon: 'fa-certificate' }, 
@@ -209,10 +271,11 @@
         { id: 'Products', icon: 'fa-couch' },       
         { id: 'My Webpage', icon: 'fa-globe' },     
         { id: 'Orders', icon: 'fa-box-open' },      
-        { id: 'Messages', icon: 'fa-comments' },    
+        { id: 'Messages', icon: 'fa-comments' },    /* Added icon for Messages tab */
         { id: 'Reviews', icon: 'fa-star' }          
     ];
 
+    // --- 2. AUTH ---
     auth.onAuthStateChanged(async u => {
         if (u) {
             user = u;
@@ -225,7 +288,9 @@
         }
     });
 
-    function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => alert(e.message)); }
+    function login() { 
+        auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => alert(e.message)); 
+    }
     function logout() { auth.signOut(); }
 
     async function loadShopData() {
@@ -234,13 +299,36 @@
             shopData = doc.data();
             currentTab = shopData.profileCompleted ? 'Dashboard' : 'Profile';
         } else {
-            shopData = { role: 'seller', profileCompleted: false, isVerified: false, products: [], isOpen: false, emergencyClose: false, schedule: {}, specialDates: [] };
+            // Default Data Structure
+            shopData = { 
+                role: 'seller', 
+                profileCompleted: false, 
+                isVerified: false, 
+                products: [], 
+                isOpen: false, 
+                emergencyClose: false, 
+                schedule: {},
+                specialDates: [] 
+            };
             await db.collection('users').doc(user.uid).set(shopData);
             currentTab = 'Profile';
         }
         
+        // Listeners for real-time updates
+        db.collection('users').doc(user.uid).onSnapshot(docSnapshot => { // Listen for shopData changes
+            if (docSnapshot.exists) {
+                shopData = docSnapshot.data();
+                // Re-render content if crucial data changed for current tab
+                if (currentTab === 'Profile' || currentTab === 'Open/Close' || currentTab === 'My Webpage' || currentTab === 'Products' || currentTab === 'Dashboard') {
+                    renderContent();
+                }
+            }
+        });
+
         db.collection('users').doc(user.uid).collection('orders').orderBy('time', 'desc').onSnapshot(snap => {
-            shopOrders = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            const newOrders = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            if (newOrders.length > shopOrders.length && shopOrders.length > 0) alert("🔔 New Order Received!");
+            shopOrders = newOrders;
             if(currentTab === 'Orders' || currentTab === 'Dashboard') renderContent();
         });
 
@@ -249,9 +337,9 @@
             if(currentTab === 'Reviews' || currentTab === 'Dashboard') renderContent();
         });
 
-        // Load Messages for Contact Form
+        // Listener for Messages from shop.html contact form
         db.collection('users').doc(user.uid).collection('messages').orderBy('time', 'desc').onSnapshot(snap => {
-            shopMessages = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            shopMessages = snap.docs.map(d => ({id: d.id, ...d.data()}));
             if(currentTab === 'Messages' || currentTab === 'Dashboard') renderContent();
         });
 
@@ -259,14 +347,20 @@
         renderContent();
     }
 
+    // --- 3. RENDER SYSTEM ---
     function renderTabs() {
         const nav = document.getElementById('tabs-nav');
-        let html = TABS.map(t => `<button class="tab-btn ${currentTab === t.id ? 'active' : ''}" onclick="switchTab('${t.id}')"><i class="fa-solid ${t.icon}"></i> ${t.id}</button>`).join('');
+        let html = TABS.map(t => 
+            `<button class="tab-btn ${currentTab === t.id ? 'active' : ''}" onclick="switchTab('${t.id}')">
+                <i class="fa-solid ${t.icon}"></i> ${t.id}
+             </button>`
+        ).join('');
+        if(window.innerWidth > 900) html += `<button class="tab-btn" onclick="logout()" style="margin-top:auto; color:#C62828;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>`; // Using var(--red) for logout
         nav.innerHTML = html;
     }
 
     function switchTab(id) {
-        if(!shopData.profileCompleted && id !== 'Profile') return alert("Please complete Profile first!");
+        if(!shopData.profileCompleted && id !== 'Profile') return alert("Please complete Profile first to access other tabs!");
         currentTab = id;
         renderTabs();
         renderContent();
@@ -275,6 +369,7 @@
     function renderContent() {
         const c = document.getElementById('content-area');
         c.innerHTML = '';
+        
         switch(currentTab) {
             case 'Dashboard': renderHome(c); break;
             case 'Smart POS': renderPOS(c); break;
@@ -290,25 +385,55 @@
         }
     }
 
+    // --- 1) DASHBOARD (NEW HOME) ---
     function renderHome(div) {
+        // Fix for Timezone - get local date string YYYY-MM-DD
         const now = new Date();
-        const today = now.toISOString().split('T')[0];
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const today = `${year}-${month}-${day}`;
+        
         const todaysOrders = shopOrders.filter(o => o.time.startsWith(today)).length;
         const pendingReviews = shopReviews.filter(r => r.status !== 'published').length;
+        const unreadMsgs = shopMessages.length; // Correctly using shopMessages count
         const isOpen = !shopData.emergencyClose && (shopData.isOpen || false); 
+        
+        // Group Products
+        const prodCounts = {};
+        (shopData.products || []).forEach(p => { prodCounts[p.category] = (prodCounts[p.category] || 0) + 1; });
+        const prodHtml = Object.keys(prodCounts).map(cat => `<div class="flex space-between" style="border-bottom:1px solid #eee; padding:5px 0;"><span>${cat}</span><b>${prodCounts[cat]}</b></div>`).join('');
+
+        // Webpage Link
+        const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+        const url = `${window.location.origin}${path}/shop.html?id=${user.uid}`;
 
         div.innerHTML = `
+            <!-- Time Widget -->
             <div class="card flex space-between" style="background:var(--primary); color:white; border:none;">
                 <div id="live-clock" style="font-size:1.2rem; font-weight:bold;">Loading...</div>
-                <div style="font-size:0.9rem;">${now.toDateString()}</div>
+                <div style="font-size:0.9rem;">${new Date().toDateString()}</div>
             </div>
+
+            <!-- Status Widget -->
             <div class="card flex space-between" style="border-left:5px solid ${isOpen?'var(--green)':'var(--red)'}">
                 <div>
-                    <h3 style="margin:0; color:${isOpen?'var(--green)':'var(--red)'}">${isOpen ? 'Shop is Open' : 'Shop is Closed'}</h3>
-                    <small>Based on schedule</small>
+                    <h3 style="margin:0; color:${isOpen?'var(--green)':'var(--red)'}">${isOpen ? 'Your shop is Open' : 'Your shop is Closed'}</h3>
+                    <small style="color:#777;">Based on schedule & emergency status</small>
                 </div>
                 <button class="btn btn-sm btn-outline" onclick="switchTab('Open/Close')">Edit</button>
             </div>
+
+            <!-- Webpage Widget -->
+            <div class="card">
+                <div class="flex space-between">
+                    <b>Public Webpage</b>
+                    <button class="btn btn-sm btn-outline" onclick="switchTab('My Webpage')">Edit</button>
+                </div>
+                <a href="${url}" target="_blank" class="btn btn-primary mt-1" style="width:100%;">See Your Webpage</a>
+            </div>
+
+            <!-- Stats Grid -->
             <div class="stat-grid">
                 <div class="stat-card" style="border-bottom:4px solid var(--primary);">
                     <h2>${todaysOrders}</h2>
@@ -316,13 +441,28 @@
                     <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Orders')">See</button>
                 </div>
                 <div class="stat-card" style="border-bottom:4px solid var(--gold);">
-                    <h2>${shopMessages.length}</h2>
-                    <small>Messages</small>
+                    <h2>${unreadMsgs}</h2>
+                    <small>New Messages</small>
                     <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Messages')">See</button>
                 </div>
+                <div class="stat-card" style="border-bottom:4px solid var(--green);">
+                    <h2>${shopReviews.length}</h2>
+                    <small>${pendingReviews} Pending Reviews</small>
+                    <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Reviews')">See</button>
+                </div>
+            </div>
+
+            <!-- Products Overview -->
+            <div class="card">
+                <div class="flex space-between mb-1">
+                    <h3>Products (${(shopData.products||[]).length})</h3>
+                    <button class="btn btn-sm btn-outline" onclick="switchTab('Products')">Edit</button>
+                </div>
+                ${prodHtml || '<p style="color:#999;">No products added yet. Go to Products tab to add your first item.</p>'}
             </div>
         `;
         
+        // Clock Logic
         if(window.clockInterval) clearInterval(window.clockInterval);
         window.clockInterval = setInterval(() => {
             const el = document.getElementById('live-clock');
@@ -330,262 +470,717 @@
         }, 1000);
     }
 
+    // --- 2) SMART POS (Renamed) ---
     function renderPOS(div) {
         div.innerHTML = `
             <div class="card">
-                <h3>Smart POS</h3>
-                <div class="input-group"><label>Product</label>
+                <h3><i class="fa-solid fa-calculator"></i> Smart POS</h3>
+                <div class="input-group">
+                    <label>Select Product</label>
                     <select id="pos-item" onchange="calcPos()">
                         <option value="0|Select">Select...</option>
                         ${(shopData.products||[]).map(p => `<option value="${p.price}|${p.name}">${p.name} - Rs.${p.price}</option>`).join('')}
                     </select>
                 </div>
-                <div class="input-group"><label>Customer</label><input id="pos-cust"></div>
-                <div class="input-group"><label>Discount</label>
-                    <div class="toggle-switch"><div class="toggle-opt ${discountType==='amount'?'active':''}" onclick="setDiscType('amount')">Rs.</div><div class="toggle-opt ${discountType==='percent'?'active':''}" onclick="setDiscType('percent')">%</div></div>
-                    <input type="number" id="pos-disc" value="0" oninput="calcPos()">
+                <div class="input-group"><label>Customer Name</label><input id="pos-cust" placeholder="Optional"></div>
+                
+                <div class="input-group">
+                    <label>Discount Type</label>
+                    <div class="toggle-switch">
+                        <div class="toggle-opt ${discountType==='amount'?'active':''}" onclick="setDiscType('amount')">Rs. Amount</div>
+                        <div class="toggle-opt ${discountType==='percent'?'active':''}" onclick="setDiscType('percent')">% Percent</div>
+                    </div>
+                    <input type="number" id="pos-disc" value="0" oninput="calcPos()" placeholder="Enter value">
                 </div>
-                <div class="text-center" style="margin:20px 0; background:#FFF3E0; padding:15px; border-radius:12px;">
+                
+                <div class="text-center" style="margin:20px 0; background:#FFF8E1; padding:15px; border-radius:12px;">
+                    <small>Total Payable</small><br>
                     <span style="font-size:1.8rem; font-weight:800; color:var(--primary);" id="pos-total">Rs. 0</span>
                 </div>
-                <button class="btn btn-green" onclick="printInv()">Print Invoice</button>
-            </div>`;
+                <button class="btn btn-green" onclick="printInv()">Generate Invoice & Print</button>
+            </div>
+        `;
     }
     
-    function setDiscType(type) { discountType = type; renderPOS(document.getElementById('content-area')); calcPos(); }
+    function setDiscType(type) {
+        discountType = type;
+        renderPOS(document.getElementById('content-area')); 
+        calcPos();
+    }
+
     function calcPos() {
         const val = document.getElementById('pos-item').value.split('|')[0];
         const price = parseInt(val) || 0;
         const discVal = parseInt(document.getElementById('pos-disc').value) || 0;
-        let final = discountType === 'amount' ? price - discVal : price - (price * (discVal / 100));
-        document.getElementById('pos-total').innerText = "Rs. " + Math.max(0, final);
+        let final = 0;
+        if (discountType === 'amount') final = price - discVal;
+        else final = price - (price * (discVal / 100));
+        document.getElementById('pos-total').innerText = "Rs. " + Math.max(0, final).toLocaleString(); // Ensure currency formatting
     }
-    function printInv() { window.print(); }
 
+    function printInv() {
+        const [price, name] = document.getElementById('pos-item').value.split('|');
+        if(name === 'Select') return alert("Please select a product first.");
+        const customerName = document.getElementById('pos-cust').value || "Customer";
+        const discountText = discountType === 'amount' ? `Discount: Rs. ${parseInt(document.getElementById('pos-disc').value || 0).toLocaleString()}` : `Discount: ${parseInt(document.getElementById('pos-disc').value || 0)}%`;
+        const total = document.getElementById('pos-total').innerText;
+        const w = window.open('','','width=300,height=500');
+        w.document.write(`
+            <body style="font-family:monospace; text-align:center; padding:10px;">
+                <h3>${shopData.shopName}</h3>
+                <p>Date: ${new Date().toLocaleDateString()}</p>
+                <hr>
+                <p>Customer: ${customerName}</p>
+                <p>Item: ${name}</p>
+                <p>Unit Price: Rs. ${parseInt(price).toLocaleString()}</p>
+                <p>${discountText}</p>
+                <hr>
+                <h3>Total: ${total}</h3>
+                <p style="margin-top:20px;">Thank you for your purchase!</p>
+                <script>window.print();<\/script>
+            </body>
+        `);
+        w.document.close(); // Close the document stream
+    }
+
+    // --- 3) MARKETPLACE ---
     async function renderMarketplace(div) {
-        div.innerHTML = `<div class="card"><h3>Feed</h3><input id="search-all" placeholder="Search..." class="w-100" onkeyup="filterFeed()"></div><div id="feed-grid" style="display:grid; gap:10px;">Loading...</div>`;
+        div.innerHTML = `
+            <div class="card">
+                <h3>Marketplace Feed</h3>
+                <div class="flex mt-1" style="gap: 15px;">
+                    <input id="search-shop" placeholder="Search Shop Name..." class="w-100" onkeyup="filterFeed()">
+                    <input id="search-prod" placeholder="Search Product Name..." class="w-100" onkeyup="filterFeed()">
+                </div>
+            </div>
+            <div id="feed-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:15px;">Loading...</div>
+        `;
+        
         try {
-            const snap = await db.collection('users').where('role', '==', 'seller').get();
+            const snapshot = await db.collection('users').where('role', '==', 'seller').get();
             marketItems = [];
-            snap.forEach(doc => { const d = doc.data(); (d.products||[]).forEach(p => marketItems.push({...p, seller:d.shopName, sellerId:doc.id})); });
-            filterFeed();
-        } catch(e) { document.getElementById('feed-grid').innerHTML = 'Error'; }
-    }
-    window.filterFeed = function() {
-        const s = document.getElementById('search-all').value.toLowerCase();
-        const grid = document.getElementById('feed-grid');
-        grid.innerHTML = marketItems.filter(i => i.name.toLowerCase().includes(s) || i.seller.toLowerCase().includes(s)).map(i => `
-            <div class="card" onclick="window.open('shop.html?id=${i.sellerId}','_blank')"><b>${i.name}</b><br>Rs. ${i.price}<br><small>${i.seller}</small></div>`).join('');
+            snapshot.forEach(doc => {
+                const d = doc.data();
+                if(d.products) d.products.forEach(p => marketItems.push({
+                    ...p, 
+                    seller: d.shopName, 
+                    logo: d.logo, 
+                    verified: d.isVerified, /* Using correct field name */
+                    sellerId: doc.id
+                }));
+            });
+            window.filterFeed();
+        } catch(e) {
+            console.error("Error loading marketplace feed:", e);
+            document.getElementById('feed-grid').innerHTML = '<p class="text-red center w-100" style="grid-column: 1/-1;">Error loading marketplace feed. Please try again.</p>';
+        }
     }
 
+    window.filterFeed = function() {
+        const sShop = document.getElementById('search-shop') ? document.getElementById('search-shop').value.toLowerCase() : "";
+        const sProd = document.getElementById('search-prod') ? document.getElementById('search-prod').value.toLowerCase() : "";
+        const grid = document.getElementById('feed-grid');
+        if (!grid) return;
+        
+        let filtered = (window.marketItems || []).filter(i => 
+            (sShop === "" || (i.seller && i.seller.toLowerCase().includes(sShop))) &&
+            (sProd === "" || (i.name && i.name.toLowerCase().includes(sProd)))
+        );
+
+        // Group by Category
+        const grouped = {};
+        filtered.forEach(i => {
+            if(!grouped[i.category]) grouped[i.category] = [];
+            grouped[i.category].push(i);
+        });
+
+        let html = '';
+        if (filtered.length === 0) {
+            html = '<p class="text-center w-100" style="grid-column: 1/-1;">No items found matching your search.</p>';
+        } else {
+            Object.keys(grouped).forEach(cat => {
+                html += `<div class="cat-header">${cat}</div>`;
+                grouped[cat].forEach(i => {
+                    html += `
+                    <div class="card" style="padding:0; overflow:hidden; cursor:pointer;" onclick="window.open('shop.html?id=${i.sellerId}','_blank')">
+                        <img src="${i.images[0]}" style="width:100%; height:120px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/120/FFCC80/3E2723?text=Product'">
+                        <div style="padding:10px;">
+                            <div class="bold">${i.name}</div>
+                            <div class="text-primary">Rs. ${parseInt(i.price).toLocaleString()}</div>
+                            <div style="font-size:0.75rem; color:#777; margin-top:5px;">${i.seller}</div>
+                        </div>
+                    </div>`;
+                });
+            });
+        }
+        grid.innerHTML = html;
+    }
+
+    // --- 4) PROFILE ---
     function renderProfile(div) {
         const d = shopData;
         const lock = d.isVerified ? 'disabled' : '';
         div.innerHTML = `
             <div class="card">
                 <h3>Shop Profile</h3>
-                ${d.isVerified ? '<div class="text-center text-green mb-1"><b><i class="fa-solid fa-lock"></i> Profile Locked (Verified)</b></div>' : ''}
-                <div class="text-center mb-1">
-                    <img id="p-logo" src="${d.logo||'logo.png'}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);">
-                    ${!d.isVerified ? `<br><label class="btn btn-outline btn-sm mt-1">Upload Logo <input type="file" hidden onchange="upImg(this, 'logo')"></label>` : ''}
+                ${d.isVerified ? '<div style="background:#E8F5E9; color:var(--green); padding:10px; border-radius:8px; text-align:center;">🔒 Locked (Verified)</div>' : ''}
+                <div class="text-center mb-2 mt-1">
+                    <img id="p-logo" src="${d.logo||'logo.png'}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);" onerror="this.src='https://via.placeholder.com/100/FFCC80/3E2723?text=Logo'">
+                    ${!d.isVerified ? `<br><label class="btn btn-outline" style="width:auto; display:inline-block; margin-top:10px; padding:6px 15px;">Upload Logo <input type="file" hidden onchange="upImg(this, 'logo')"></label>` : ''}
                 </div>
                 <div class="input-group"><label>Shop Name *</label><input id="s-name" value="${d.shopName||''}" ${lock}></div>
                 <div class="input-group"><label>Address *</label><textarea id="s-addr" ${lock}>${d.address||''}</textarea></div>
                 <div class="input-group"><label>Owner Name *</label><input id="s-own" value="${d.ownerName||''}" ${lock}></div>
                 <div class="input-group"><label>NIC *</label><input id="s-nic" value="${d.nic||''}" ${lock}></div>
-                <div class="input-group"><label>Phone 1 *</label><input type="number" id="s-ph1" value="${d.phone1||''}" ${lock}></div>
-                <div class="input-group"><label>WhatsApp (+94...) *</label><input id="s-wa" type="number" value="${d.whatsapp||''}" placeholder="94771234567" ${lock}></div>
+                <div class="input-group"><label>Phone 1 *</label><input type="tel" id="s-ph1" value="${d.phone1||''}" placeholder="e.g., 0712345678" ${lock}></div>
+                <div class="input-group"><label>WhatsApp Number (+94...) *</label><input type="tel" id="s-wa" value="${d.whatsapp||''}" placeholder="e.g., 94771234567" ${lock}></div>
                 ${!d.isVerified ? `<button class="btn" onclick="saveProfile(this)">Save Profile</button>` : ''}
             </div>
         `;
     }
 
     async function saveProfile(btn) {
-        const name = document.getElementById('s-name').value;
-        const addr = document.getElementById('s-addr').value;
-        const own = document.getElementById('s-own').value;
+        const shopName = document.getElementById('s-name').value;
+        const address = document.getElementById('s-addr').value;
+        const ownerName = document.getElementById('s-own').value;
         const nic = document.getElementById('s-nic').value;
-        const ph1 = document.getElementById('s-ph1').value;
-        const wa = document.getElementById('s-wa').value;
+        const phone1 = document.getElementById('s-ph1').value;
+        const whatsapp = document.getElementById('s-wa').value;
 
-        if(!name || !addr || !own || !nic || !ph1 || !wa) return alert("All fields are required!");
-        if(wa.length < 11 || !wa.startsWith('94')) return alert("WhatsApp number must start with 94 and have proper length (e.g. 94771234567)");
+        // Basic validation for required fields
+        if (!shopName || !address || !ownerName || !nic || !phone1 || !whatsapp) {
+            return alert("All fields marked with * are required.");
+        }
 
+        // Validate WhatsApp number format
+        if (!whatsapp.startsWith('94') || whatsapp.length < 11 || !/^\d+$/.test(whatsapp)) { // Check for starts with 94, minimum length, and digits only
+            return alert("WhatsApp number must start with '94' and be a complete phone number (e.g., 94771234567).");
+        }
+        // Validate Phone 1 format (simple digit check for now)
+        if (!/^\d+$/.test(phone1) || phone1.length < 9) { // Simple check for digits and min length
+            return alert("Please enter a valid Phone 1 number (digits only, minimum 9 digits).");
+        }
+        
         const originalText = btn.innerText;
         btn.innerText = "Saving...";
         btn.disabled = true;
 
         try {
             await db.collection('users').doc(user.uid).update({
-                shopName: name, address: addr, ownerName: own, nic: nic, phone1: ph1, whatsapp: wa,
+                shopName: shopName,
+                address: address,
+                ownerName: ownerName,
+                nic: nic,
+                phone1: phone1,
+                whatsapp: whatsapp,
                 logo: shopData.temp_logo || shopData.logo || '',
                 profileCompleted: true
             });
+            // Update local data immediately after successful save
             shopData = (await db.collection('users').doc(user.uid).get()).data();
-            alert("Saved! Check your Shop page.");
-            switchTab('Dashboard');
+            alert("Profile saved successfully!");
+            switchTab('Dashboard'); // Redirect to dashboard after saving
         } catch(e) {
-            console.error(e);
-            alert("Error: " + e.message);
+            console.error("Error saving profile:", e);
+            alert("Error saving profile: " + e.message);
         } finally {
             btn.innerText = originalText;
             btn.disabled = false;
         }
     }
 
+    // --- 5) GET VERIFIED ---
     function renderVerify(div) {
-        if(shopData.isVerified) return div.innerHTML = `<div class="card text-center" style="padding:40px;"><h1 style="color:var(--green)">Verified!</h1></div>`;
+        if(shopData.isVerified) return div.innerHTML = `<div class="card text-center" style="padding:40px;"><h1 class="text-green"><i class="fa-solid fa-circle-check"></i> Verified! Your shop has the green badge.</h1></div>`;
+        
         div.innerHTML = `
             <div class="card">
-                <h3>Get Verified (Rs. 5000)</h3>
-                <button class="btn btn-outline" onclick="window.print()">Download Profile PDF</button>
-                <div class="mt-1 mb-1 p-2" style="background:#FFF3E0; border-radius:8px;">Bank: Commercial Bank<br>Acc: 8750053306 (Colombage SD)</div>
-                <div class="input-group"><label>Upload Certified Doc</label><div class="upload-box" onclick="document.getElementById('v-doc').click()">Upload<input type="file" id="v-doc" hidden onchange="upImg(this, 'doc')"></div></div>
-                <div class="input-group"><label>Upload Payment Slip</label><div class="upload-box" onclick="document.getElementById('v-slip').click()">Upload<input type="file" id="v-slip" hidden onchange="upImg(this, 'slip')"></div></div>
-                <button class="btn btn-green" onclick="subVerify(this)">Submit</button>
-            </div>`;
+                <h3>Get Verified (One-time fee: Rs. 5000)</h3>
+                <p style="color:#666; margin-bottom:15px;">Follow these steps to get your shop's green 'Verified' badge.</p>
+                <button class="btn btn-outline" onclick="printProf()">1. Download Shop Profile PDF</button>
+                <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0;">
+                    <b>2. Certify Document:</b> Get the downloaded PDF certified by a Grama Niladhari (GN) or Justice of Peace (JP).<br>
+                    <b>3. Make Payment:</b> Pay the one-time verification fee of <b>Rs. 5000</b> to:<br>
+                    Bank: Commercial Bank, Homagama<br>
+                    Account Name: Colombage S.D.<br>
+                    Account Number: 8750053306
+                </div>
+                <div class="input-group">
+                    <label>4. Upload Certified Document *</label>
+                    <div class="upload-box" onclick="document.getElementById('v-doc').click()">Click to Upload Certified PDF/Image <input type="file" id="v-doc" hidden onchange="upImg(this, 'doc')"></div>
+                    <small id="st-doc" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded Successfully</small>
+                </div>
+                <div class="input-group">
+                    <label>5. Upload Payment Slip/Screenshot *</label>
+                    <div class="upload-box" onclick="document.getElementById('v-slip').click()">Click to Upload Payment Proof <input type="file" id="v-slip" hidden onchange="upImg(this, 'slip')"></div>
+                    <small id="st-slip" class="hidden text-center" style="color:var(--green); display:block; margin-top:5px;">✅ Uploaded Successfully</small>
+                </div>
+                <button class="btn btn-green" onclick="subVerify(this)">Submit for Review</button>
+            </div>
+        `;
     }
-    
-    async function subVerify(btn) {
-        if(!shopData.temp_doc || !shopData.temp_slip) return alert("Upload proofs");
-        btn.disabled = true;
-        try {
-            await db.collection('admin_requests').add({ uid: user.uid, shopName: shopData.shopName, doc: shopData.temp_doc, slip: shopData.temp_slip, time: new Date().toISOString() });
-            alert("Submitted!");
-        } catch(e) { alert(e.message); }
-        btn.disabled = false;
+      
+    function printProf() {
+        const w = window.open('','','width=600,height=600');
+        w.document.write(`
+            <html lang="en"><head><title>Shop Profile - ${shopData.shopName}</title><style>body{font-family: 'Poppins', sans-serif; padding: 20px;} h2{color:#FF6D00;} p{margin-bottom: 5px;}</style></head>
+            <body>
+                <h2>FurnicoHub Seller Profile</h2>
+                <p><b>Shop Name:</b> ${shopData.shopName || 'N/A'}</p>
+                <p><b>Owner Name:</b> ${shopData.ownerName || 'N/A'}</p>
+                <p><b>NIC:</b> ${shopData.nic || 'N/A'}</p>
+                <p><b>Address:</b> ${shopData.address || 'N/A'}</p>
+                <p><b>Phone:</b> ${shopData.phone1 || 'N/A'}</p>
+                <p><b>WhatsApp:</b> ${shopData.whatsapp || 'N/A'}</p>
+                <p style="margin-top:20px; font-style:italic;">Please get this document certified by a Grama Niladhari or Justice of Peace.</p>
+                <p style="text-align:center; margin-top:40px;">------------------------------------</p>
+                <p style="text-align:center;">(Official Stamp & Signature)</p>
+            </body></html>
+        `);
+        w.document.close();
+        w.print();
     }
 
+    async function subVerify(btn) {
+        if(!shopData.temp_doc || !shopData.temp_slip) return alert("Please upload both the certified document and the payment slip before submitting.");
+        
+        btn.innerText = "Submitting...";
+        btn.disabled = true;
+        
+        try {
+            await db.collection('admin_requests').add({ 
+                uid: user.uid, 
+                shopName: shopData.shopName, 
+                doc: shopData.temp_doc, 
+                slip: shopData.temp_slip, 
+                time: new Date().toISOString(),
+                status: 'pending' // Add a status for admin review
+            });
+            alert("Verification request submitted successfully! We will review it shortly.");
+            // Optionally clear temp_doc and temp_slip or update UI
+            delete shopData.temp_doc;
+            delete shopData.temp_slip;
+            renderVerify(document.getElementById('content-area')); // Refresh the verification tab
+        } catch(e) {
+            console.error("Error submitting verification request:", e);
+            alert("Error submitting for review: " + e.message);
+        } finally {
+            btn.innerText = "Submit for Review";
+            btn.disabled = false;
+        }
+    }
+
+    // --- 6) OPEN/CLOSE (Major Update) ---
     function renderOpenClose(div) {
         const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-        const sch = shopData.schedule || {};
-        div.innerHTML = `
-            <div class="card" style="border:2px solid ${shopData.emergencyClose?'red':'green'}">
-                <h3>Emergency</h3>
-                <button class="btn btn-${shopData.emergencyClose?'green':'red'}" onclick="toggleEmg(!${shopData.emergencyClose})">${shopData.emergencyClose?'Open Shop':'Close Today'}</button>
-            </div>
-            <div class="card">
-                <h3>Schedule</h3>
-                ${days.map(d => `<div class="day-row"><div style="width:80px;">${d}</div><select id="st-${d}"><option value="open" ${sch[d]?.open?'selected':''}>Open</option><option value="closed" ${!sch[d]?.open?'selected':''}>Closed</option></select><input type="time" id="s-${d}" value="${sch[d]?.start||'09:00'}"><input type="time" id="e-${d}" value="${sch[d]?.end||'18:00'}"></div>`).join('')}
-                <button class="btn" onclick="saveSch()">Save Schedule</button>
+        const schedule = shopData.schedule || {};
+        const isEmergency = shopData.emergencyClose || false;
+        
+        let rows = days.map(d => {
+            const s = schedule[d] || {open: true, start: "09:00", end: "20:00"};
+            return `
+            <div class="day-row">
+                <div style="width:90px; font-weight:bold;">${d}</div>
+                <select id="st-${d}" class="w-100" style="flex: 1;"><option value="open" ${s.open?'selected':''}>Open</option><option value="closed" ${!s.open?'selected':''}>Closed</option></select>
+                <input type="time" id="start-${d}" value="${s.start}" class="w-100" style="flex: 1;"> to <input type="time" id="end-${d}" value="${s.end}" class="w-100" style="flex: 1;">
             </div>`;
+        }).join('');
+
+        const specialDates = (shopData.specialDates || []).map((sd, i) => `
+            <span class="date-chip">${sd} <i class="fa-solid fa-times" style="cursor:pointer; margin-left:5px;" onclick="removeDate(${i})"></i></span>
+        `).join('');
+
+        div.innerHTML = `
+            <div class="card" style="border:2px solid ${isEmergency?'var(--red)':'var(--green)'}">
+                <h3>Emergency Control</h3>
+                <p>${isEmergency ? "🔴 YOUR SHOP IS TEMPORARILY CLOSED TODAY" : "🟢 Your shop is currently operating normally"}</p>
+                <button class="btn btn-${isEmergency?'green':'red'}" onclick="toggleEmergency(!${isEmergency})">${isEmergency?'Re-Open Shop Now':'Close Shop Today'}</button>
+            </div>
+            <div class="card">
+                <h3>Weekly Schedule</h3>
+                <p style="color:#777; margin-bottom:15px;">Set your regular opening and closing times for each day.</p>
+                ${rows}
+                <button class="btn mt-1" onclick="saveSchedule(this)">Save Weekly Settings</button>
+            </div>
+            <div class="card">
+                <h3>Special Closed Dates</h3>
+                <p style="color:#777; margin-bottom:15px;">Add specific dates when your shop will be closed (e.g., holidays).</p>
+                <div class="flex mb-1" style="flex-wrap: nowrap; gap: 5px;">
+                    <input type="date" id="sp-date" class="w-100">
+                    <button class="btn btn-sm btn-outline" onclick="addDate()">Add Date</button>
+                </div>
+                <div style="margin-top: 10px;">${specialDates || '<p style="color:#999;">No special closed dates added.</p>'}</div>
+            </div>
+        `;
     }
 
-    async function toggleEmg(state) { await db.collection('users').doc(user.uid).update({emergencyClose:state}); shopData.emergencyClose=state; renderOpenClose(document.getElementById('content-area')); }
-    async function saveSch() {
+    async function saveSchedule(btn) {
+        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
         const schedule = {};
-        ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].forEach(d => {
-            schedule[d] = { open: document.getElementById(`st-${d}`).value === 'open', start: document.getElementById(`s-${d}`).value, end: document.getElementById(`e-${d}`).value };
+        days.forEach(d => {
+            schedule[d] = {
+                open: document.getElementById(`st-${d}`).value === 'open',
+                start: document.getElementById(`start-${d}`).value,
+                end: document.getElementById(`end-${d}`).value
+            };
         });
-        await db.collection('users').doc(user.uid).update({schedule});
-        alert("Saved");
+        
+        btn.innerText = "Saving...";
+        btn.disabled = true;
+        try {
+            await db.collection('users').doc(user.uid).update({ schedule });
+            shopData.schedule = schedule; // Update local shopData immediately
+            alert("Weekly Schedule Saved!");
+        } catch(e) { 
+            console.error("Error saving schedule:", e);
+            alert("Error saving schedule: " + e.message); 
+        } finally { 
+            btn.innerText = "Save Weekly Settings"; 
+            btn.disabled = false;
+        }
     }
 
+    async function toggleEmergency(state) {
+        try {
+            await db.collection('users').doc(user.uid).update({ emergencyClose: state });
+            shopData.emergencyClose = state; // Update local shopData immediately
+            renderOpenClose(document.getElementById('content-area')); // Re-render the UI
+            alert(`Shop is now ${state ? 'CLOSED' : 'OPEN'}.`);
+        } catch(e) { 
+            console.error("Error toggling emergency close:", e);
+            alert("Error toggling emergency status: " + e.message); 
+        }
+    }
+
+    async function addDate() {
+        const d = document.getElementById('sp-date').value;
+        if(!d) return alert("Please select a date first.");
+        const arr = shopData.specialDates || [];
+        if (arr.includes(d)) return alert("This date is already added.");
+        arr.push(d);
+        try {
+            await db.collection('users').doc(user.uid).update({ specialDates: arr });
+            shopData.specialDates = arr; // Update local shopData immediately
+            renderOpenClose(document.getElementById('content-area')); // Re-render the UI
+            document.getElementById('sp-date').value = ''; // Clear input
+            alert("Special date added!");
+        } catch(e) { 
+            console.error("Error adding special date:", e);
+            alert("Error adding special date: " + e.message); 
+        }
+    }
+
+    async function removeDate(i) {
+        if (!confirm("Are you sure you want to remove this date?")) return;
+        const arr = shopData.specialDates;
+        arr.splice(i, 1);
+        try {
+            await db.collection('users').doc(user.uid).update({ specialDates: arr });
+            shopData.specialDates = arr; // Update local shopData immediately
+            renderOpenClose(document.getElementById('content-area')); // Re-render the UI
+            alert("Special date removed!");
+        } catch(e) { 
+            console.error("Error removing special date:", e);
+            alert("Error removing special date: " + e.message); 
+        }
+    }
+
+    // --- 7) PRODUCTS (Strict Cats) ---
     function renderProducts(div) {
-        tempImages = [null,null,null];
+        tempImages = [null,null,null]; // Reset temp images on render
         div.innerHTML = `
             <div class="card">
-                <h3>Add Product</h3>
-                <div class="input-group"><label>Images</label><div class="flex">${[0,1,2].map(i=>`<div class="upload-box" style="padding:5px; width:60px;" onclick="document.getElementById('fp${i}').click()">+<input type="file" id="fp${i}" hidden onchange="upImg(this,'prod',${i})"><img id="pp${i}"></div>`).join('')}</div></div>
-                <div class="input-group"><label>Category</label><select id="p-cat">${CATEGORIES.map(c=>`<option>${c}</option>`)}</select></div>
-                <div class="input-group"><label>Name</label><input id="p-name"></div>
-                <div class="input-group"><label>Description</label><textarea id="p-desc"></textarea></div>
-                <div class="input-group"><label>Price</label><input type="number" id="p-price"></div>
-                <button class="btn" onclick="saveProd(this)">Add Product</button>
+                <h3>Add New Product</h3>
+                <p style="color:#777; margin-bottom:15px;">Upload up to 3 images, choose a category, and fill in product details.</p>
+                <div class="input-group">
+                    <label>Images (Max 3) *</label>
+                    <div class="flex" style="flex-wrap: nowrap; overflow-x: auto;">
+                        ${[0,1,2].map(i=>`<div class="upload-box" style="padding:10px; min-width:70px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center;" onclick="document.getElementById('f-p${i}').click()">
+                            <i class="fa-solid fa-plus" style="font-size: 1.2rem; color: var(--primary);"></i>
+                            <input type="file" id="f-p${i}" hidden onchange="upImg(this, 'prod', ${i})">
+                            <img id="prev-p${i}" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius: 8px; display:none;">
+                        </div>`).join('')}
+                    </div>
+                </div>
+                <div class="input-group"><label>Category *</label>
+                    <select id="p-cat">
+                        <option value="">Select Category</option>
+                        ${CATEGORIES.map(c => `<option>${c}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="input-group"><label>Product Name *</label><input id="p-name" placeholder="e.g., Modern Sofa Set"></div>
+                <div class="input-group"><label>Description</label><textarea id="p-desc" rows="3" placeholder="Detailed product description..."></textarea></div>
+                <div class="input-group"><label>Price (Rs) *</label><input type="number" id="p-price" placeholder="e.g., 50000"></div>
+                <div class="input-group"><label>Promotion Text (Optional)</label><input id="p-promo" placeholder="e.g., 10% Off, Free Delivery"></div>
+                <button class="btn" onclick="saveProd(this)">Save Product</button>
             </div>
-            <h3>Inventory</h3>
-            ${(shopData.products||[]).map((p,i)=>`<div class="card flex space-between"><div class="flex"><img src="${p.images[0]}" style="width:40px;height:40px;"><div><b>${p.name}</b><br>Rs. ${p.price}</div></div><button class="btn btn-outline btn-sm" style="color:red; border-color:red" onclick="delProd(${i})">Del</button></div>`).join('')}
+            <h3>Your Inventory (${(shopData.products||[]).length} items)</h3>
+            ${(shopData.products||[]).length === 0 ? '<p style="color:#999; text-align:center;">No products added yet.</p>' : ''}
+            ${(shopData.products||[]).map((p,i)=>`
+                <div class="card flex space-between" style="padding:15px;">
+                    <div class="flex" style="align-items:flex-start;">
+                        <img src="${p.images[0]}" style="width:60px; height:60px; border-radius:8px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/60/FFCC80/3E2723?text=Prod'"> 
+                        <div style="flex:1;">
+                            <b style="display:block;">${p.name}</b>
+                            <span style="display:block; font-size:0.9rem; color:var(--primary);">Rs. ${parseInt(p.price).toLocaleString()}</span>
+                            ${p.promoText ? `<span style="display:block; font-size:0.75rem; color:#E65100;">${p.promoText}</span>` : ''}
+                        </div>
+                    </div>
+                    <button class="btn btn-outline btn-sm" style="width:auto; padding:5px 10px; border-color:var(--red); color:var(--red);" onclick="delProd(${i})"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+            `).join('')}
         `;
     }
 
     async function saveProd(btn) {
         const imgs = tempImages.filter(x=>x);
+        const cat = document.getElementById('p-cat').value;
         const name = document.getElementById('p-name').value;
+        const desc = document.getElementById('p-desc').value;
         const price = document.getElementById('p-price').value;
-        if(!imgs.length || !name || !price) return alert("Fill details");
+        const promoText = document.getElementById('p-promo').value;
+
+        if(!imgs.length) return alert("At least one image is required for the product.");
+        if(!cat) return alert("Product category is required.");
+        if(!name) return alert("Product name is required.");
+        if(!price) return alert("Product price is required.");
+        if(isNaN(price) || Number(price) <= 0) return alert("Please enter a valid positive number for price.");
+        
+        btn.innerText = "Saving Product...";
         btn.disabled = true;
-        const prod = { id:Date.now(), category:document.getElementById('p-cat').value, name, desc:document.getElementById('p-desc').value, price:Number(price), images:imgs };
-        const newArr = [...(shopData.products||[]), prod];
-        await db.collection('users').doc(user.uid).update({products:newArr});
-        shopData.products = newArr;
-        alert("Added"); renderProducts(document.getElementById('content-area'));
-    }
-    
-    async function delProd(i) {
-        if(confirm("Delete?")) { shopData.products.splice(i,1); await db.collection('users').doc(user.uid).update({products:shopData.products}); renderProducts(document.getElementById('content-area')); }
+
+        const prod = {
+            id: Date.now(),
+            category: cat,
+            name: name,
+            desc: desc,
+            price: Number(price),
+            promoText: promoText,
+            images: imgs
+        };
+
+        try {
+            const newArr = [...(shopData.products||[]), prod];
+            await db.collection('users').doc(user.uid).update({products: newArr});
+            shopData.products = newArr; // Update local shopData
+            alert("Product added successfully!");
+            renderProducts(document.getElementById('content-area')); // Re-render product list
+        } catch(e) {
+            console.error("Error saving product:", e);
+            alert("Error saving product: " + e.message);
+        } finally {
+            btn.innerText = "Save Product";
+            btn.disabled = false;
+        }
     }
 
+    async function delProd(i) {
+        if(!confirm("Are you sure you want to delete this product? This action cannot be undone.")) return;
+        try {
+            const productToDelete = shopData.products[i];
+            const updatedProducts = shopData.products.filter((_, index) => index !== i); // Create new array without the deleted product
+
+            await db.collection('users').doc(user.uid).update({products: updatedProducts});
+            shopData.products = updatedProducts; // Update local shopData
+            alert(`Product "${productToDelete.name}" deleted successfully!`);
+            renderProducts(document.getElementById('content-area')); // Re-render product list
+        } catch(e) { 
+            console.error("Error deleting product:", e);
+            alert("Error deleting product: " + e.message); 
+        }
+    }
+
+    // --- 8) MY WEBPAGE ---
     function renderWebpage(div) {
-        const path = window.location.pathname.replace('dashboard.html', 'shop.html');
-        const url = `${window.location.origin}${path}?id=${user.uid}`;
+        const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+        const url = `${window.location.origin}${path}/shop.html?id=${user.uid}`;
+        const sl = shopData.socialLinks || {};
+
         div.innerHTML = `
             <div class="card text-center">
-                <h3>Your Shop Link</h3>
-                <input value="${url}" readonly class="w-100 mb-1" style="background:#eee; border:none; padding:10px;">
-                <a href="${url}" target="_blank" class="btn">Open Page</a>
+                <h3>Public Shop Link</h3>
+                <p style="color:#777; margin-bottom:15px;">Share this link with your customers to showcase your products.</p>
+                <input value="${url}" readonly class="w-100 text-center mb-1" style="background:#eee; border:none; padding:10px; border-radius:10px;">
+                <div class="flex center" style="flex-wrap: nowrap;">
+                    <a href="${url}" target="_blank" class="btn btn-outline" style="text-decoration:none;">Open Page</a>
+                    <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${url}'); alert('Shop link copied to clipboard!')">Copy Link</button>
+                </div>
             </div>
+            
             <div class="card">
-                <h3>Visuals</h3>
-                <div class="input-group"><label>Hero Text</label><input id="w-txt" value="${shopData.heroText||''}" onchange="upWeb()"></div>
-            </div>`;
-    }
-    function upWeb() { db.collection('users').doc(user.uid).update({heroText:document.getElementById('w-txt').value}); }
+                <h3>Visual Editor (Shop Page Customization)</h3>
+                <p style="color:#777; margin-bottom:15px;">Customize the look and feel of your public shop page.</p>
+                <div class="input-group"><label>Brand Color (Primary Color for Shop Page)</label><input type="color" id="w-col" value="${shopData.themeColor||'#FF6D00'}" onchange="saveWeb()"></div>
+                <div class="input-group"><label>Welcome Text (Displayed below contact info on Shop Page)</label><input id="w-txt" value="${shopData.heroText||''}" placeholder="e.g., Welcome to our exclusive collection!" onchange="saveWeb()"></div>
+            </div>
 
+            <div class="card">
+                <h3>Social Media Links</h3>
+                <p style="color:#777; margin-bottom:15px;">Add your social media profiles to connect with more customers.</p>
+                <div class="input-group"><label>Facebook Profile/Page URL</label><input id="sl-fb" value="${sl.fb||''}" placeholder="https://facebook.com/yourshop" onchange="saveWeb()"></div>
+                <div class="input-group"><label>Instagram Profile URL</label><input id="sl-ig" value="${sl.ig||''}" placeholder="https://instagram.com/yourshop" onchange="saveWeb()"></div>
+                <div class="input-group"><label>TikTok Profile URL</label><input id="sl-tk" value="${sl.tk||''}" placeholder="https://tiktok.com/@yourshop" onchange="saveWeb()"></div>
+                <div class="input-group"><label>YouTube Channel URL</label><input id="sl-yt" value="${sl.yt||''}" placeholder="https://youtube.com/yourchannel" onchange="saveWeb()"></div>
+            </div>
+        `;
+    }
+    
+    function saveWeb() {
+        // Debounce or add a "Save" button for more explicit saving if desired for better UX.
+        // For now, it saves on every change to see immediate effect.
+        db.collection('users').doc(user.uid).update({
+            themeColor: document.getElementById('w-col').value,
+            heroText: document.getElementById('w-txt').value,
+            socialLinks: {
+                fb: document.getElementById('sl-fb').value,
+                ig: document.getElementById('sl-ig').value,
+                tk: document.getElementById('sl-tk').value,
+                yt: document.getElementById('sl-yt').value
+            }
+        }).then(()=>console.log("Webpage settings updated successfully.")).catch(e=>{
+            console.error("Error updating webpage settings:", e);
+            alert("Error saving webpage settings: " + e.message);
+        });
+    }
+
+    // --- 9) ORDERS ---
     function renderOrders(div) {
-        div.innerHTML = shopOrders.length ? shopOrders.map(o => `
-            <div class="card">
-                <div class="flex space-between"><b>${o.custName}</b> <small>${o.time.split('T')[0]}</small></div>
-                <div class="flex space-between mt-1"><b class="text-primary">Rs. ${o.total}</b> <a href="https://wa.me/${o.custWa}" class="btn btn-green btn-sm">WhatsApp</a></div>
-                <p style="font-size:0.8rem; margin:5px 0;">${(o.items||[]).map(i=>i.name).join(', ')}</p>
-            </div>`).join('') : '<div class="card text-center">No Orders</div>';
+        if(!shopOrders.length) return div.innerHTML = `<div class="card text-center"><h3>No Orders Yet</h3><p style="color:#777;">New customer inquiries will appear here.</p></div>`;
+        div.innerHTML = shopOrders.map(o => `
+            <div class="card" style="border-left:5px solid ${o.status==='new'?'var(--accent)':'var(--green)'}">
+                <div class="flex space-between">
+                    <b>${o.custName || 'Anonymous Customer'}</b> 
+                    <span class="status-badge" style="background:#FFF8E1; color:var(--text);">${(o.status||'new').toUpperCase()}</span>
+                </div>
+                <div class="flex space-between" style="margin-top:10px;">
+                    <b style="color:var(--primary)">Total: Rs. ${parseInt(o.total).toLocaleString()}</b>
+                    <a href="https://wa.me/${o.custWa || shopData.whatsapp}?text=${encodeURIComponent('Hi ' + (o.custName || 'there') + ', regarding your inquiry for ' + (o.items||[]).map(i=>i.name).join(', ') + ' from ' + shopData.shopName + '.')}" target="_blank" class="btn btn-green btn-sm" style="width: auto;">
+                        <i class="fa-brands fa-whatsapp"></i> Chat
+                    </a>
+                </div>
+                <p style="font-size:0.85rem; color:#666; margin-top:10px;">Items: ${(o.items||[]).map(i=>i.name).join(', ') || 'N/A'}</p>
+                <small style="display:block; text-align:right; color:#999;">Received: ${new Date(o.time).toLocaleString()}</small>
+            </div>
+        `).join('');
     }
 
+    // --- 10) MESSAGES (Updated to show contact form messages) ---
     function renderMessages(div) {
-        if(!shopMessages.length) return div.innerHTML = `<div class="card text-center"><h3>Messages</h3><p>No messages from contact form yet.</p></div>`;
+        if(!shopMessages.length) return div.innerHTML = `<div class="card text-center"><h3>No Messages Yet</h3><p style="color:#777;">Customer inquiries from your shop's contact form will appear here.</p></div>`;
         div.innerHTML = shopMessages.map(m => `
-            <div class="card">
-                <div class="flex space-between"><b>${m.name}</b> <small>${new Date(m.time).toLocaleDateString()}</small></div>
-                <p style="background:#f9f9f9; padding:10px; border-radius:8px; margin:5px 0;">${m.message}</p>
+            <div class="card" style="border-left:5px solid var(--primary);">
                 <div class="flex space-between">
-                    <div>Phone: ${m.phone}</div>
-                    <a href="https://wa.me/${m.wa}" target="_blank" class="btn btn-green btn-sm"><i class="fa-brands fa-whatsapp"></i> Reply</a>
+                    <b>${m.name || 'Anonymous User'}</b>
+                    <small style="color:#777;">${new Date(m.time).toLocaleString()}</small>
+                </div>
+                <p style="background:#FFF8E1; padding:12px; border-radius:8px; margin:10px 0; line-height:1.6;">"${m.message || 'No message content.'}"</p>
+                <div class="flex space-between" style="font-size:0.9rem; color:#555;">
+                    <span><i class="fa-solid fa-phone"></i> ${m.phone || 'N/A'}</span>
+                    <a href="https://wa.me/${m.wa || ''}?text=${encodeURIComponent('Hi ' + (m.name || 'there') + ', regarding your message from FurnicoHub. ')}" target="_blank" class="btn btn-green btn-sm" style="width:auto;">
+                        <i class="fa-brands fa-whatsapp"></i> Reply
+                    </a>
                 </div>
             </div>
         `).join('');
     }
 
+    // --- 11) REVIEWS ---
     function renderReviews(div) {
+        if(!shopReviews.length) return div.innerHTML = `<div class="card text-center"><h3>No Reviews Yet</h3><p style="color:#777;">Customer reviews for your shop will appear here.</p></div>`;
         div.innerHTML = shopReviews.map(r => `
             <div class="card">
-                <div class="flex space-between"><b>${r.name}</b> <b style="color:var(--gold)">${'★'.repeat(r.stars)}</b></div>
-                <p>"${r.text}"</p>
                 <div class="flex space-between">
-                    <span class="text-${r.status==='published'?'green':'red'}">${r.status||'Pending'}</span>
-                    <div class="flex">${r.status!=='published'?`<button class="btn btn-green btn-sm" onclick="pubRev('${r.id}')">Publish</button>`:''} <button class="btn btn-outline btn-sm" onclick="delRev('${r.id}')">Del</button></div>
+                    <b>${r.name || 'Anonymous'}</b>
+                    <div style="color:var(--gold)">${'★'.repeat(r.stars || 5)}</div>
                 </div>
-            </div>`).join('') || '<div class="card">No Reviews</div>';
+                <p style="margin:10px 0; font-style:italic; line-height:1.6;">"${r.text}"</p>
+                <div class="flex space-between">
+                    <span class="status-badge" style="background:${r.status==='published'?'#E8F5E9':'#FFF3E0'}; color:${r.status==='published'?'var(--green)':'#E65100'}; border-color:${r.status==='published'?'var(--green)':'#FFCC80'};">${(r.status || 'Pending').toUpperCase()}</span>
+                    <div class="flex" style="gap: 5px;">
+                        ${r.status !== 'published' ? `<button class="btn btn-green btn-sm" style="width:auto;" onclick="pubRev('${r.id}')">Publish</button>` : ''}
+                        <button class="btn btn-outline btn-sm" style="width:auto; border-color:var(--red); color:var(--red);" onclick="delRev('${r.id}')">Delete</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
     }
-    
-    function pubRev(id) { db.collection('users').doc(user.uid).collection('reviews').doc(id).update({status:'published'}); }
-    function delRev(id) { if(confirm("Del?")) db.collection('users').doc(user.uid).collection('reviews').doc(id).delete(); }
 
+    function pubRev(id) {
+        if(confirm("Are you sure you want to publish this review? It will be visible on your public shop page.")) {
+            db.collection('users').doc(user.uid).collection('reviews').doc(id).update({status: 'published'})
+            .then(() => alert("Review published successfully!"))
+            .catch(e => { console.error("Error publishing review:", e); alert("Error publishing review: " + e.message); });
+        }
+    }
+
+    function delRev(id) {
+        if(confirm("Are you sure you want to delete this review? This action cannot be undone.")) {
+            db.collection('users').doc(user.uid).collection('reviews').doc(id).delete()
+            .then(() => alert("Review deleted successfully!"))
+            .catch(e => { console.error("Error deleting review:", e); alert("Error deleting review: " + e.message); });
+        }
+    }
+
+    // --- UTILS ---
     function upImg(input, type, idx) {
         const file = input.files[0];
         if(!file) return;
+
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = e => {
-            const img = new Image(); img.src = e.target.result;
+            const img = new Image();
+            img.src = e.target.result;
             img.onload = () => {
                 const cvs = document.createElement('canvas');
-                const scale = 600/img.width; cvs.width=600; cvs.height=img.height*scale;
+                const MAX_WIDTH = 800; // Max width for uploaded images
+                const scale = MAX_WIDTH / img.width;
+                cvs.width = MAX_WIDTH; 
+                cvs.height = img.height * scale;
+                if (img.width < MAX_WIDTH) { // If image is smaller, don't upscale
+                    cvs.width = img.width;
+                    cvs.height = img.height;
+                }
                 cvs.getContext('2d').drawImage(img,0,0,cvs.width,cvs.height);
-                storage.ref(`img/${user.uid}/${Date.now()}.jpg`).putString(cvs.toDataURL('image/jpeg',0.7), 'data_url').then(s => s.ref.getDownloadURL().then(url => {
-                    if(type==='logo') { shopData.temp_logo = url; document.getElementById('p-logo').src = url; }
-                    else if(type==='doc') { shopData.temp_doc = url; alert("Uploaded"); }
-                    else if(type==='slip') { shopData.temp_slip = url; alert("Uploaded"); }
-                    else if(type==='prod') { tempImages[idx] = url; document.getElementById(`pp${idx}`).src = url; document.getElementById(`pp${idx}`).style.display='block'; }
-                }));
+                
+                // Show a loading indicator
+                const uploadBox = input.parentElement;
+                const originalContent = uploadBox.innerHTML;
+                uploadBox.innerHTML = '<i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--primary);"></i> Uploading...';
+                
+                const task = storage.ref(`img/${user.uid}/${Date.now()}_${file.name}`).putString(cvs.toDataURL('image/jpeg',0.7), 'data_url');
+                task.then(s => s.ref.getDownloadURL().then(url => {
+                    if(type==='logo') { 
+                        shopData.temp_logo = url; 
+                        document.getElementById('p-logo').src = url; 
+                    }
+                    else if(type==='doc') { 
+                        shopData.temp_doc = url; 
+                        document.getElementById('st-doc').classList.remove('hidden'); 
+                    }
+                    else if(type==='slip') { 
+                        shopData.temp_slip = url; 
+                        document.getElementById('st-slip').classList.remove('hidden'); 
+                    }
+                    else if(type==='prod') { 
+                        tempImages[idx] = url; 
+                        document.getElementById(`prev-p${idx}`).src = url; 
+                        document.getElementById(`prev-p${idx}`).style.display='block'; 
+                        uploadBox.style.border = `2px solid var(--green)`; // Green border on success
+                    }
+                    alert("Image uploaded successfully!");
+                })).catch(err => {
+                    console.error("Upload failed:", err);
+                    alert("Upload failed: " + err.message);
+                }).finally(() => {
+                    if (type !== 'prod') { // For product images, we show the image itself, not restore generic text
+                        uploadBox.innerHTML = originalContent; // Restore original content
+                    } else { // For prod images, restore the + icon, keeping the image shown
+                        // Small fix: need to re-attach the event listener if innerHTML is reset fully.
+                        // For product images, let's just make the image visible.
+                        document.getElementById(`prev-p${idx}`).parentElement.style.border = '2px dashed #FFCC80'; // Reset border
+                    }
+                });
             }
         }
     }
