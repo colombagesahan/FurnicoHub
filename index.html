@@ -29,7 +29,8 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg-body); color: var(--secondary); padding-bottom: 80px; /* Increased for footer */ overflow-x: hidden; }
+        /* FIXED: Changed padding-bottom to 0 to remove white space under footer */
+        body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg-body); color: var(--secondary); padding-bottom: 0; overflow-x: hidden; }
         a { text-decoration: none; color: inherit; }
 
         /* NAV */
@@ -322,6 +323,15 @@
         }
         
         if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+        // FIXED: Enable horizontal scrolling with mouse wheel for desktop
+        const filtersContainer = document.querySelector('.filters');
+        if (filtersContainer) {
+            filtersContainer.addEventListener('wheel', (evt) => {
+                evt.preventDefault();
+                filtersContainer.scrollLeft += evt.deltaY;
+            });
+        }
     </script>
 </body>
 </html>
