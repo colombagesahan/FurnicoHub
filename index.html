@@ -312,18 +312,16 @@
 
                 snapshot.forEach(doc => {
                     const d = doc.data();
-                    
-                    // --- MODERATION & SUBSCRIPTION FILTER ---
-                    // Exclude shops that are Locked (Subscription overdue or Admin banned) OR Hidden (Admin hidden)
-                    if (!d.isLocked && !d.isHidden && d.products && d.products.length > 0) {
+                    // Fix: Check if products array exists using optional chaining or logical OR
+                    if (d.products && d.products.length > 0) {
                         d.products.forEach(p => {
+                            // Only show verified badge logic
                             allProducts.push({
                                 ...p,
                                 sellerId: doc.id,
                                 sellerName: d.shopName || 'Unknown Shop',
                                 sellerLogo: d.logo || 'logo.png',
-                                verified: d.isVerified,
-                                urlSlug: d.urlSlug // Capture slug for pretty linking if available
+                                verified: d.isVerified // Corrected to use 'isVerified' from dashboard data
                             });
                         });
                     }
@@ -342,12 +340,8 @@
                 grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#777;">No furniture found in this category.</div>`;
                 return;
             }
-            grid.innerHTML = items.map(item => {
-                // PRETTY LINK LOGIC: Use slug if available, else ID
-                const link = item.urlSlug ? `shop.html?store=${item.urlSlug}` : `shop.html?id=${item.sellerId}`;
-                
-                return `
-                <div class="card" onclick="location.href='${link}'">
+            grid.innerHTML = items.map(item => `
+                <div class="card" onclick="location.href='shop.html?id=${item.sellerId}'">
                     ${item.verified ? `<div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</div>` : ''}
                     <img src="${(item.images && item.images.length > 0) ? item.images[0] : 'https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'">
                     <div class="card-body">
@@ -362,8 +356,7 @@
                         </div>
                     </div>
                 </div>
-                `;
-            }).join('');
+            `).join('');
         }
 
         function filter(cat, el) {
