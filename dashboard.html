@@ -24,7 +24,7 @@
 
     <style>
         :root {
-            /* --- COLOR PALETTE --- (Updated for Orange/Mahogany) */
+            /* --- COLOR PALETTE --- */
             --primary: #FF6D00;        /* Vivid Orange */
             --primary-light: #FF9E80;  /* Lighter Orange */
             --accent: #E65100;         /* Deeper Orange for accents */
@@ -48,7 +48,7 @@
         
         /* UTILS */
         .hidden { display: none !important; }
-        .flex { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; } /* Added flex-wrap */
+        .flex { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .space-between { justify-content: space-between; }
         .col { flex-direction: column; }
         .center { text-align: center; }
@@ -66,7 +66,7 @@
             background: var(--primary); color: white; font-weight: 600;
             cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
             font-size: 0.9rem; transition: all 0.2s ease; margin-bottom: 10px;
-            box-shadow: 0 4px 10px rgba(255, 109, 0, 0.2); /* Orange-tinted shadow */
+            box-shadow: 0 4px 10px rgba(255, 109, 0, 0.2);
             text-decoration: none;
         }
         .btn:active { transform: scale(0.97); }
@@ -83,7 +83,7 @@
         .card {
             background: var(--surface); padding: 20px; border-radius: var(--radius);
             box-shadow: var(--shadow); margin-bottom: 15px;
-            border: 1px solid #FFE0B2; /* Lighter border for new theme */
+            border: 1px solid #FFE0B2;
             animation: slideUp 0.4s ease-out;
         }
         .card h3 { color: var(--primary); margin-top: 0; }
@@ -92,7 +92,7 @@
         .input-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600; color: #5D4037; }
         .input-group input, .input-group select, .input-group textarea {
             width: 100%; padding: 12px; border: 2px solid #FFE0B2; border-radius: 12px;
-            font-family: var(--font); font-size: 0.95rem; background: #FFF; /* White background for input */
+            font-family: var(--font); font-size: 0.95rem; background: #FFF;
             transition: all 0.3s ease;
         }
         .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
@@ -100,14 +100,13 @@
             box-shadow: 0 0 0 3px rgba(255, 109, 0, 0.2);
             background: #fff;
         }
-        /* Fix for Color Input */
         input[type="color"] { height: 50px; padding: 2px; cursor: pointer; border-radius: 8px; }
 
         /* FILE UPLOAD */
         .upload-box {
-            border: 2px dashed #FFCC80; /* Orange dashed border */
+            border: 2px dashed #FFCC80;
             border-radius: 12px; padding: 20px;
-            text-align: center; cursor: pointer; background: #FFF8E1; /* Light cream background */
+            text-align: center; cursor: pointer; background: #FFF8E1;
             position: relative; transition: all 0.3s ease;
             color: #795548;
         }
@@ -118,7 +117,7 @@
         #login-ui {
             height: 100vh; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; padding: 20px;
-            background: radial-gradient(circle at top right, #FFF3E0 0%, #FFCC80 100%); /* Warm radial gradient */
+            background: radial-gradient(circle at top right, #FFF3E0 0%, #FFCC80 100%);
         }
         #login-ui .card h2 { color: var(--primary); }
 
@@ -135,7 +134,7 @@
             width: 100%; overflow-x: auto; background: white; 
             padding: 10px; display: flex; gap: 8px;
             scrollbar-width: none; -webkit-overflow-scrolling: touch;
-            border-bottom: 1px solid #FFE0B2; /* Light orange border */
+            border-bottom: 1px solid #FFE0B2;
         }
         .tabs-container::-webkit-scrollbar { display: none; }
         .tab-btn {
@@ -177,7 +176,7 @@
             .btn { font-size: 0.8rem; padding: 10px; }
             .mobile-header .bold { font-size: 1rem; }
             .mobile-header .bold img { height: 24px; }
-            .stat-grid { grid-template-columns: 1fr !important; /* Forces single column on very small screens */ }
+            .stat-grid { grid-template-columns: 1fr !important; }
             .day-row { flex-direction: column; align-items: flex-start; gap: 5px; }
             .day-row input, .day-row select { width: 100%; }
             .input-group label { font-size: 0.8rem; }
@@ -217,14 +216,11 @@
             border-radius: 20px; margin: 2px; font-size: 0.8rem; color: #C62828; 
             border: 1px solid #FFCCBC;
         }
-        
-        /* Category Header in Feed (Marketplace) */
         .cat-header { 
             grid-column: 1 / -1; font-weight: 800; color: var(--primary); 
             margin: 20px 0 10px; border-bottom: 2px solid #FFE0B2; padding-bottom: 5px; 
             font-size: 1.2rem;
         }
-
         @keyframes slideUp { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
     </style>
 </head>
@@ -244,7 +240,7 @@
     <!-- 2. DASHBOARD UI -->
     <div id="dashboard-ui" class="hidden">
         <div class="mobile-header">
-            <div class="bold"> <!-- Changed to use common styling for brand -->
+            <div class="bold">
                 <img src="icon.png" height="28"> FurnicoHub
             </div>
             <button class="btn" style="width:auto; padding:6px 14px; margin:0; background:rgba(255, 109, 0, 0.1); color:var(--primary);" onclick="logout()">
@@ -254,7 +250,6 @@
 
         <div class="tabs-container" id="tabs-nav">
             <!-- Injected via JS -->
-            <!-- Desktop Logout for larger screens -->
             <button class="tab-btn" onclick="logout()" style="margin-top:auto; color:var(--red); display:none;" id="desktop-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
         </div>
 
@@ -270,7 +265,6 @@
 <script>
     // --- 1. FIREBASE CONFIG ---
     const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
-    // Fix: Check before initializing
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -280,13 +274,12 @@
     let shopData = {};
     let shopOrders = [];
     let shopReviews = [];
-    let shopMessages = []; // Added for new messages tab
+    let shopMessages = [];
     let currentTab = 'Dashboard';
     let tempImages = [null, null, null]; 
     let discountType = 'amount';
-    let marketItems = []; // For Marketplace search
+    let marketItems = []; 
 
-    // --- CONFIG DATA ---
     const CATEGORIES = [
         "Living Room", "Bedroom", "Dining Room", "Kitchen", 
         "Bathroom", "Study Room", "Kids Room", "Baby Room", 
@@ -294,8 +287,8 @@
     ];
 
     const TABS = [
-        { id: 'Dashboard', icon: 'fa-chart-pie', text: 'Dashboard' }, // New Home
-        { id: 'Smart POS', icon: 'fa-calculator', text: 'Smart POS' }, // Renamed
+        { id: 'Dashboard', icon: 'fa-chart-pie', text: 'Dashboard' },
+        { id: 'Smart POS', icon: 'fa-calculator', text: 'Smart POS' },
         { id: 'Marketplace', icon: 'fa-store', text: 'Marketplace' },    
         { id: 'Profile', icon: 'fa-user-gear', text: 'Profile' },     
         { id: 'Get Verified', icon: 'fa-certificate', text: 'Get Verified' }, 
@@ -307,7 +300,6 @@
         { id: 'Reviews', icon: 'fa-star', text: 'Reviews' }          
     ];
 
-    // --- 2. AUTH ---
     auth.onAuthStateChanged(async u => {
         if (u) {
             user = u;
@@ -321,46 +313,29 @@
     });
 
     function login() { 
-        auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => alert(e.message)); 
+        auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => console.error("Login failed:", e)); 
     }
     function logout() { auth.signOut(); }
 
     async function loadShopData() {
-        // Fetch current shop data or initialize if new user
         const doc = await db.collection('users').doc(user.uid).get();
         if (doc.exists) {
             shopData = doc.data();
-            // Ensure array fields exist
             shopData.products = shopData.products || [];
             shopData.socialLinks = shopData.socialLinks || {};
             currentTab = shopData.profileCompleted ? 'Dashboard' : 'Profile';
         } else {
-            // Default Data Structure for new sellers
             shopData = { 
-                role: 'seller', 
-                profileCompleted: false, 
-                isVerified: false, 
-                products: [], 
-                isOpen: false, 
-                emergencyClose: false, 
-                schedule: {},
-                specialDates: [],
-                socialLinks: {}, // Fix: Initialize empty object
-                shopName: user.displayName || 'My Shop', // Default with user's name
-                address: '',
-                ownerName: user.displayName || '',
-                nic: '',
-                phone1: '',
-                whatsapp: '+94',
-                logo: user.photoURL || 'logo.png', // Default with user's photo
-                heroText: 'Welcome to my furniture store!'
+                role: 'seller', profileCompleted: false, isVerified: false, products: [], 
+                isOpen: false, emergencyClose: false, schedule: {}, specialDates: [],
+                socialLinks: {}, shopName: user.displayName || 'My Shop',
+                address: '', ownerName: user.displayName || '', nic: '', phone1: '',
+                whatsapp: '+94', logo: user.photoURL || 'logo.png', heroText: 'Welcome to my furniture store!'
             };
             await db.collection('users').doc(user.uid).set(shopData);
-            currentTab = 'Profile'; // Force profile completion for new users
+            currentTab = 'Profile';
         }
         
-        // --- REAL-TIME LISTENERS ---
-        // Orders Listener
         db.collection('users').doc(user.uid).collection('orders').orderBy('time', 'desc').onSnapshot(snap => {
             const newOrders = snap.docs.map(d => ({id:d.id, ...d.data()}));
             if (newOrders.length > shopOrders.length && shopOrders.length > 0) alert("🔔 New Order Received!");
@@ -368,13 +343,11 @@
             if(currentTab === 'Orders' || currentTab === 'Dashboard') renderContent();
         });
 
-        // Reviews Listener
         db.collection('users').doc(user.uid).collection('reviews').onSnapshot(snap => {
             shopReviews = snap.docs.map(d => ({id:d.id, ...d.data()}));
             if(currentTab === 'Reviews' || currentTab === 'Dashboard') renderContent();
         });
 
-        // Messages Listener (from shop.html contact form)
         db.collection('users').doc(user.uid).collection('messages').orderBy('time', 'desc').onSnapshot(snap => {
             const newMessages = snap.docs.map(d => ({id:d.id, ...d.data()}));
             if (newMessages.length > shopMessages.length && shopMessages.length > 0) alert("✉️ New Customer Message!");
@@ -382,20 +355,16 @@
             if(currentTab === 'Messages' || currentTab === 'Dashboard') renderContent();
         });
 
-        // Shop Data Listener (for immediate UI updates from other dashboard changes)
         db.collection('users').doc(user.uid).onSnapshot(s => {
             shopData = s.data();
-            // Re-render current tab if it's one that depends on shopData (most do)
-            if (currentTab !== 'Login') renderContent(); // Avoid re-rendering login
-            renderTabs(); // Also update tabs if any status changes (e.g., profile completion)
+            if (currentTab !== 'Login') renderContent();
+            renderTabs();
         });
-
 
         renderTabs();
         renderContent();
     }
 
-    // --- 3. RENDER SYSTEM ---
     function renderTabs() {
         const nav = document.getElementById('tabs-nav');
         let html = TABS.map(t => 
@@ -403,10 +372,8 @@
                 <i class="fa-solid ${t.icon}"></i> ${t.text}
              </button>`
         ).join('');
-        // This desktop-specific logout button is now hidden by default and shown by CSS for >900px
         html += `<button class="tab-btn" onclick="logout()" style="margin-top:auto; color:var(--red);" id="desktop-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>`;
         nav.innerHTML = html;
-        // Ensure desktop logout is handled by CSS for visibility on larger screens
         if (window.innerWidth > 900) {
             document.getElementById('desktop-logout-btn').style.display = 'flex';
         } else {
@@ -417,7 +384,7 @@
     function switchTab(id) {
         if(!shopData.profileCompleted && id !== 'Profile') {
             alert("Please complete your Profile first to access other features!");
-            currentTab = 'Profile'; // Force user to profile tab
+            currentTab = 'Profile';
             renderTabs();
         }
         currentTab = id;
@@ -427,8 +394,7 @@
 
     function renderContent() {
         const c = document.getElementById('content-area');
-        c.innerHTML = ''; // Clear previous content
-        
+        c.innerHTML = '';
         switch(currentTab) {
             case 'Dashboard': renderHome(c); break;
             case 'Smart POS': renderPOS(c); break;
@@ -447,35 +413,38 @@
 
     // --- 1) DASHBOARD (NEW HOME) ---
     function renderHome(div) {
-        // Fix for Timezone - get local date string YYYY-MM-DD
+        // Updated Logic: Calculate Open/Close based on schedule and time
         const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const today = `${year}-${month}-${day}`;
+        const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
+        const currentTime = now.toTimeString().slice(0, 5);
+        const schedule = shopData.schedule ? shopData.schedule[currentDay] : null;
         
-        const todaysOrders = shopOrders.filter(o => o.time.startsWith(today)).length;
+        let isOpen = false;
+        if (!shopData.emergencyClose) {
+            if (schedule && schedule.open) {
+                if (currentTime >= schedule.start && currentTime <= schedule.end) {
+                    isOpen = true;
+                }
+            }
+        }
+        
+        const todaysOrders = shopOrders.filter(o => o.time.startsWith(new Date().toISOString().split('T')[0])).length;
         const pendingReviews = shopReviews.filter(r => r.status !== 'published').length;
-        const unreadMsgs = shopMessages.length; // Now uses actual messages count
-        const isOpen = !shopData.emergencyClose && (shopData.isOpen || false); 
+        const unreadMsgs = shopMessages.length;
         
-        // Group Products
         const prodCounts = {};
         (shopData.products || []).forEach(p => { prodCounts[p.category] = (prodCounts[p.category] || 0) + 1; });
         const prodHtml = Object.keys(prodCounts).map(cat => `<div class="flex space-between" style="border-bottom:1px solid #eee; padding:5px 0;"><span>${cat}</span><b>${prodCounts[cat]}</b></div>`).join('') || '<p style="color:#999; text-align:center;">No products added yet.</p>';
 
-        // Webpage Link
         const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
         const url = `${window.location.origin}${path}/shop.html?id=${user.uid}`;
 
         div.innerHTML = `
-            <!-- Time Widget -->
             <div class="card flex space-between" style="background:var(--primary); color:white; border:none; padding:15px 20px;">
                 <div id="live-clock" style="font-size:1.2rem; font-weight:bold;">Loading...</div>
                 <div style="font-size:0.9rem;">${new Date().toDateString()}</div>
             </div>
 
-            <!-- Status Widget -->
             <div class="card flex space-between" style="border-left:5px solid ${isOpen?'var(--green)':'var(--red)'}; padding:15px 20px;">
                 <div>
                     <h3 style="margin:0; color:${isOpen?'var(--green)':'var(--red)'}">${isOpen ? 'Your shop is Open' : 'Your shop is Closed'}</h3>
@@ -484,7 +453,6 @@
                 <button class="btn btn-sm btn-outline" onclick="switchTab('Open/Close')">Edit Status</button>
             </div>
 
-            <!-- Webpage Widget -->
             <div class="card" style="padding:15px 20px;">
                 <div class="flex space-between">
                     <b>Public Webpage</b>
@@ -493,7 +461,6 @@
                 <a href="${url}" target="_blank" class="btn btn-primary mt-1" style="width:100%;"><i class="fa-solid fa-eye"></i> View Your Webpage</a>
             </div>
 
-            <!-- Stats Grid -->
             <div class="stat-grid">
                 <div class="stat-card" style="border-bottom:4px solid var(--primary);">
                     <h2>${todaysOrders}</h2>
@@ -517,7 +484,6 @@
                 </div>
             </div>
 
-            <!-- Products Overview -->
             <div class="card" style="padding:15px 20px;">
                 <div class="flex space-between mb-1">
                     <h3>Products by Category</h3>
@@ -527,7 +493,6 @@
             </div>
         `;
         
-        // Clock Logic
         if(window.clockInterval) clearInterval(window.clockInterval);
         window.clockInterval = setInterval(() => {
             const el = document.getElementById('live-clock');
@@ -535,12 +500,11 @@
         }, 1000);
     }
 
-    // --- 2) SMART POS (Renamed) ---
     function renderPOS(div) {
         div.innerHTML = `
             <div class="card">
                 <h3><i class="fa-solid fa-calculator"></i> Smart POS</h3>
-                <p style="color:#666; margin-bottom: 20px;">Quickly generate invoices for in-store sales.</p> <!-- Original text preserved -->
+                <p style="color:#666; margin-bottom: 20px;">Quickly generate invoices for in-store sales.</p>
                 <div class="input-group">
                     <label>Select Product</label>
                     <select id="pos-item" onchange="calcPos()">
@@ -628,12 +592,11 @@
         printFrame.contentWindow.print();
     }
 
-    // --- 3) MARKETPLACE ---
     async function renderMarketplace(div) {
         div.innerHTML = `
             <div class="card">
                 <h3>Marketplace Feed</h3>
-                <p style="color:#666; margin-bottom: 15px;">Explore furniture from other sellers on FurnicoHub.</p> <!-- Original text preserved -->
+                <p style="color:#666; margin-bottom: 15px;">Explore furniture from other sellers on FurnicoHub.</p>
                 <div class="flex mt-1">
                     <input id="search-shop" placeholder="Search Shop Name..." class="w-100" onkeyup="filterFeed()">
                     <input id="search-prod" placeholder="Search Product Name..." class="w-100" onkeyup="filterFeed()">
@@ -656,7 +619,7 @@
                 }
             });
             window.marketItems = items;
-            window.filterFeed(); // Initial render after fetching
+            window.filterFeed();
         } catch(e) {
             console.error("Error loading marketplace feed:", e);
             document.getElementById('feed-grid').innerHTML = '<p class="text-red" style="grid-column:1/-1; text-align:center;">Error loading feed. Please check your internet connection.</p>';
@@ -674,7 +637,6 @@
             (sProd === "" || (i.name && i.name.toLowerCase().includes(sProd)))
         );
 
-        // Group by Category
         const grouped = {};
         filtered.forEach(i => {
             if(!grouped[i.category]) grouped[i.category] = [];
@@ -699,7 +661,6 @@
         grid.innerHTML = html || '<p class="text-center w-100" style="color:#777; padding:40px;">No items found matching your search criteria.</p>';
     }
 
-    // --- 4) PROFILE ---
     function renderProfile(div) {
         const d = shopData;
         const lock = d.isVerified ? 'disabled' : '';
@@ -730,22 +691,17 @@
         const phone1 = document.getElementById('s-ph1').value;
         let whatsapp = document.getElementById('s-wa').value;
 
-        // Validation for all fields
         if (!shopName || !address || !ownerName || !nic || !phone1 || !whatsapp) {
-            alert("All profile fields (Shop Name, Address, Owner Name, NIC, Phone, WhatsApp) are required.");
+            alert("All profile fields are required.");
             return;
         }
         
-        // Remove '+' if user typed it
         whatsapp = whatsapp.replace('+', '');
-
-        // Specific WhatsApp validation (no +, starts with 94, minimum length)
-        if (!whatsapp.startsWith('94') || whatsapp.length < 11) { // 94 + 9 digits = 11
-            alert("WhatsApp number must start with '94' and be a complete number (e.g., 94771234567). Do not include '+'.");
+        if (!whatsapp.startsWith('94') || whatsapp.length < 11) {
+            alert("WhatsApp number must start with '94' and be a complete number. Do not include '+'.");
             return;
         }
-        // Basic Phone validation
-        if (phone1.length < 9) { // Assuming 0771234567 is 10 digits, minimum could be 9
+        if (phone1.length < 9) {
              alert("Please enter a valid phone number.");
              return;
         }
@@ -756,16 +712,10 @@
 
         try {
             await db.collection('users').doc(user.uid).update({
-                shopName: shopName,
-                address: address,
-                ownerName: ownerName,
-                nic: nic,
-                phone1: phone1,
-                whatsapp: whatsapp, // Saved without '+' as per instruction, will add in shop.html
+                shopName, address, ownerName, nic, phone1, whatsapp,
                 logo: shopData.temp_logo || shopData.logo || user.photoURL || 'logo.png',
                 profileCompleted: true
             });
-            // shopData will be updated by the onSnapshot listener
             alert("Profile Saved Successfully! Your public shop page is now updated.");
             switchTab('Dashboard');
         } catch(e) {
@@ -777,14 +727,12 @@
         }
     }
 
-    // --- 5) GET VERIFIED ---
     function renderVerify(div) {
         if(shopData.isVerified) return div.innerHTML = `<div class="card text-center" style="padding:40px;"><h1 class="text-green"><i class="fa-solid fa-circle-check"></i> Your Shop is Verified!</h1><p style="color:#666;">You now have the official green badge.</p></div>`;
-        
         div.innerHTML = `
             <div class="card">
                 <h3>Get Verified (Rs. 5000)</h3>
-                <p style="color:#666; margin-bottom:15px;">Follow these steps to get the official green 'Verified' badge on your shop profile and products.</p>
+                <p style="color:#666; margin-bottom:15px;">Follow these steps to get the official green 'Verified' badge.</p>
                 <button class="btn btn-outline" onclick="printProf()"><i class="fa-solid fa-download"></i> 1. Download Profile PDF</button>
                 <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0; border:1px dashed #FFCC80;">
                     <b>2. Certify Document:</b> Get the downloaded PDF document certified by a Grama Niladhari (GN) or Justice of the Peace (JP).<br><br>
@@ -805,13 +753,11 @@
                 <button class="btn btn-green" onclick="subVerify(this)"><i class="fa-solid fa-paper-plane"></i> Submit for Review</button>
             </div>
         `;
-        // Initial check for existing temp files
         if (shopData.temp_doc) document.getElementById('st-doc').classList.remove('hidden');
         if (shopData.temp_slip) document.getElementById('st-slip').classList.remove('hidden');
     }
       
     function printProf() {
-        // Ensuring all profile data is available for PDF
         const d = shopData;
         const printWindow = window.open('','','width=600,height=600');
         printWindow.document.write(`
@@ -847,24 +793,18 @@
 
     async function subVerify(btn) {
         if(!shopData.temp_doc || !shopData.temp_slip) return alert("Please upload both the certified document and the payment slip before submitting.");
-        
         btn.innerText = "Submitting...";
         btn.disabled = true;
-        
         try {
             await db.collection('admin_requests').add({ 
-                uid: user.uid, 
-                shopName: shopData.shopName, 
-                doc: shopData.temp_doc, 
-                slip: shopData.temp_slip, 
-                time: new Date().toISOString(),
-                status: 'pending' // Add a status
+                uid: user.uid, shopName: shopData.shopName, 
+                doc: shopData.temp_doc, slip: shopData.temp_slip, 
+                time: new Date().toISOString(), status: 'pending'
             });
-            alert("Application Submitted! Your verification request has been sent for review. We will contact you soon.");
-            // Optionally clear temp urls or update UI to show pending status
+            alert("Application Submitted! Your verification request has been sent for review.");
             shopData.temp_doc = null;
             shopData.temp_slip = null;
-            renderVerify(document.getElementById('content-area')); // Re-render to show submission status
+            renderVerify(document.getElementById('content-area'));
         } catch(e) {
             console.error("Error submitting verification:", e);
             alert("Error submitting verification: " + e.message);
@@ -874,7 +814,6 @@
         }
     }
 
-    // --- 6) OPEN/CLOSE (Major Update) ---
     function renderOpenClose(div) {
         const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
         const schedule = shopData.schedule || {};
@@ -897,19 +836,19 @@
         div.innerHTML = `
             <div class="card" style="border:2px solid ${isEmergency?'var(--red)':'var(--green)'}">
                 <h3>Emergency Control</h3>
-                <p style="color:#666; margin-bottom:15px;">This allows you to quickly close or re-open your shop for today, overriding the regular schedule.</p> <!-- Original text preserved -->
+                <p style="color:#666; margin-bottom:15px;">Quickly close or re-open your shop for today, overriding the schedule.</p>
                 <p class="bold" style="color:${isEmergency?'var(--red)':'var(--green)'}">${isEmergency ? "🔴 YOUR SHOP IS CURRENTLY CLOSED" : "🟢 YOUR SHOP IS CURRENTLY OPEN"}</p>
                 <button class="btn btn-${isEmergency?'green':'red'}" onclick="toggleEmergency(!${isEmergency})"><i class="fa-solid ${isEmergency?'fa-door-open':'fa-door-closed'}"></i> ${isEmergency?'Re-Open Shop Now':'Close Shop for Today'}</button>
             </div>
             <div class="card">
                 <h3>Weekly Schedule</h3>
-                <p style="color:#666; margin-bottom:15px;">Set your regular opening and closing times for each day of the week.</p> <!-- Original text preserved -->
+                <p style="color:#666; margin-bottom:15px;">Set your regular opening and closing times.</p>
                 ${rows}
                 <button class="btn mt-1" onclick="saveSchedule(this)"><i class="fa-solid fa-save"></i> Save Weekly Settings</button>
             </div>
             <div class="card">
                 <h3>Special Closed Dates</h3>
-                <p style="color:#666; margin-bottom:15px;">Add specific dates (e.g., holidays) when your shop will be closed, overriding the weekly schedule.</p> <!-- Original text preserved -->
+                <p style="color:#666; margin-bottom:15px;">Add specific dates (e.g., holidays) when your shop will be closed.</p>
                 <div class="flex mb-1">
                     <input type="date" id="sp-date" class="w-100" style="flex:1;">
                     <button class="btn btn-sm btn-outline" onclick="addDate()" style="flex-shrink:0;"><i class="fa-solid fa-plus"></i> Add Date</button>
@@ -929,12 +868,10 @@
                 end: document.getElementById(`end-${d}`).value
             };
         });
-        
         btn.innerText = "Saving...";
         btn.disabled = true;
         try {
             await db.collection('users').doc(user.uid).update({ schedule });
-            // shopData.schedule will be updated by the onSnapshot listener
             alert("Weekly Schedule Saved Successfully!");
         } catch(e) { 
             console.error("Error saving schedule:", e);
@@ -946,7 +883,6 @@
     async function toggleEmergency(state) {
         try {
             await db.collection('users').doc(user.uid).update({ emergencyClose: state });
-            // shopData.emergencyClose will be updated by the onSnapshot listener
             alert(`Shop is now ${state ? 'CLOSED' : 'OPEN'} for today.`);
         } catch(e) { 
             console.error("Error toggling emergency status:", e);
@@ -958,13 +894,12 @@
         const d = document.getElementById('sp-date').value;
         if(!d) { alert("Please select a date to add."); return; }
         const arr = shopData.specialDates || [];
-        if (arr.includes(d)) { alert("This date is already added."); return; } // Prevent duplicates
+        if (arr.includes(d)) { alert("This date is already added."); return; }
         arr.push(d);
         try {
             await db.collection('users').doc(user.uid).update({ specialDates: arr });
-            // shopData.specialDates will be updated by the onSnapshot listener
             alert("Special date added!");
-            document.getElementById('sp-date').value = ''; // Clear input
+            document.getElementById('sp-date').value = '';
         } catch(e) { 
             console.error("Error adding special date:", e);
             alert("Error adding special date: " + e.message); 
@@ -977,7 +912,6 @@
         arr.splice(i, 1);
         try {
             await db.collection('users').doc(user.uid).update({ specialDates: arr });
-            // shopData.specialDates will be updated by the onSnapshot listener
             alert("Special date removed.");
         } catch(e) { 
             console.error("Error removing special date:", e);
@@ -985,13 +919,12 @@
         }
     }
 
-    // --- 7) PRODUCTS (Strict Cats) ---
     function renderProducts(div) {
-        tempImages = [null,null,null]; // Reset temp images on tab load
+        tempImages = [null,null,null];
         div.innerHTML = `
             <div class="card">
                 <h3>Add New Product</h3>
-                <p style="color:#666; margin-bottom:15px;">Fill in the details below to add a new furniture product to your shop.</p> <!-- Original text preserved -->
+                <p style="color:#666; margin-bottom:15px;">Fill in the details below to add a new furniture product.</p>
                 <div class="input-group">
                     <label>Images (Max 3) *</label>
                     <div class="flex">
@@ -1015,7 +948,7 @@
                 <button class="btn" onclick="saveProd(this)"><i class="fa-solid fa-plus-circle"></i> Save Product</button>
             </div>
             <h3 style="margin-top:30px;">Current Inventory</h3>
-            <p style="color:#666; margin-bottom:15px;">Here are all the products currently listed in your shop.</p> <!-- Original text preserved -->
+            <p style="color:#666; margin-bottom:15px;">Here are all the products currently listed in your shop.</p>
             ${(shopData.products && shopData.products.length > 0) ? shopData.products.map((p,i)=>`
                 <div class="card flex space-between" style="padding:15px;">
                     <div class="flex" style="flex-grow:1;"><img src="${(p.images && p.images.length > 0) ? p.images[0] : 'https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;"> 
@@ -1023,7 +956,7 @@
                     </div>
                     <button class="btn btn-outline" style="width:auto; padding:5px 10px; border-color:var(--red); color:var(--red); flex-shrink:0;" onclick="delProd(${i})"><i class="fa-solid fa-trash"></i> Delete</button>
                 </div>
-            `).join('') : '<p style="color:#999; text-align:center;">No products added yet. Start by adding one above!</p>'}
+            `).join('') : '<p style="color:#999; text-align:center;">No products added yet.</p>'}
         `;
     }
 
@@ -1034,7 +967,7 @@
         const price = document.getElementById('p-price').value;
         const promoText = document.getElementById('p-promo').value;
 
-        if(!imgs.length) return alert("Please upload at least one image for the product.");
+        if(!imgs.length) return alert("Please upload at least one image.");
         if(!cat) return alert("Product category is required.");
         if(!name) return alert("Product name is required.");
         if(!price || isNaN(price) || Number(price) <= 0) return alert("A valid price is required.");
@@ -1055,9 +988,8 @@
         try {
             const newArr = [...(shopData.products||[]), prod];
             await db.collection('users').doc(user.uid).update({products: newArr});
-            // shopData.products will be updated by onSnapshot listener
             alert("Product Added Successfully!");
-            renderProducts(document.getElementById('content-area')); // Re-render to clear form and update list
+            renderProducts(document.getElementById('content-area'));
         } catch(e) {
             console.error("Error saving product:", e);
             alert("Error saving product: " + e.message);
@@ -1068,12 +1000,11 @@
     }
 
     async function delProd(i) {
-        if(!confirm("Are you sure you want to delete this product? This action cannot be undone.")) return;
+        if(!confirm("Are you sure you want to delete this product?")) return;
         try {
             const productToDelete = shopData.products[i];
             const updatedProducts = shopData.products.filter((_, index) => index !== i);
             await db.collection('users').doc(user.uid).update({products: updatedProducts});
-            // shopData.products will be updated by onSnapshot listener
             alert(`Product '${productToDelete.name}' deleted successfully.`);
         } catch(e) { 
             console.error("Error deleting product:", e);
@@ -1081,7 +1012,6 @@
         }
     }
 
-    // --- 8) MY WEBPAGE ---
     function renderWebpage(div) {
         const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
         const url = `${window.location.origin}${path}/shop.html?id=${user.uid}`;
@@ -1090,7 +1020,7 @@
         div.innerHTML = `
             <div class="card text-center">
                 <h3>Your Public Shop Link</h3>
-                <p style="color:#666; margin-bottom:15px;">Share this link with your customers to direct them to your personalized shop webpage.</p> <!-- Original text preserved -->
+                <p style="color:#666; margin-bottom:15px;">Share this link with your customers.</p>
                 <input value="${url}" readonly class="w-100 text-center mb-1" style="background:#eee; border:none; padding:10px; border-radius:10px;">
                 <div class="flex center">
                     <a href="${url}" target="_blank" class="btn btn-primary" style="text-decoration:none;"><i class="fa-solid fa-eye"></i> Open Page</a>
@@ -1100,19 +1030,19 @@
             
             <div class="card">
                 <h3>Visual Editor</h3>
-                <p style="color:#666; margin-bottom:15px;">Customize the look and feel of your public shop page.</p> <!-- Original text preserved -->
+                <p style="color:#666; margin-bottom:15px;">Customize the look of your public shop page.</p>
                 <div class="input-group"><label>Brand Color</label><input type="color" id="w-col" value="${shopData.themeColor||'#FF6D00'}" onchange="saveWeb('themeColor')"></div>
                 <div class="input-group"><label>Welcome Text on Page Header</label><input id="w-txt" value="${shopData.heroText||''}" onchange="saveWeb('heroText')" placeholder="e.g., Discover our exquisite collection!"></div>
             </div>
 
             <div class="card">
                 <h3>Social Media Links</h3>
-                <p style="color:#666; margin-bottom:15px;">Connect your social media profiles to your shop page. Use full URLs (e.g., https://facebook.com/yourpage).</p> <!-- Original text preserved -->
+                <p style="color:#666; margin-bottom:15px;">Connect your social media profiles.</p>
                 <div class="input-group"><label>Facebook Profile/Page URL</label><input id="sl-fb" value="${sl.fb||''}" placeholder="https://facebook.com/..." onchange="saveWeb('socialLinks.fb')"></div>
                 <div class="input-group"><label>Instagram Profile URL</label><input id="sl-ig" value="${sl.ig||''}" placeholder="https://instagram.com/..." onchange="saveWeb('socialLinks.ig')"></div>
                 <div class="input-group"><label>TikTok Profile URL</label><input id="sl-tk" value="${sl.tk||''}" placeholder="https://tiktok.com/..." onchange="saveWeb('socialLinks.tk')"></div>
                 <div class="input-group"><label>YouTube Channel URL</label><input id="sl-yt" value="${sl.yt||''}" placeholder="https://youtube.com/..." onchange="saveWeb('socialLinks.yt')"></div>
-                <div class="input-group"><label>LinkedIn Profile/Page URL</label><input id="sl-li" value="${sl.li||''}" placeholder="https://linkedin.com/..." onchange="saveWeb('socialLinks.li')"></div> <!-- Added LinkedIn -->
+                <div class="input-group"><label>LinkedIn Profile/Page URL</label><input id="sl-li" value="${sl.li||''}" placeholder="https://linkedin.com/..." onchange="saveWeb('socialLinks.li')"></div>
             </div>
         `;
     }
@@ -1124,7 +1054,6 @@
         } else if (field === 'heroText') {
             updateData.heroText = document.getElementById('w-txt').value;
         } else if (field.startsWith('socialLinks.')) {
-            // Fix: Use direct dot notation which Firestore supports safely for updating map fields
             const socialKey = field.split('.')[1];
             updateData[`socialLinks.${socialKey}`] = document.getElementById('sl-' + socialKey).value;
         }
@@ -1132,15 +1061,13 @@
         db.collection('users').doc(user.uid).update(updateData)
             .then(() => console.log("Webpage settings updated."))
             .catch(e => console.error("Error updating webpage settings:", e));
-        // shopData will be updated by onSnapshot listener, triggering re-render if necessary
     }
 
-    // --- 9) ORDERS ---
     function renderOrders(div) {
-        if(!shopOrders.length) return div.innerHTML = `<div class="card text-center"><h3>No Orders Yet</h3><p style="color:#777;">You haven't received any orders from your public shop page.</p></div>`;
+        if(!shopOrders.length) return div.innerHTML = `<div class="card text-center"><h3>No Orders Yet</h3><p style="color:#777;">You haven't received any orders.</p></div>`;
         div.innerHTML = `
             <h3>Recent Orders</h3>
-            <p style="color:#666; margin-bottom:15px;">Manage incoming inquiries and orders from your customers.</p> <!-- Original text preserved -->
+            <p style="color:#666; margin-bottom:15px;">Manage incoming inquiries and orders.</p>
             ${shopOrders.map(o => `
                 <div class="card" style="border-left:5px solid ${o.status==='new'?'var(--accent)':'var(--green)'};">
                     <div class="flex space-between">
@@ -1158,12 +1085,11 @@
         `;
     }
 
-    // --- 10) MESSAGES --- (Updated to display actual messages)
     function renderMessages(div) {
-        if(!shopMessages.length) return div.innerHTML = `<div class="card text-center"><h3>No Messages Yet</h3><p style="color:#777;">You haven't received any messages from your public shop's contact form.</p></div>`;
+        if(!shopMessages.length) return div.innerHTML = `<div class="card text-center"><h3>No Messages Yet</h3><p style="color:#777;">You haven't received any messages.</p></div>`;
         div.innerHTML = `
             <h3>Customer Messages</h3>
-            <p style="color:#666; margin-bottom:15px;">Respond to customer inquiries sent via your shop's contact form.</p> <!-- Original text preserved -->
+            <p style="color:#666; margin-bottom:15px;">Respond to customer inquiries.</p>
             ${shopMessages.map(m => `
                 <div class="card" style="border-left:5px solid var(--primary);">
                     <div class="flex space-between">
@@ -1180,12 +1106,11 @@
         `;
     }
 
-    // --- 11) REVIEWS ---
     function renderReviews(div) {
-        if(!shopReviews.length) return div.innerHTML = `<div class="card text-center"><h3>No Reviews Yet</h3><p style="color:#777;">Your shop has no customer reviews yet.</p></div>`;
+        if(!shopReviews.length) return div.innerHTML = `<div class="card text-center"><h3>No Reviews Yet</h3><p style="color:#777;">Your shop has no reviews yet.</p></div>`;
         div.innerHTML = `
             <h3>Customer Reviews</h3>
-            <p style="color:#666; margin-bottom:15px;">Manage reviews from your customers. Published reviews appear on your shop page.</p> <!-- Original text preserved -->
+            <p style="color:#666; margin-bottom:15px;">Manage reviews from your customers.</p>
             ${shopReviews.map(r => `
                 <div class="card" style="border-left:5px solid ${r.status==='published'?'var(--green)':'var(--gold)'};">
                     <div class="flex space-between">
@@ -1206,25 +1131,24 @@
     }
 
     function pubRev(id) {
-        if (!confirm("Are you sure you want to publish this review? It will be visible on your public shop page.")) return;
+        if (!confirm("Are you sure you want to publish this review?")) return;
         db.collection('users').doc(user.uid).collection('reviews').doc(id).update({status: 'published'})
             .then(() => alert("Review Published Successfully!"))
-            .catch(e => { console.error("Error publishing review:", e); alert("Error publishing review: " + e.message); });
+            .catch(e => { console.error("Error publishing review:", e); alert("Error: " + e.message); });
     }
 
     function delRev(id) {
-        if(!confirm("Are you sure you want to delete this review? This action cannot be undone.")) return;
+        if(!confirm("Are you sure you want to delete this review?")) return;
         db.collection('users').doc(user.uid).collection('reviews').doc(id).delete()
             .then(() => alert("Review Deleted Successfully!"))
-            .catch(e => { console.error("Error deleting review:", e); alert("Error deleting review: " + e.message); });
+            .catch(e => { console.error("Error deleting review:", e); alert("Error: " + e.message); });
     }
 
-    // --- UTILS ---
     function upImg(input, type, idx) {
         const file = input.files[0];
         if(!file) { alert("No file selected."); return; }
         if (!file.type.startsWith('image/')) { alert("Please upload an image file."); return; }
-        if (file.size > 2 * 1024 * 1024) { alert("Image size should not exceed 2MB."); return; } // 2MB limit
+        if (file.size > 2 * 1024 * 1024) { alert("Image size should not exceed 2MB."); return; }
 
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -1233,7 +1157,7 @@
             img.src = e.target.result;
             img.onload = () => {
                 const cvs = document.createElement('canvas');
-                const MAX_WIDTH = 800; // Max width for uploaded images
+                const MAX_WIDTH = 800;
                 let width = img.width;
                 let height = img.height;
 
@@ -1245,16 +1169,14 @@
                 cvs.height = height;
                 cvs.getContext('2d').drawImage(img,0,0,cvs.width,cvs.height);
                 
-                const uploadDataUrl = cvs.toDataURL('image/jpeg',0.8); // Compress image to JPEG, 80% quality
-                const uploadPath = `img/${user.uid}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`; // Clean filename
+                const uploadDataUrl = cvs.toDataURL('image/jpeg',0.8);
+                const uploadPath = `img/${user.uid}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
 
                 const task = storage.ref(uploadPath).putString(uploadDataUrl, 'data_url');
                 
-                // Show uploading progress or spinner if desired
                 let uploadStatusElement = null;
                 if (type === 'doc') uploadStatusElement = document.getElementById('st-doc');
                 else if (type === 'slip') uploadStatusElement = document.getElementById('st-slip');
-                // For prod, individual elements
                 
                 if (uploadStatusElement) {
                     uploadStatusElement.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Uploading...`;
@@ -1288,20 +1210,11 @@
                 })).catch(err => {
                     console.error("Upload failed:", err);
                     alert("Upload failed: " + err.message);
-                    if (uploadStatusElement) {
-                        uploadStatusElement.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Upload Failed`;
-                        uploadStatusElement.style.color = 'var(--red)'; // FIXED: Added quotes
-                    }
                 });
             }
         }
-        reader.onerror = error => {
-            console.error("FileReader error:", error);
-            alert("Error reading file.");
-        };
     }
 
-    // Adjust desktop logout button visibility on window resize
     window.addEventListener('resize', () => {
         if (window.innerWidth > 900) {
             document.getElementById('desktop-logout-btn').style.display = 'flex';
