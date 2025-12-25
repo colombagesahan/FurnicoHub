@@ -114,6 +114,7 @@
         .review-card .stars { color: var(--gold-star); font-size: 1.1rem; margin-top: 5px;}
         .review-card p { font-style: italic; color: #5D4037; margin: 10px 0; line-height: 1.5;}
         .review-form { background: #FAFAFA; padding: 20px; border-radius: var(--radius); margin-top: 20px; border: 1px dashed #FFE0B2; }
+        .review-form h4 { color: var(--primary); margin-top: 0; }
         .rating-group { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
 
         .contact-form { background: white; padding: 25px; margin: 0 20px; border-radius: var(--radius); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
@@ -223,6 +224,7 @@
         ref.onSnapshot(doc => {
             if(!doc.exists) return;
             shop = doc.data();
+            shop.id = doc.id; // SAVE ID FOR FORMS
             
             // Check Moderation
             if(shop.isLocked || shop.isHidden) {
@@ -489,94 +491,31 @@
             return;
         }
 
-        let msg = `Hello ${shop.shopName},\n\nI am ${name} (Phone: ${phone}, WhatsApp: +${waNumber}).\nI am interested in the following items from your shop:\n\n`;
+        let msg = `Hello ${shop.shopName},\n\nI am ${name} (Phone: ${phone}, WhatsApp: +${waNumber}).\nI am interested in:\n\n`;
         let total = 0;
         cart.forEach(i => { msg += `- ${i.name} (Rs. ${parseInt(i.price).toLocaleString()})\n`; total += parseInt(i.price); });
-        msg += `\nTotal Estimated Price: Rs. ${total.toLocaleString()}`;
-        msg += `\n\nPlease contact me regarding these items.`;
+        msg += `\nTotal: Rs. ${total.toLocaleString()}`;
 
-        // Save Order to Firestore first
-        const docRef = db.collection('users').doc(shop.id || uidParam || 'unknown').collection('orders'); 
-        // Note: shop.id is not directly available in shop object unless we put it there.
-        // We use the param from URL or ref.id passed earlier.
-        // To be safe, we rely on URL param if available, but the best way is saving ID in shop object.
-        // For now, assume param exists since page loaded.
-        
-        // Simpler way: just open WA. Saving to DB requires knowing Shop UID which we have in `uidParam` or from query.
+        // Save to DB
+        if(shop.id) {
+            db.collection('users').doc(shop.id).collection('orders').add({
+                custName: name, custPhone: phone, custWa: waNumber,
+                items: cart.map(item => ({name: item.name, price: item.price})),
+                total: total.toString(), status: 'new', time: new Date().toISOString()
+            });
+        }
+
         window.open(`https://wa.me/+${shop.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
         document.getElementById('inquiry-modal').style.display = 'none';
         cart = [];
-        alert("Your inquiry has been sent to the seller via WhatsApp!");
     }
 
     function submitReview() {
+        if(!shop.id) return alert("Shop ID missing.");
         const name = document.getElementById('r-name').value;
         const text = document.getElementById('r-text').value;
         const stars = document.getElementById('r-stars').value;
-        if(!name || !text) return alert("Please fill in your Name and your Review.");
-        
-        // We need Shop UID. If loaded via store param, we don't have UID easily unless stored.
-        // Fix: Store UID in global `shop` object during load.
-        // (In setupListener, shop = doc.data(); shop.id = doc.id;) -> Add this small fix below in setupListener logic mentally or see updated setupListener
-        
-        // Since I can't edit previous blocks easily, I will assume UID is in URL or we need to capture it.
-        // Let's ensure setupListener saves ID.
-        // Re-defining setupListener here to be safe isn't possible due to scope. 
-        // Assuming user uses ?id link or we stored it. 
-        // *Self-correction*: I didn't store shop.id in setupListener. 
-        // *Fix*: I will rely on `uidParam` if present. If `storeParam`, we fetched `q.docs[0]`.
-        // Let's assume the user uses the standard link for now or I update setupListener.
-        
-        // *CRITICAL FIX*: Update `setupListener` in this script block to save ID.
-        
-        // (See updated setupListener logic above in the script block, I will ensure it's there)
-    }
-
-    function submitContact() {
-        const name = document.getElementById('msg-name').value;
-        const phone = document.getElementById('msg-ph').value;
-        const waNumber = document.getElementById('msg-wa').value;
-        const message = document.getElementById('msg-text').value;
-        
-        if(!name || !phone || !waNumber || !message) return alert("Please fill in all fields.");
-        
-        // This requires Shop UID. 
-        // Since I cannot guarantee UID availability without the fix mentioned above, 
-        // I will add the fix to `setupListener` in the final code block.
-        
-        // Just alerting for now as placeholder for DB save if ID missing.
-        alert("Message sent! (Function requires Shop ID to save to database)");
-    }
-
-    function scrollToContact() {
-        document.getElementById('contact-area').scrollIntoView({behavior: 'smooth'});
-    }
-    
-    // REDEFINING setupListener to capture ID correctly for forms
-    function setupListener(ref) {
-        ref.onSnapshot(doc => {
-            if(!doc.exists) return;
-            shop = doc.data();
-            shop.id = doc.id; // CAPTURE ID HERE
-            
-            if(shop.isLocked || shop.isHidden) {
-                 document.getElementById('app').innerHTML = "<div style='text-align:center; padding:50px; color:red;'><h2>Shop Unavailable</h2><p>This shop is currently unavailable.</p></div>";
-                 return;
-            }
-
-            renderShop();
-            document.getElementById('wa-link').href = `https://wa.me/+${shop.whatsapp}`;
-            loadReviews(shop.id); 
-        });
-    }
-    
-    // REDEFINING submit functions to use shop.id
-    function submitReview() {
-        if(!shop.id) return alert("Shop ID not found.");
-        const name = document.getElementById('r-name').value;
-        const text = document.getElementById('r-text').value;
-        const stars = document.getElementById('r-stars').value;
-        if(!name || !text) return alert("All fields required.");
+        if(!name || !text) return alert("Please fill in all fields.");
         
         db.collection('users').doc(shop.id).collection('reviews').add({
             name, text, stars: parseInt(stars), status: 'pending', time: new Date().toISOString()
@@ -587,12 +526,13 @@
     }
 
     function submitContact() {
-        if(!shop.id) return alert("Shop ID not found.");
+        if(!shop.id) return alert("Shop ID missing.");
         const name = document.getElementById('msg-name').value;
         const phone = document.getElementById('msg-ph').value;
         const waNumber = document.getElementById('msg-wa').value;
         const message = document.getElementById('msg-text').value;
-        if(!name || !phone || !waNumber || !message) return alert("All fields required.");
+        
+        if(!name || !phone || !waNumber || !message) return alert("Please fill in all fields.");
 
         db.collection('users').doc(shop.id).collection('messages').add({
             name, phone, wa: waNumber, message, time: new Date().toISOString()
@@ -604,31 +544,10 @@
             document.getElementById('msg-text').value = '';
         });
     }
-    
-    // REDEFINING sendWhatsAppOrder to save to DB
-    function sendWhatsAppOrder() {
-        if(!shop.id) return alert("Shop ID not found.");
-        const name = document.getElementById('c-name').value;
-        const phone = document.getElementById('c-ph').value;
-        const waNumber = document.getElementById('c-wa').value;
-        if(!name || !phone || !waNumber) return alert("All fields required.");
 
-        let msg = `Hello ${shop.shopName},\n\nI am ${name} (Phone: ${phone}, WhatsApp: +${waNumber}).\nI am interested in:\n\n`;
-        let total = 0;
-        cart.forEach(i => { msg += `- ${i.name} (Rs. ${parseInt(i.price).toLocaleString()})\n`; total += parseInt(i.price); });
-        msg += `\nTotal: Rs. ${total.toLocaleString()}`;
-
-        db.collection('users').doc(shop.id).collection('orders').add({
-            custName: name, custPhone: phone, custWa: waNumber,
-            items: cart.map(item => ({name: item.name, price: item.price})),
-            total: total.toString(), status: 'new', time: new Date().toISOString()
-        });
-
-        window.open(`https://wa.me/+${shop.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
-        document.getElementById('inquiry-modal').style.display = 'none';
-        cart = [];
+    function scrollToContact() {
+        document.getElementById('contact-area').scrollIntoView({behavior: 'smooth'});
     }
-
 </script>
 </body>
 </html>
