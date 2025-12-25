@@ -32,63 +32,136 @@
         
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .img-preview { width: 100%; height: 150px; object-fit: contain; border: 1px solid #ddd; background: #f9f9f9; }
+
+        /* Login Screen Styles */
+        #login-view {
+            text-align: center;
+            padding: 50px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 50px;
+        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <h1><i class="fa-solid fa-user-shield"></i> Admin Panel</h1>
+    <!-- LOGIN VIEW (Shown by default or if unauthorized) -->
+    <div id="login-view">
+        <h1 style="color:#FF6D00;"><i class="fa-solid fa-lock"></i> Admin Access</h1>
+        <p style="color:#666; margin-bottom: 20px;">Restricted Area. Authorized Personnel Only.</p>
+        <button class="btn btn-blue" onclick="login()"><i class="fa-brands fa-google"></i> Login with Google</button>
+        <p id="error-msg" style="color: #c62828; margin-top: 20px; font-weight: bold;"></p>
+    </div>
 
-    <!-- SECTION 1: PENDING REQUESTS -->
-    <h2>Pending Verifications</h2>
-    <div id="request-list">Loading...</div>
+    <!-- ADMIN VIEW (Hidden until authorized) -->
+    <div id="admin-view" class="hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h1><i class="fa-solid fa-user-shield"></i> Admin Panel</h1>
+            <button class="btn btn-red" onclick="logout()">Logout</button>
+        </div>
 
-    <!-- SECTION 2: MANAGE SELLERS (Unlock Profiles) -->
-    <h2>Manage Sellers & Unlock Profiles</h2>
-    <input type="text" id="search" placeholder="Search by Shop Name..." onkeyup="searchSellers()">
-    <div id="seller-list"></div>
+        <!-- SECTION 1: PENDING REQUESTS -->
+        <h2>Pending Verifications</h2>
+        <div id="request-list">Loading...</div>
+
+        <!-- SECTION 2: MANAGE SELLERS (Unlock Profiles) -->
+        <h2>Manage Sellers & Unlock Profiles</h2>
+        <input type="text" id="search" placeholder="Search by Shop Name..." onkeyup="searchSellers()">
+        <div id="seller-list"></div>
+    </div>
 
     <script>
         // 1. FIREBASE CONFIG (Must match your project)
         const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();
 
-        // 2. LOAD PENDING REQUESTS
-        db.collection('admin_requests').orderBy('time', 'desc').onSnapshot(snap => {
-            const list = document.getElementById('request-list');
-            if(snap.empty) { list.innerHTML = "<p>No pending requests.</p>"; return; }
+        // --- AUTHENTICATION LOGIC ---
+        const ADMIN_EMAIL = "colombagesahan@gmail.com";
+
+        function login() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(error => {
+                document.getElementById('error-msg').innerText = "Login Failed: " + error.message;
+            });
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.reload();
+            });
+        }
+
+        auth.onAuthStateChanged(user => {
+            const loginView = document.getElementById('login-view');
+            const adminView = document.getElementById('admin-view');
+            const errorMsg = document.getElementById('error-msg');
+
+            if (user) {
+                if (user.email === ADMIN_EMAIL) {
+                    // Authorized
+                    loginView.classList.add('hidden');
+                    adminView.classList.remove('hidden');
+                    initAdminPanel(); // Load data only after auth
+                } else {
+                    // Unauthorized
+                    auth.signOut();
+                    errorMsg.innerText = "Access Denied: " + user.email + " is not an admin.";
+                    loginView.classList.remove('hidden');
+                    adminView.classList.add('hidden');
+                }
+            } else {
+                // Not logged in
+                loginView.classList.remove('hidden');
+                adminView.classList.add('hidden');
+            }
+        });
+
+        // --- ORIGINAL ADMIN LOGIC (Wrapped in function) ---
+        function initAdminPanel() {
+            console.log("Admin Panel Initialized");
+
+            // 2. LOAD PENDING REQUESTS
+            db.collection('admin_requests').orderBy('time', 'desc').onSnapshot(snap => {
+                const list = document.getElementById('request-list');
+                if(snap.empty) { list.innerHTML = "<p>No pending requests.</p>"; return; }
+                
+                list.innerHTML = snap.docs.map(doc => {
+                    const r = doc.data();
+                    return `
+                    <div class="card">
+                        <h3>${r.shopName}</h3>
+                        <p>User ID: ${r.uid}</p>
+                        <div class="grid">
+                            <div><b>Doc:</b><br><a href="${r.doc}" target="_blank"><img src="${r.doc}" class="img-preview"></a></div>
+                            <div><b>Slip:</b><br><a href="${r.slip}" target="_blank"><img src="${r.slip}" class="img-preview"></a></div>
+                        </div>
+                        <div style="margin-top:15px;">
+                            <button class="btn btn-green" onclick="verifyUser('${doc.id}', '${r.uid}')">Approve & Verify</button>
+                            <button class="btn btn-red" onclick="rejectRequest('${doc.id}')">Reject</button>
+                        </div>
+                    </div>`;
+                }).join('');
+            });
+
+            // 3. SEARCH SELLERS (For Unlocking)
+            let allSellers = [];
             
-            list.innerHTML = snap.docs.map(doc => {
-                const r = doc.data();
-                return `
-                <div class="card">
-                    <h3>${r.shopName}</h3>
-                    <p>User ID: ${r.uid}</p>
-                    <div class="grid">
-                        <div><b>Doc:</b><br><a href="${r.doc}" target="_blank"><img src="${r.doc}" class="img-preview"></a></div>
-                        <div><b>Slip:</b><br><a href="${r.slip}" target="_blank"><img src="${r.slip}" class="img-preview"></a></div>
-                    </div>
-                    <div style="margin-top:15px;">
-                        <button class="btn btn-green" onclick="verifyUser('${doc.id}', '${r.uid}')">Approve & Verify</button>
-                        <button class="btn btn-red" onclick="rejectRequest('${doc.id}')">Reject</button>
-                    </div>
-                </div>`;
-            }).join('');
-        });
+            // Fetch all sellers once on load
+            db.collection('users').where('role', '==', 'seller').get().then(snap => {
+                allSellers = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                renderSellers(allSellers);
+            });
 
-        // 3. SEARCH SELLERS (For Unlocking)
-        let allSellers = [];
-        
-        // Fetch all sellers once on load
-        db.collection('users').where('role', '==', 'seller').get().then(snap => {
-            allSellers = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            renderSellers(allSellers);
-        });
-
-        function searchSellers() {
-            const q = document.getElementById('search').value.toLowerCase();
-            const filtered = allSellers.filter(s => (s.shopName || '').toLowerCase().includes(q));
-            renderSellers(filtered);
+            // Make search function globally available
+            window.searchSellers = function() {
+                const q = document.getElementById('search').value.toLowerCase();
+                const filtered = allSellers.filter(s => (s.shopName || '').toLowerCase().includes(q));
+                renderSellers(filtered);
+            }
         }
 
         function renderSellers(list) {
@@ -117,7 +190,7 @@
         // --- ACTIONS ---
 
         // A. Approve from Request
-        function verifyUser(reqId, uid) {
+        window.verifyUser = function(reqId, uid) {
             if(!confirm("Approve Verification?")) return;
             // 1. Set User as Verified
             db.collection('users').doc(uid).update({ isVerified: true }).then(() => {
@@ -127,14 +200,14 @@
             });
         }
 
-        function rejectRequest(reqId) {
+        window.rejectRequest = function(reqId) {
             if(confirm("Reject this request?")) {
                 db.collection('admin_requests').doc(reqId).delete();
             }
         }
 
         // B. Unlock / Revoke Verification
-        function unlockProfile(uid) {
+        window.unlockProfile = function(uid) {
             const reason = prompt("Type 'CONFIRM' to remove verification and unlock profile:");
             if(reason === 'CONFIRM') {
                 db.collection('users').doc(uid).update({ isVerified: false })
@@ -146,7 +219,7 @@
         }
 
         // C. Force Verify (Manual)
-        function forceVerify(uid) {
+        window.forceVerify = function(uid) {
             if(confirm("Manually verify this user? This will LOCK their profile.")) {
                 db.collection('users').doc(uid).update({ isVerified: true })
                 .then(() => {
