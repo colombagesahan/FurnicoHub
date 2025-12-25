@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FurnicoHub | Sri Lanka's #1 Furniture Platform</title>
-    <meta name="theme-color" content="#E65100"> 
+    <meta name="theme-color" content="#E65100"> <!-- Updated Theme Color -->
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -15,47 +15,65 @@
 
     <style>
         :root {
-            --primary: #FF6D00; --primary-light: #FF9E80; --primary-dark: #E65100;
-            --secondary: #3E2723; --gold: #FFC107; --bg-body: #FFF8E1; 
-            --surface: #FFFFFF; --shadow-card: 0 10px 25px rgba(62, 39, 35, 0.15); 
-            --font: 'Poppins', sans-serif; --radius: 15px; --green-verified: #2E7D32; 
+            /* NEW THEME: ORANGE & DARK WOOD */
+            --primary: #FF6D00; /* Vivid Orange */
+            --primary-light: #FF9E80; /* Lighter Orange */
+            --primary-dark: #E65100;
+            --secondary: #3E2723; /* Dark Mahogany */
+            --gold: #FFC107; /* Gold for accents */
+            --bg-body: #FFF8E1; /* Light Cream background */
+            --surface: #FFFFFF; /* White for cards/elements */
+            --shadow-card: 0 10px 25px rgba(62, 39, 35, 0.15); /* Enhanced shadow */
+            --font: 'Poppins', sans-serif;
+            --radius: 15px; /* Slightly larger radius */
+            --green-verified: #2E7D32; /* Darker green for verified badge */
         }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        /* FIXED: Changed padding-bottom to 0 to remove white space under footer */
         body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg-body); color: var(--secondary); padding-bottom: 0; overflow-x: hidden; }
         a { text-decoration: none; color: inherit; }
 
+        /* NAV */
         nav {
             position: fixed; top: 0; width: 100%; z-index: 1000;
-            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.98); /* More opaque */ backdrop-filter: blur(10px);
             padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 15px rgba(255, 109, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(255, 109, 0, 0.1); /* Orange-tinted shadow */
         }
-        .logo { font-size: 1.3rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; }
-        .logo img { height: 32px; }
+        .logo { font-size: 1.3rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; } /* Larger, more prominent */
+        .logo img { height: 32px; /* Slightly larger logo */ }
         
+        /* HERO */
         .hero {
-            margin-top: 60px; padding: 50px 5%; text-align: center;
-            background: linear-gradient(135deg, #FFF3E0 0%, #FFFFFF 100%);
-            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            margin-top: 60px; padding: 50px 5%; text-align: center; /* More padding */
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFFFFF 100%); /* Light, warm gradient */
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; /* Rounded bottom */
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08); /* Soft shadow */
         }
-        h1 { font-size: 2.5rem; line-height: 1.2; margin-bottom: 20px; color: var(--secondary); }
-        h1 span { color: var(--primary); }
-        p.sub { font-size: 1rem; color: #5D4037; margin-bottom: 30px; line-height: 1.6; }
+        h1 { font-size: 2.5rem; line-height: 1.2; margin-bottom: 20px; color: var(--secondary); } /* Larger heading */
+        h1 span { color: var(--primary); /* Primary orange highlight */ }
+        p.sub { font-size: 1rem; color: #5D4037; margin-bottom: 30px; line-height: 1.6; } /* Better readability */
 
-        .cta-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .cta-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; } /* Increased gap */
         .btn { 
-            padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: 1rem;
+            padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: 1rem; /* More prominent buttons */
             border: none; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 10px;
         }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 20px rgba(255, 109, 0, 0.4); }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 20px rgba(255, 109, 0, 0.4); } /* Stronger shadow */
         .btn-primary:hover { background: var(--primary-dark); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255, 109, 0, 0.5); }
         .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
         .btn-outline:hover { background: var(--primary-light); color: white; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 109, 0, 0.2); }
 
-        .filter-container { position: relative; width: 100%; }
-        .filters { display: flex; gap: 12px; overflow-x: auto; padding: 25px 5%; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-        .filters::-webkit-scrollbar { display: none; }
+        /* FEED */
+        /* Added Wrapper for filters to handle buttons */
+        .filter-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .filters { display: flex; gap: 12px; overflow-x: auto; padding: 25px 5%; scrollbar-width: none; /* Hide scrollbar */ -webkit-overflow-scrolling: touch; }
+        .filters::-webkit-scrollbar { display: none; } /* For webkit browsers */
         
         .chip { 
             padding: 10px 20px; background: var(--surface); border: 1px solid #FFCC80; border-radius: 30px; 
@@ -68,14 +86,31 @@
         }
         .chip:hover:not(.active) { background: #FFF3E0; border-color: var(--primary-light); }
 
+        /* NEW SCROLL BUTTONS */
         .scroll-btn {
-            position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px;
-            border-radius: 50%; background: rgba(255, 255, 255, 0.95); border: 1px solid var(--primary);
-            color: var(--primary); font-size: 1.2rem; cursor: pointer; z-index: 10;
-            display: none; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: all 0.3s ease;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+            display: none; /* Hidden on mobile */
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
         }
-        .scroll-btn:hover { background: var(--primary); color: white; transform: translateY(-50%) scale(1.1); }
+        .scroll-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
         .scroll-btn.left { left: 20px; }
         .scroll-btn.right { right: 20px; }
 
@@ -86,47 +121,76 @@
             box-shadow: var(--shadow-card); position: relative; cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255, 230, 199, 0.5);
         }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(62, 39, 35, 0.2); }
+        .card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 30px rgba(62, 39, 35, 0.2);
+        }
         .card-img { 
-            width: 100%; height: 180px; object-fit: cover; 
+            width: 100%; height: 180px; /* Slightly taller images */ object-fit: cover; 
             background: #eee; border-bottom: 1px solid #f0f0f0; 
         }
         .verified-badge { 
-            position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.98); 
+            position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.98); /* More opaque */
             padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; 
             color: var(--green-verified); display: flex; align-items: center; gap: 6px; 
             box-shadow: 0 3px 10px rgba(0,0,0,0.1); text-transform: uppercase;
         }
-        .card-body { padding: 15px; }
-        .promo { font-size: 0.75rem; color: #D84315; margin-bottom: 5px; font-weight: 700; min-height: 18px; line-height: 1.3;}
+        .card-body { padding: 15px; } /* More padding */
+        .promo { font-size: 0.75rem; color: #D84315; margin-bottom: 5px; font-weight: 700; min-height: 18px; line-height: 1.3;} /* Stronger promo text */
         .card-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--secondary); }
-        .card-seller { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #795548; margin-bottom: 10px; }
+        .card-seller { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #795548; margin-bottom: 10px; } /* Larger seller info */
         .card-seller img { 
             width: 28px; height: 28px; border-radius: 50%; object-fit: cover; 
-            border: 2px solid var(--primary-light); 
+            border: 2px solid var(--primary-light); /* Added border to seller logo */
         }
-        .price { font-weight: 800; color: var(--primary); font-size: 1.2rem; }
+        .price { font-weight: 800; color: var(--primary); font-size: 1.2rem; } /* Larger price */
         .card .btn-primary { 
             padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; 
             width: auto; box-shadow: 0 3px 10px rgba(255, 109, 0, 0.2);
         }
         .card .btn-primary:hover { transform: none; background: var(--primary-dark); }
 
+        /* FOOTER */
         footer {
-            background: var(--secondary); color: #D7CCC8; padding: 40px 5%;
-            text-align: center; font-size: 0.9rem; margin-top: 50px;
-            border-top-left-radius: 40px; border-top-right-radius: 40px;
+            background: var(--secondary); /* Dark Mahogany background */
+            color: #D7CCC8; /* Light text color */
+            padding: 40px 5%;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 50px;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
             box-shadow: 0 -5px 25px rgba(0,0,0,0.1);
         }
         footer .footer-logo {
-            font-size: 1.8rem; font-weight: 800; color: var(--primary-light); 
-            margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary-light); /* Lighter orange for logo in footer */
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        footer .footer-logo img { height: 40px; }
-        footer p { margin: 5px 0; line-height: 1.6; color: #BCAAA4; }
-        footer .social-links a { color: white; font-size: 1.5rem; margin: 0 10px; transition: color 0.3s ease; }
-        footer .social-links a:hover { color: var(--primary); }
+        footer .footer-logo img {
+            height: 40px;
+        }
+        footer p {
+            margin: 5px 0;
+            line-height: 1.6;
+            color: #BCAAA4;
+        }
+        footer .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+        footer .social-links a:hover {
+            color: var(--primary);
+        }
 
+        /* 250px RESPONSIVENESS */
         @media (max-width: 350px) {
             .hero { padding: 30px 10px; }
             h1 { font-size: 1.8rem; }
@@ -161,6 +225,8 @@
             .filters { padding: 30px 8%; }
             .grid { padding: 0 8%; }
             footer { padding: 50px 8%; }
+            
+            /* SHOW SCROLL BUTTONS ON DESKTOP */
             .scroll-btn { display: flex; }
         }
     </style>
@@ -168,7 +234,7 @@
 <body>
 
     <nav>
-        <div class="logo"><img src="icon.png" onerror="this.style.display='none'"> FurnicoHub</div> 
+        <div class="logo"><img src="icon.png" onerror="this.style.display='none'"> FurnicoHub</div> <!-- Changed logo to icon.png for consistency -->
         <a href="dashboard.html" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.8rem;">Seller Login</a>
     </nav>
 
@@ -182,6 +248,7 @@
         </div>
     </section>
 
+    <!-- WRAPPED FILTERS IN CONTAINER WITH BUTTONS -->
     <div class="filter-container">
         <button class="scroll-btn left" id="slideLeft"><i class="fa-solid fa-chevron-left"></i></button>
         <div id="feed" class="filters">
@@ -191,17 +258,18 @@
             <div class="chip" onclick="filter('Dining', this)">Dining</div>
             <div class="chip" onclick="filter('Office', this)">Office</div>
             <div class="chip" onclick="filter('Outdoor', this)">Outdoor</div>
-            <div class="chip" onclick="filter('Kitchen', this)">Kitchen</div>
-            <div class="chip" onclick="filter('Bathroom', this)">Bathroom</div>
-            <div class="chip" onclick="filter('Study Room', this)">Study Room</div>
-            <div class="chip" onclick="filter('Kids Room', this)">Kids Room</div>
-            <div class="chip" onclick="filter('Baby Room', this)">Baby Room</div>
-            <div class="chip" onclick="filter('Other', this)">Other</div>
+            <div class="chip" onclick="filter('Kitchen', this)">Kitchen</div> <!-- Added Kitchen filter -->
+            <div class="chip" onclick="filter('Bathroom', this)">Bathroom</div> <!-- Added Bathroom filter -->
+            <div class="chip" onclick="filter('Study Room', this)">Study Room</div> <!-- Added Study Room filter -->
+            <div class="chip" onclick="filter('Kids Room', this)">Kids Room</div> <!-- Added Kids Room filter -->
+            <div class="chip" onclick="filter('Baby Room', this)">Baby Room</div> <!-- Added Baby Room filter -->
+            <div class="chip" onclick="filter('Other', this)">Other</div> <!-- Added Other filter -->
         </div>
         <button class="scroll-btn right" id="slideRight"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
 
     <div id="grid" class="grid">
+        <!-- Products injected here -->
         <div style="grid-column:1/-1; text-align:center; padding:50px;">
             <i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--primary)"></i>
         </div>
@@ -225,7 +293,12 @@
         document.getElementById('current-year').innerText = new Date().getFullYear();
 
         const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        
+        // Fix: Check if app is already initialized
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
         const db = firebase.firestore();
 
         let allProducts = [];
@@ -233,12 +306,15 @@
         window.onload = async () => {
             const grid = document.getElementById('grid');
             try {
+                // Fetch sellers to give everyone a reasonable chance
                 const snapshot = await db.collection('users').where('role', '==', 'seller').get();
                 allProducts = [];
 
                 snapshot.forEach(doc => {
                     const d = doc.data();
-                    // FILTER: Only show products from shops that are NOT locked AND NOT hidden
+                    
+                    // --- MODERATION & SUBSCRIPTION FILTER ---
+                    // Exclude shops that are Locked (Subscription overdue or Admin banned) OR Hidden (Admin hidden)
                     if (!d.isLocked && !d.isHidden && d.products && d.products.length > 0) {
                         d.products.forEach(p => {
                             allProducts.push({
@@ -246,12 +322,14 @@
                                 sellerId: doc.id,
                                 sellerName: d.shopName || 'Unknown Shop',
                                 sellerLogo: d.logo || 'logo.png',
-                                verified: d.isVerified
+                                verified: d.isVerified,
+                                urlSlug: d.urlSlug // Capture slug for pretty linking if available
                             });
                         });
                     }
                 });
 
+                // Shuffle for fairness
                 allProducts.sort(() => Math.random() - 0.5);
                 render(allProducts);
 
@@ -264,8 +342,12 @@
                 grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#777;">No furniture found in this category.</div>`;
                 return;
             }
-            grid.innerHTML = items.map(item => `
-                <div class="card" onclick="location.href='shop.html?id=${item.sellerId}'">
+            grid.innerHTML = items.map(item => {
+                // PRETTY LINK LOGIC: Use slug if available, else ID
+                const link = item.urlSlug ? `shop.html?store=${item.urlSlug}` : `shop.html?id=${item.sellerId}`;
+                
+                return `
+                <div class="card" onclick="location.href='${link}'">
                     ${item.verified ? `<div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified</div>` : ''}
                     <img src="${(item.images && item.images.length > 0) ? item.images[0] : 'https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/150/FF6D00/FFFFFF?text=No+Image'">
                     <div class="card-body">
@@ -280,7 +362,8 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function filter(cat, el) {
@@ -292,6 +375,7 @@
         
         if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
+        // FIXED: Enable horizontal scrolling with mouse wheel for desktop
         const filtersContainer = document.querySelector('.filters');
         if (filtersContainer) {
             filtersContainer.addEventListener('wheel', (evt) => {
@@ -300,12 +384,18 @@
             });
         }
 
+        // ADDED: Logic for Slide Buttons
         const slideLeft = document.getElementById('slideLeft');
         const slideRight = document.getElementById('slideRight');
         
         if (slideLeft && slideRight && filtersContainer) {
-            slideLeft.onclick = () => { filtersContainer.scrollBy({ left: -300, behavior: 'smooth' }); };
-            slideRight.onclick = () => { filtersContainer.scrollBy({ left: 300, behavior: 'smooth' }); };
+            slideLeft.onclick = () => {
+                filtersContainer.scrollBy({ left: -300, behavior: 'smooth' });
+            };
+            
+            slideRight.onclick = () => {
+                filtersContainer.scrollBy({ left: 300, behavior: 'smooth' });
+            };
         }
     </script>
 </body>
