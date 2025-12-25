@@ -121,9 +121,30 @@
         .modal-content { 
             background: white; width: 100%; max-width: 600px; padding: 25px; 
             border-radius: 25px 25px 0 0; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease-out;
-            position: relative; /* For close button positioning */
+            position: relative; 
         }
-        .modal .close-btn { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #777; cursor: pointer; }
+        
+        /* FIXED: Modal Close Button Styling (Sticky, Black Circle) */
+        .close-btn { 
+            position: sticky;
+            top: 0;
+            left: 100%; /* Pushes it to right */
+            margin-bottom: 10px;
+            background: black;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            z-index: 50;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            float: right; /* Fallback */
+        }
+
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         /* REVIEWS */
@@ -356,6 +377,12 @@
         // FIXED: Set Favicon Dynamically
         if(shop.logo) {
             document.getElementById('dynamic-favicon').href = shop.logo;
+        }
+
+        // FIXED: Apply Theme Color Dynamically
+        if(shop.themeColor) {
+            document.documentElement.style.setProperty('--primary', shop.themeColor);
+            document.documentElement.style.setProperty('--primary-dark', shop.themeColor); // You could also darken this slightly if needed
         }
 
         let html = `
