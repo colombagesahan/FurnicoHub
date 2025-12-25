@@ -3,148 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FurnicoHub | Super Admin</title>
+    <title>FurnicoHub | Admin</title>
     <link rel="icon" type="image/png" href="icon.png">
+    
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; max-width: 1000px; margin: 0 auto; }
-        .card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #FF6D00; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn { padding: 5px 10px; cursor: pointer; color: white; border: none; border-radius: 4px; margin-right: 5px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #F5F5F5; padding: 20px; max-width: 800px; margin: 0 auto; color: #3E2723; }
+        h2 { border-bottom: 2px solid #4E342E; padding-bottom: 10px; margin-top: 30px; }
+        
+        .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 5px solid #4E342E; }
+        
+        .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; margin-right: 5px; }
         .btn-green { background: #2E7D32; }
-        .btn-red { background: #C62828; }
-        .btn-blue { background: #1565C0; }
-        .btn-orange { background: #FF6D00; }
-        h2 { border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; }
-        #login-screen { text-align: center; margin-top: 50px; }
+        .btn-red { background: #c62828; }
+        .btn-blue { background: #1976D2; }
+        
+        input { padding: 10px; width: 100%; box-sizing: border-box; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        
+        .badge { padding: 3px 8px; border-radius: 10px; font-size: 0.8rem; background: #eee; }
+        .verified { background: #E8F5E9; color: #2E7D32; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .img-preview { width: 100%; height: 150px; object-fit: contain; border: 1px solid #ddd; background: #f9f9f9; }
+
+        /* Login Screen Styles */
+        #login-view {
+            text-align: center;
+            padding: 50px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 50px;
+        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <h1>Admin Panel <button class="btn btn-red" onclick="firebase.auth().signOut()">Logout</button></h1>
-    <div id="login-screen">
-        <button class="btn btn-blue" onclick="login()">Login as Admin</button>
+
+    <!-- LOGIN VIEW (Shown by default or if unauthorized) -->
+    <div id="login-view">
+        <h1 style="color:#FF6D00;"><i class="fa-solid fa-lock"></i> Admin Access</h1>
+        <p style="color:#666; margin-bottom: 20px;">Restricted Area. Authorized Personnel Only.</p>
+        <button class="btn btn-blue" onclick="login()"><i class="fa-brands fa-google"></i> Login with Google</button>
+        <p id="error-msg" style="color: #c62828; margin-top: 20px; font-weight: bold;"></p>
     </div>
 
-    <div id="admin-content" style="display:none;">
-        
-        <!-- 1. PAYMENT REVIEWS -->
-        <h2><i class="fa-solid fa-money-bill"></i> Payment Reviews (Subscription)</h2>
-        <div id="payment-list">Loading...</div>
+    <!-- ADMIN VIEW (Hidden until authorized) -->
+    <div id="admin-view" class="hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h1><i class="fa-solid fa-user-shield"></i> Admin Panel</h1>
+            <button class="btn btn-red" onclick="logout()">Logout</button>
+        </div>
 
-        <!-- 2. ALL SELLERS (Moderation) -->
-        <h2><i class="fa-solid fa-users"></i> All Sellers Manager</h2>
-        <input type="text" id="search" placeholder="Search Shop..." onkeyup="filterSellers()" style="padding:8px; width:100%; margin-bottom:10px;">
-        <div id="seller-list">Loading...</div>
+        <!-- SECTION 1: PENDING REQUESTS -->
+        <h2>Pending Verifications</h2>
+        <div id="request-list">Loading...</div>
 
+        <!-- SECTION 2: MANAGE SELLERS (Unlock Profiles) -->
+        <h2>Manage Sellers & Unlock Profiles</h2>
+        <input type="text" id="search" placeholder="Search by Shop Name..." onkeyup="searchSellers()">
+        <div id="seller-list"></div>
     </div>
 
-<script>
-    const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-    const ADMIN_EMAIL = "colombagesahan@gmail.com";
+    <script>
+        // 1. FIREBASE CONFIG (Must match your project)
+        const firebaseConfig = { apiKey: "AIzaSyCbqz4vsik5tiuAUvIL_-FiquhrZcXX0N0", authDomain: "furnicohub.firebaseapp.com", projectId: "furnicohub", storageBucket: "furnicohub.firebasestorage.app", messagingSenderId: "395576125006", appId: "1:395576125006:web:a848f68053c69409ddc51f" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
 
-    auth.onAuthStateChanged(user => {
-        if(user && user.email === ADMIN_EMAIL) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('admin-content').style.display = 'block';
-            initAdmin();
-        } else {
-            document.getElementById('login-screen').style.display = 'block';
-            document.getElementById('admin-content').style.display = 'none';
+        // --- AUTHENTICATION LOGIC ---
+        const ADMIN_EMAIL = "colombagesahan@gmail.com";
+
+        function login() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(error => {
+                document.getElementById('error-msg').innerText = "Login Failed: " + error.message;
+            });
         }
-    });
 
-    function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.reload();
+            });
+        }
 
-    function initAdmin() {
-        // 1. Fetch Pending Payments
-        db.collection('users').where('paymentStatus', '==', 'pending').onSnapshot(snap => {
-            const div = document.getElementById('payment-list');
-            if(snap.empty) div.innerHTML = "<p>No pending payments.</p>";
-            else {
-                div.innerHTML = snap.docs.map(doc => {
-                    const d = doc.data();
-                    return `
-                    <div class="card">
-                        <h3>${d.shopName}</h3>
-                        <p>Proof: <a href="${d.paymentSlip}" target="_blank">View Slip</a></p>
-                        <button class="btn btn-green" onclick="approvePay('${doc.id}')">Approve & Renew</button>
-                        <button class="btn btn-red" onclick="rejectPay('${doc.id}')">Reject & Lock</button>
-                    </div>`;
-                }).join('');
+        auth.onAuthStateChanged(user => {
+            const loginView = document.getElementById('login-view');
+            const adminView = document.getElementById('admin-view');
+            const errorMsg = document.getElementById('error-msg');
+
+            if (user) {
+                if (user.email === ADMIN_EMAIL) {
+                    // Authorized
+                    loginView.classList.add('hidden');
+                    adminView.classList.remove('hidden');
+                    initAdminPanel(); // Load data only after auth
+                } else {
+                    // Unauthorized
+                    auth.signOut();
+                    errorMsg.innerText = "Access Denied: " + user.email + " is not an admin.";
+                    loginView.classList.remove('hidden');
+                    adminView.classList.add('hidden');
+                }
+            } else {
+                // Not logged in
+                loginView.classList.remove('hidden');
+                adminView.classList.add('hidden');
             }
         });
 
-        // 2. Fetch All Sellers
-        db.collection('users').where('role', '==', 'seller').onSnapshot(snap => {
-            window.allSellers = snap.docs.map(d => ({id:d.id, ...d.data()}));
-            filterSellers();
-        });
-    }
+        // --- ORIGINAL ADMIN LOGIC (Wrapped in function) ---
+        function initAdminPanel() {
+            console.log("Admin Panel Initialized");
 
-    function filterSellers() {
-        const q = document.getElementById('search').value.toLowerCase();
-        const list = window.allSellers.filter(s => (s.shopName||'').toLowerCase().includes(q));
-        const div = document.getElementById('seller-list');
-        div.innerHTML = list.map(s => `
-            <div class="card" style="border-left-color: ${s.isLocked ? 'red' : 'green'}">
-                <div style="display:flex; justify-content:space-between;">
-                    <div>
-                        <b>${s.shopName}</b> (${s.phone1})<br>
-                        Status: ${s.isLocked ? '<b style="color:red">LOCKED</b>' : '<b style="color:green">ACTIVE</b>'} | 
-                        Visibility: ${s.isHidden ? '<b style="color:grey">HIDDEN</b>' : 'VISIBLE'}
-                    </div>
-                    <div>
-                        <button class="btn ${s.isHidden ? 'btn-green' : 'btn-orange'}" onclick="toggleHide('${s.id}', ${!s.isHidden})">
-                            ${s.isHidden ? 'Unhide' : 'Hide Content'}
-                        </button>
-                        <button class="btn ${s.isLocked ? 'btn-green' : 'btn-red'}" onclick="toggleLock('${s.id}', ${!s.isLocked})">
-                            ${s.isLocked ? 'Unlock Account' : 'Lock Account'}
-                        </button>
+            // 2. LOAD PENDING REQUESTS
+            db.collection('admin_requests').orderBy('time', 'desc').onSnapshot(snap => {
+                const list = document.getElementById('request-list');
+                if(snap.empty) { list.innerHTML = "<p>No pending requests.</p>"; return; }
+                
+                list.innerHTML = snap.docs.map(doc => {
+                    const r = doc.data();
+                    return `
+                    <div class="card">
+                        <h3>${r.shopName}</h3>
+                        <p>User ID: ${r.uid}</p>
+                        <div class="grid">
+                            <div><b>Doc:</b><br><a href="${r.doc}" target="_blank"><img src="${r.doc}" class="img-preview"></a></div>
+                            <div><b>Slip:</b><br><a href="${r.slip}" target="_blank"><img src="${r.slip}" class="img-preview"></a></div>
+                        </div>
+                        <div style="margin-top:15px;">
+                            <button class="btn btn-green" onclick="verifyUser('${doc.id}', '${r.uid}')">Approve & Verify</button>
+                            <button class="btn btn-red" onclick="rejectRequest('${doc.id}')">Reject</button>
+                        </div>
+                    </div>`;
+                }).join('');
+            });
+
+            // 3. SEARCH SELLERS (For Unlocking)
+            let allSellers = [];
+            
+            // Fetch all sellers once on load
+            db.collection('users').where('role', '==', 'seller').get().then(snap => {
+                allSellers = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                renderSellers(allSellers);
+            });
+
+            // Make search function globally available
+            window.searchSellers = function() {
+                const q = document.getElementById('search').value.toLowerCase();
+                const filtered = allSellers.filter(s => (s.shopName || '').toLowerCase().includes(q));
+                renderSellers(filtered);
+            }
+        }
+
+        function renderSellers(list) {
+            const container = document.getElementById('seller-list');
+            if(list.length === 0) { container.innerHTML = "<p>No sellers found.</p>"; return; }
+
+            container.innerHTML = list.map(s => `
+                <div class="card" style="border-left-color: ${s.isVerified ? '#2E7D32' : '#FF9800'}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h3>${s.shopName || 'No Name'}</h3>
+                            <p>${s.phone1 || 'No Phone'}</p>
+                            ${s.isVerified ? '<span class="badge verified">VERIFIED (LOCKED)</span>' : '<span class="badge">UNVERIFIED (UNLOCKED)</span>'}
+                        </div>
+                        <div>
+                            ${s.isVerified 
+                                ? `<button class="btn btn-red" onclick="unlockProfile('${s.id}')"><i class="fa-solid fa-lock-open"></i> Unlock / Revoke</button>` 
+                                : `<button class="btn btn-blue" onclick="forceVerify('${s.id}')"><i class="fa-solid fa-check"></i> Force Verify</button>`
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-        `).join('');
-    }
+            `).join('');
+        }
 
-    // ACTIONS
-    function approvePay(uid) {
-        if(!confirm("Confirm Payment?")) return;
-        // Reset cycle: lastPaymentDate = Now, status = paid
-        db.collection('users').doc(uid).update({
-            paymentStatus: 'paid',
-            lastPaymentDate: Date.now(),
-            isLocked: false,
-            lockReason: firebase.firestore.FieldValue.delete()
-        });
-    }
+        // --- ACTIONS ---
 
-    function rejectPay(uid) {
-        if(!confirm("Reject Payment and Lock Account?")) return;
-        const msg = "YOU UPLOAD PAYMENT PROF IS WRONG. PLEASE CONTCT ADMIN TO RECOVER YOUR ACCOUNT. DISPLAY MY EMAIL-colombagesahan@gmail.com";
-        db.collection('users').doc(uid).update({
-            paymentStatus: 'rejected',
-            isLocked: true,
-            lockReason: msg
-        });
-    }
+        // A. Approve from Request
+        window.verifyUser = function(reqId, uid) {
+            if(!confirm("Approve Verification?")) return;
+            // 1. Set User as Verified
+            db.collection('users').doc(uid).update({ isVerified: true }).then(() => {
+                // 2. Delete Request
+                db.collection('admin_requests').doc(reqId).delete();
+                alert("User Verified Successfully!");
+            });
+        }
 
-    function toggleHide(uid, hide) {
-        db.collection('users').doc(uid).update({ isHidden: hide });
-    }
+        window.rejectRequest = function(reqId) {
+            if(confirm("Reject this request?")) {
+                db.collection('admin_requests').doc(reqId).delete();
+            }
+        }
 
-    function toggleLock(uid, lock) {
-        const reason = lock ? prompt("Enter Lock Reason:", "Violation of terms") : null;
-        const update = { isLocked: lock };
-        if(lock && reason) update.lockReason = reason;
-        else if (!lock) update.lockReason = firebase.firestore.FieldValue.delete();
-        
-        db.collection('users').doc(uid).update(update);
-    }
-</script>
+        // B. Unlock / Revoke Verification
+        window.unlockProfile = function(uid) {
+            const reason = prompt("Type 'CONFIRM' to remove verification and unlock profile:");
+            if(reason === 'CONFIRM') {
+                db.collection('users').doc(uid).update({ isVerified: false })
+                .then(() => {
+                    alert("Profile Unlocked! The seller can now edit their details.");
+                    location.reload(); // Refresh list
+                });
+            }
+        }
+
+        // C. Force Verify (Manual)
+        window.forceVerify = function(uid) {
+            if(confirm("Manually verify this user? This will LOCK their profile.")) {
+                db.collection('users').doc(uid).update({ isVerified: true })
+                .then(() => {
+                    alert("User Verified!");
+                    location.reload();
+                });
+            }
+        }
+
+    </script>
 </body>
 </html>
