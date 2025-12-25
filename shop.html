@@ -28,7 +28,6 @@
         }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; outline: none; }
         
-        /* FIXED: Removed padding-bottom to remove white space */
         body { 
             margin: 0; font-family: var(--font); background: var(--bg); color: var(--secondary); 
             padding-bottom: 0; overflow-x: hidden; 
@@ -124,7 +123,7 @@
             position: relative; 
         }
         
-        /* FIXED: Modal Close Button Styling (Sticky, Black Circle) */
+        /* Modal Close Button Styling (Sticky, Black Circle) */
         .close-btn { 
             position: sticky;
             top: 0;
@@ -144,6 +143,31 @@
             cursor: pointer;
             float: right; /* Fallback */
         }
+
+        /* NEW: Image Gallery Styles */
+        .gallery-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none; /* Firefox */
+        }
+        .gallery-container::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+        
+        .gallery-thumb {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            background: #eee;
+        }
+        .gallery-thumb:hover { transform: scale(1.05); }
+        .gallery-thumb.active { border-color: var(--primary); box-shadow: 0 4px 10px rgba(255, 109, 0, 0.3); }
 
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
@@ -272,7 +296,13 @@
 <div id="prod-modal" class="modal">
     <div class="modal-content" id="pm-content">
         <i class="fa-solid fa-times close-btn" onclick="closeModal()"></i>
+        
+        <!-- Main Image -->
         <img id="m-img" style="width:100%; height:250px; object-fit:cover; border-radius:15px; margin-bottom:15px;" onerror="this.src='https://via.placeholder.com/250/FF6D00/FFFFFF?text=No+Image'">
+        
+        <!-- UPDATED: Image Gallery Container -->
+        <div id="m-gallery" class="gallery-container"></div>
+
         <h2 id="m-title" style="margin:0; color:var(--secondary);"></h2>
         <h3 id="m-price" style="color:var(--primary); margin:5px 0 15px;"></h3>
         <p id="m-desc" style="color:#555; line-height:1.6; margin-bottom:20px;"></p>
@@ -533,17 +563,47 @@
     // --- PRODUCT LOGIC ---
     function openProd(item) {
         currentProd = item;
-        // Fix: Safe access to images array
-        const mainImg = (item.images && item.images.length > 0) ? item.images[0] : 'https://via.placeholder.com/250/FF6D00/FFFFFF?text=No+Image';
-        document.getElementById('m-img').src = mainImg;
+        
+        // --- UPDATED IMAGE LOGIC ---
+        // Use all available images, falling back to placeholder if empty
+        const images = (item.images && item.images.length > 0) ? item.images : ['https://via.placeholder.com/250/FF6D00/FFFFFF?text=No+Image'];
+        
+        // 1. Set Main Image (Default to first)
+        const mainImgEl = document.getElementById('m-img');
+        mainImgEl.src = images[0];
+
+        // 2. Set Text Details
         document.getElementById('m-title').innerText = item.name;
         document.getElementById('m-price').innerText = "Rs. " + parseInt(item.price).toLocaleString();
         document.getElementById('m-desc').innerText = item.desc || "No description available.";
+
+        // 3. Render Gallery (Only if > 1 image)
+        const galleryEl = document.getElementById('m-gallery');
+        galleryEl.innerHTML = ''; // Clear previous images
+
+        if (images.length > 1) {
+            images.forEach((imgUrl, index) => {
+                const thumb = document.createElement('img');
+                thumb.src = imgUrl;
+                thumb.className = `gallery-thumb ${index === 0 ? 'active' : ''}`;
+                thumb.onclick = () => {
+                    // Swap Main Image
+                    mainImgEl.src = imgUrl;
+                    // Highlight active thumbnail
+                    document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+                    thumb.classList.add('active');
+                };
+                galleryEl.appendChild(thumb);
+            });
+            galleryEl.style.display = 'flex'; // Show gallery
+        } else {
+            galleryEl.style.display = 'none'; // Hide gallery if single image
+        }
         
-        // Upsell/Downsell Logic: Find other products in same category
-        const others = (shop.products || []).filter(p => p.category === item.category && p.id !== item.id); // Filter by id, not name
+        // --- Upsell Logic ---
+        const others = (shop.products || []).filter(p => p.category === item.category && p.id !== item.id);
         const upsellDiv = document.getElementById('m-upsell');
-        if(upsellDiv) { // Ensure element exists
+        if(upsellDiv) {
             if(others.length > 0) {
                 upsellDiv.innerHTML = others.slice(0,4).map(p => `
                     <div style="min-width:100px; max-width:100px; text-align:center; cursor:pointer;" onclick='openProd(${JSON.stringify(p).replace(/"/g, '&quot;')})'>
