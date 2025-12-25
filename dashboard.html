@@ -60,6 +60,14 @@
         .text-green { color: var(--green); }
         .text-red { color: var(--red); }
 
+        /* LOCK SCREEN OVERLAY */
+        #lock-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255, 255, 255, 0.98); z-index: 9999; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; text-align: center;
+        }
+
         /* COMPONENTS */
         .btn {
             width: 100%; padding: 12px; border: none; border-radius: 12px;
@@ -239,6 +247,38 @@
 
     <!-- 2. DASHBOARD UI -->
     <div id="dashboard-ui" class="hidden">
+        
+        <!-- SUBSCRIPTION LOCK OVERLAY -->
+        <div id="lock-overlay" class="hidden">
+            <i class="fa-solid fa-lock" style="font-size: 3rem; color: var(--red); margin-bottom: 20px;"></i>
+            <h2 id="lock-title" style="color: var(--red);">Account Locked</h2>
+            <p id="lock-msg" style="color: #555; max-width: 500px; margin-bottom: 20px; line-height: 1.6;"></p>
+            
+            <!-- Payment Form -->
+            <div id="pay-form" class="card" style="width:100%; max-width:400px; border:1px solid var(--red);">
+                <h3 style="color:var(--primary)">Pay Service Charge (Rs. 1500)</h3>
+                <div style="text-align:left; font-size:0.9rem; background:#FFF3E0; padding:10px; border-radius:8px; margin-bottom:15px;">
+                    <b>Bank:</b> Commercial Bank, Homagama<br>
+                    <b>Acc No:</b> 8750053306<br>
+                    <b>Name:</b> Colombage SD
+                </div>
+                <div class="input-group">
+                    <label>Upload Payment Slip/Screenshot</label>
+                    <div class="upload-box" onclick="document.getElementById('pay-slip').click()" style="padding:10px; margin:0;">
+                        Click to Upload <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <input type="file" id="pay-slip" hidden>
+                    </div>
+                </div>
+                <button class="btn btn-green" onclick="submitPayment()">Submit Proof & Unlock</button>
+            </div>
+            
+            <!-- Admin Contact (If Rejected) -->
+            <div id="admin-contact" class="hidden">
+                <p style="font-weight:bold; color:var(--red);">Please contact admin to recover your account:</p>
+                <a href="mailto:colombagesahan@gmail.com" style="color:var(--primary); font-size:1.2rem; font-weight:bold;">colombagesahan@gmail.com</a>
+            </div>
+        </div>
+
         <div class="mobile-header">
             <div class="bold">
                 <img src="icon.png" height="28"> FurnicoHub
@@ -323,6 +363,11 @@
             shopData = doc.data();
             shopData.products = shopData.products || [];
             shopData.socialLinks = shopData.socialLinks || {};
+            // If user has not paid recently (default check)
+            if (!shopData.lastPaymentDate) {
+                 // Give new users a free month from now if not set
+                 await db.collection('users').doc(user.uid).update({ lastPaymentDate: Date.now(), paymentStatus: 'paid' });
+            }
             currentTab = shopData.profileCompleted ? 'Dashboard' : 'Profile';
         } else {
             shopData = { 
@@ -330,12 +375,18 @@
                 isOpen: false, emergencyClose: false, schedule: {}, specialDates: [],
                 socialLinks: {}, shopName: user.displayName || 'My Shop',
                 address: '', ownerName: user.displayName || '', nic: '', phone1: '',
-                whatsapp: '+94', logo: user.photoURL || 'logo.png', heroText: 'Welcome to my furniture store!'
+                whatsapp: '+94', logo: user.photoURL || 'logo.png', heroText: 'Welcome to my furniture store!',
+                // SUBSCRIPTION FIELDS
+                lastPaymentDate: Date.now(), // First month free
+                paymentStatus: 'paid',
+                isLocked: false,
+                isHidden: false
             };
             await db.collection('users').doc(user.uid).set(shopData);
             currentTab = 'Profile';
         }
         
+        // Listeners for data
         db.collection('users').doc(user.uid).collection('orders').orderBy('time', 'desc').onSnapshot(snap => {
             const newOrders = snap.docs.map(d => ({id:d.id, ...d.data()}));
             if (newOrders.length > shopOrders.length && shopOrders.length > 0) alert("🔔 New Order Received!");
@@ -357,14 +408,84 @@
 
         db.collection('users').doc(user.uid).onSnapshot(s => {
             shopData = s.data();
+            checkLockStatus(); // Check lock on every update
             if (currentTab !== 'Login') renderContent();
             renderTabs();
         });
 
+        checkLockStatus(); // Initial Check
         renderTabs();
         renderContent();
     }
 
+    // --- SUBSCRIPTION & LOCK LOGIC ---
+    function checkLockStatus() {
+        const overlay = document.getElementById('lock-overlay');
+        const title = document.getElementById('lock-title');
+        const msg = document.getElementById('lock-msg');
+        const form = document.getElementById('pay-form');
+        const adminContact = document.getElementById('admin-contact');
+
+        const now = Date.now();
+        const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+        const timeSincePay = now - (shopData.lastPaymentDate || 0);
+        let isOverdue = timeSincePay > thirtyDays;
+
+        // 1. ADMIN LOCK (Manual or Rejection)
+        if (shopData.isLocked && shopData.lockReason) {
+            overlay.classList.remove('hidden');
+            title.innerText = "Account Locked by Admin";
+            msg.innerText = shopData.lockReason; // "YOU UPLOAD PAYMENT PROF IS WRONG..."
+            msg.style.color = "var(--red)";
+            msg.style.fontWeight = "bold";
+            form.classList.add('hidden'); // Hide upload if manual lock
+            adminContact.classList.remove('hidden');
+            return;
+        }
+
+        // 2. SUBSCRIPTION OVERDUE
+        if (isOverdue && shopData.paymentStatus !== 'pending') {
+            overlay.classList.remove('hidden');
+            title.innerText = "Service Charge Overdue";
+            msg.innerText = "Your 30-day subscription has expired. Please pay Rs. 1500 to unlock your seller account.";
+            msg.style.color = "#555";
+            form.classList.remove('hidden');
+            adminContact.classList.add('hidden');
+            return;
+        }
+
+        // 3. PAYMENT PENDING (Unlock Temporarily)
+        if (shopData.paymentStatus === 'pending') {
+            overlay.classList.add('hidden');
+            // Logic handled by admin approval now
+            return;
+        }
+
+        // Unlocked
+        overlay.classList.add('hidden');
+    }
+
+    async function submitPayment() {
+        const file = document.getElementById('pay-slip').files[0];
+        if(!file) return alert("Please select a payment slip image.");
+
+        const ref = storage.ref(`payments/${user.uid}/${Date.now()}`);
+        await ref.put(file);
+        const url = await ref.getDownloadURL();
+
+        // Optimistic Update
+        await db.collection('users').doc(user.uid).update({
+            paymentStatus: 'pending',
+            paymentSlip: url,
+            isLocked: false, // Unlock temporarily
+            lockReason: firebase.firestore.FieldValue.delete() // Clear previous errors
+        });
+
+        alert("Thank you! Your payment information is under review. Your account is unlocked.");
+        checkLockStatus();
+    }
+
+    // --- RENDERING ---
     function renderTabs() {
         const nav = document.getElementById('tabs-nav');
         let html = TABS.map(t => 
@@ -372,7 +493,7 @@
                 <i class="fa-solid ${t.icon}"></i> ${t.text}
              </button>`
         ).join('');
-        html += `<button class="tab-btn" onclick="logout()" style="margin-top:auto; color:var(--red);" id="desktop-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>`;
+        html += `<button class="tab-btn" onclick="logout()" style="margin-top:auto; color:var(--red); display:none;" id="desktop-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>`;
         nav.innerHTML = html;
         if (window.innerWidth > 900) {
             document.getElementById('desktop-logout-btn').style.display = 'flex';
@@ -411,9 +532,8 @@
         }
     }
 
-    // --- 1) DASHBOARD (NEW HOME) ---
+    // --- DASHBOARD ---
     function renderHome(div) {
-        // Updated Logic: Calculate Open/Close based on schedule and time
         const now = new Date();
         const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
         const currentTime = now.toTimeString().slice(0, 5);
@@ -432,18 +552,19 @@
         const pendingReviews = shopReviews.filter(r => r.status !== 'published').length;
         const unreadMsgs = shopMessages.length;
         
-        const prodCounts = {};
-        (shopData.products || []).forEach(p => { prodCounts[p.category] = (prodCounts[p.category] || 0) + 1; });
-        const prodHtml = Object.keys(prodCounts).map(cat => `<div class="flex space-between" style="border-bottom:1px solid #eee; padding:5px 0;"><span>${cat}</span><b>${prodCounts[cat]}</b></div>`).join('') || '<p style="color:#999; text-align:center;">No products added yet.</p>';
-
+        // Pretty Link Construction
+        const slug = shopData.urlSlug || 'update-profile-first';
         const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-        const url = `${window.location.origin}${path}/shop.html?id=${user.uid}`;
+        // NOTE: In a real routing setup, this would be domain/slug. Here we use query params.
+        const url = `${window.location.origin}${path}/shop.html?store=${slug}`;
 
         div.innerHTML = `
             <div class="card flex space-between" style="background:var(--primary); color:white; border:none; padding:15px 20px;">
                 <div id="live-clock" style="font-size:1.2rem; font-weight:bold;">Loading...</div>
                 <div style="font-size:0.9rem;">${new Date().toDateString()}</div>
             </div>
+
+            ${shopData.paymentStatus === 'pending' ? '<div class="card" style="background:#FFF3E0; border:1px solid orange; color:#E65100; text-align:center;"><b><i class="fa-solid fa-clock"></i> Payment Under Review</b><p style="margin:5px 0 0;">You have full access while admin reviews your slip.</p></div>' : ''}
 
             <div class="card flex space-between" style="border-left:5px solid ${isOpen?'var(--green)':'var(--red)'}; padding:15px 20px;">
                 <div>
@@ -483,14 +604,6 @@
                     <button class="btn btn-sm btn-outline mt-1" onclick="switchTab('Products')">View Products</button>
                 </div>
             </div>
-
-            <div class="card" style="padding:15px 20px;">
-                <div class="flex space-between mb-1">
-                    <h3>Products by Category</h3>
-                    <button class="btn btn-sm btn-outline" onclick="switchTab('Products')">Manage Products</button>
-                </div>
-                ${prodHtml}
-            </div>
         `;
         
         if(window.clockInterval) clearInterval(window.clockInterval);
@@ -500,6 +613,7 @@
         }, 1000);
     }
 
+    // --- POS ---
     function renderPOS(div) {
         div.innerHTML = `
             <div class="card">
@@ -592,7 +706,7 @@
         printFrame.contentWindow.print();
     }
 
-    async function renderMarketplace(div) {
+    function renderMarketplace(div) {
         div.innerHTML = `
             <div class="card">
                 <h3>Marketplace Feed</h3>
@@ -614,7 +728,8 @@
             let items = [];
             snap.forEach(doc => {
                 const d = doc.data();
-                if(d.products && d.products.length > 0) {
+                // Filter out Locked/Hidden sellers
+                if(!d.isLocked && !d.isHidden && d.products && d.products.length > 0) {
                     d.products.forEach(p => items.push({...p, seller: d.shopName, logo: d.logo, verified: d.isVerified, sellerId: doc.id}));
                 }
             });
@@ -661,6 +776,7 @@
         grid.innerHTML = html || '<p class="text-center w-100" style="color:#777; padding:40px;">No items found matching your search criteria.</p>';
     }
 
+    // --- PROFILE & PRETTY URL ---
     function renderProfile(div) {
         const d = shopData;
         const lock = d.isVerified ? 'disabled' : '';
@@ -678,7 +794,7 @@
                 <div class="input-group"><label>NIC</label><input id="s-nic" value="${d.nic||''}" ${lock} placeholder="National Identity Card number"></div>
                 <div class="input-group"><label>Phone (e.g., 0771234567)</label><input type="tel" id="s-ph1" value="${d.phone1||''}" ${lock} placeholder="Primary contact number"></div>
                 <div class="input-group"><label>WhatsApp (e.g., 94771234567 - No +)</label><input type="tel" id="s-wa" value="${d.whatsapp||'94'}" ${lock} placeholder="WhatsApp number without '+', starting with 94"></div>
-                ${!d.isVerified ? `<button class="btn" onclick="saveProfile(this)">Save Profile</button>` : ''}
+                ${!d.isVerified ? `<button class="btn" onclick="saveProfile(this)">Save Profile & Update Link</button>` : ''}
             </div>
         `;
     }
@@ -710,13 +826,16 @@
         btn.innerText = "Saving...";
         btn.disabled = true;
 
+        // Generate Pretty Slug: ShopName-Phone -> myshop-077...
+        const urlSlug = `${shopName.replace(/\s+/g, '').toLowerCase()}-${phone1}`;
+
         try {
             await db.collection('users').doc(user.uid).update({
-                shopName, address, ownerName, nic, phone1, whatsapp,
+                shopName, address, ownerName, nic, phone1, whatsapp, urlSlug,
                 logo: shopData.temp_logo || shopData.logo || user.photoURL || 'logo.png',
                 profileCompleted: true
             });
-            alert("Profile Saved Successfully! Your public shop page is now updated.");
+            alert("Profile Saved Successfully! Your public shop page link has been updated.");
             switchTab('Dashboard');
         } catch(e) {
             console.error("Error saving profile:", e);
@@ -1014,17 +1133,18 @@
 
     function renderWebpage(div) {
         const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-        const url = `${window.location.origin}${path}/shop.html?id=${user.uid}`;
-        const sl = shopData.socialLinks || {};
+        // PRETTY LINK LOGIC
+        const slug = shopData.urlSlug || 'update-profile-first';
+        const prettyLink = `${window.location.origin}${window.location.pathname.replace('dashboard.html', 'shop.html')}?store=${slug}`;
 
         div.innerHTML = `
             <div class="card text-center">
                 <h3>Your Public Shop Link</h3>
                 <p style="color:#666; margin-bottom:15px;">Share this link with your customers.</p>
-                <input value="${url}" readonly class="w-100 text-center mb-1" style="background:#eee; border:none; padding:10px; border-radius:10px;">
+                <input value="${prettyLink}" readonly class="w-100 text-center mb-1" style="background:#eee; border:none; padding:10px; border-radius:10px;">
                 <div class="flex center">
-                    <a href="${url}" target="_blank" class="btn btn-primary" style="text-decoration:none;"><i class="fa-solid fa-eye"></i> Open Page</a>
-                    <button class="btn btn-outline" onclick="navigator.clipboard.writeText('${url}'); alert('Link copied to clipboard!')"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                    <a href="${prettyLink}" target="_blank" class="btn btn-primary" style="text-decoration:none;"><i class="fa-solid fa-eye"></i> Open Page</a>
+                    <button class="btn btn-outline" onclick="navigator.clipboard.writeText('${prettyLink}'); alert('Link copied to clipboard!')"><i class="fa-solid fa-copy"></i> Copy Link</button>
                 </div>
             </div>
             
@@ -1038,11 +1158,11 @@
             <div class="card">
                 <h3>Social Media Links</h3>
                 <p style="color:#666; margin-bottom:15px;">Connect your social media profiles.</p>
-                <div class="input-group"><label>Facebook Profile/Page URL</label><input id="sl-fb" value="${sl.fb||''}" placeholder="https://facebook.com/..." onchange="saveWeb('socialLinks.fb')"></div>
-                <div class="input-group"><label>Instagram Profile URL</label><input id="sl-ig" value="${sl.ig||''}" placeholder="https://instagram.com/..." onchange="saveWeb('socialLinks.ig')"></div>
-                <div class="input-group"><label>TikTok Profile URL</label><input id="sl-tk" value="${sl.tk||''}" placeholder="https://tiktok.com/..." onchange="saveWeb('socialLinks.tk')"></div>
-                <div class="input-group"><label>YouTube Channel URL</label><input id="sl-yt" value="${sl.yt||''}" placeholder="https://youtube.com/..." onchange="saveWeb('socialLinks.yt')"></div>
-                <div class="input-group"><label>LinkedIn Profile/Page URL</label><input id="sl-li" value="${sl.li||''}" placeholder="https://linkedin.com/..." onchange="saveWeb('socialLinks.li')"></div>
+                <div class="input-group"><label>Facebook Profile/Page URL</label><input id="sl-fb" value="${shopData.socialLinks.fb||''}" placeholder="https://facebook.com/..." onchange="saveWeb('socialLinks.fb')"></div>
+                <div class="input-group"><label>Instagram Profile URL</label><input id="sl-ig" value="${shopData.socialLinks.ig||''}" placeholder="https://instagram.com/..." onchange="saveWeb('socialLinks.ig')"></div>
+                <div class="input-group"><label>TikTok Profile URL</label><input id="sl-tk" value="${shopData.socialLinks.tk||''}" placeholder="https://tiktok.com/..." onchange="saveWeb('socialLinks.tk')"></div>
+                <div class="input-group"><label>YouTube Channel URL</label><input id="sl-yt" value="${shopData.socialLinks.yt||''}" placeholder="https://youtube.com/..." onchange="saveWeb('socialLinks.yt')"></div>
+                <div class="input-group"><label>LinkedIn Profile/Page URL</label><input id="sl-li" value="${shopData.socialLinks.li||''}" placeholder="https://linkedin.com/..." onchange="saveWeb('socialLinks.li')"></div>
             </div>
         `;
     }
