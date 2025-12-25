@@ -65,8 +65,15 @@
         .btn-outline:hover { background: var(--primary-light); color: white; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 109, 0, 0.2); }
 
         /* FEED */
+        /* Added Wrapper for filters to handle buttons */
+        .filter-container {
+            position: relative;
+            width: 100%;
+        }
+
         .filters { display: flex; gap: 12px; overflow-x: auto; padding: 25px 5%; scrollbar-width: none; /* Hide scrollbar */ -webkit-overflow-scrolling: touch; }
         .filters::-webkit-scrollbar { display: none; } /* For webkit browsers */
+        
         .chip { 
             padding: 10px 20px; background: var(--surface); border: 1px solid #FFCC80; border-radius: 30px; 
             white-space: nowrap; font-size: 0.9rem; color: var(--secondary); cursor: pointer; transition: all 0.3s ease;
@@ -77,6 +84,34 @@
             box-shadow: 0 4px 15px rgba(255, 109, 0, 0.3); transform: translateY(-2px);
         }
         .chip:hover:not(.active) { background: #FFF3E0; border-color: var(--primary-light); }
+
+        /* NEW SCROLL BUTTONS */
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+            display: none; /* Hidden on mobile */
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+        .scroll-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+        .scroll-btn.left { left: 20px; }
+        .scroll-btn.right { right: 20px; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 0 5%; }
         
@@ -189,6 +224,9 @@
             .filters { padding: 30px 8%; }
             .grid { padding: 0 8%; }
             footer { padding: 50px 8%; }
+            
+            /* SHOW SCROLL BUTTONS ON DESKTOP */
+            .scroll-btn { display: flex; }
         }
     </style>
 </head>
@@ -209,19 +247,24 @@
         </div>
     </section>
 
-    <div id="feed" class="filters">
-        <div class="chip active" onclick="filter('All', this)">All</div>
-        <div class="chip" onclick="filter('Living Room', this)">Living Room</div>
-        <div class="chip" onclick="filter('Bedroom', this)">Bedroom</div>
-        <div class="chip" onclick="filter('Dining', this)">Dining</div>
-        <div class="chip" onclick="filter('Office', this)">Office</div>
-        <div class="chip" onclick="filter('Outdoor', this)">Outdoor</div>
-        <div class="chip" onclick="filter('Kitchen', this)">Kitchen</div> <!-- Added Kitchen filter -->
-        <div class="chip" onclick="filter('Bathroom', this)">Bathroom</div> <!-- Added Bathroom filter -->
-        <div class="chip" onclick="filter('Study Room', this)">Study Room</div> <!-- Added Study Room filter -->
-        <div class="chip" onclick="filter('Kids Room', this)">Kids Room</div> <!-- Added Kids Room filter -->
-        <div class="chip" onclick="filter('Baby Room', this)">Baby Room</div> <!-- Added Baby Room filter -->
-        <div class="chip" onclick="filter('Other', this)">Other</div> <!-- Added Other filter -->
+    <!-- WRAPPED FILTERS IN CONTAINER WITH BUTTONS -->
+    <div class="filter-container">
+        <button class="scroll-btn left" id="slideLeft"><i class="fa-solid fa-chevron-left"></i></button>
+        <div id="feed" class="filters">
+            <div class="chip active" onclick="filter('All', this)">All</div>
+            <div class="chip" onclick="filter('Living Room', this)">Living Room</div>
+            <div class="chip" onclick="filter('Bedroom', this)">Bedroom</div>
+            <div class="chip" onclick="filter('Dining', this)">Dining</div>
+            <div class="chip" onclick="filter('Office', this)">Office</div>
+            <div class="chip" onclick="filter('Outdoor', this)">Outdoor</div>
+            <div class="chip" onclick="filter('Kitchen', this)">Kitchen</div> <!-- Added Kitchen filter -->
+            <div class="chip" onclick="filter('Bathroom', this)">Bathroom</div> <!-- Added Bathroom filter -->
+            <div class="chip" onclick="filter('Study Room', this)">Study Room</div> <!-- Added Study Room filter -->
+            <div class="chip" onclick="filter('Kids Room', this)">Kids Room</div> <!-- Added Kids Room filter -->
+            <div class="chip" onclick="filter('Baby Room', this)">Baby Room</div> <!-- Added Baby Room filter -->
+            <div class="chip" onclick="filter('Other', this)">Other</div> <!-- Added Other filter -->
+        </div>
+        <button class="scroll-btn right" id="slideRight"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
 
     <div id="grid" class="grid">
@@ -331,6 +374,20 @@
                 evt.preventDefault();
                 filtersContainer.scrollLeft += evt.deltaY;
             });
+        }
+
+        // ADDED: Logic for Slide Buttons
+        const slideLeft = document.getElementById('slideLeft');
+        const slideRight = document.getElementById('slideRight');
+        
+        if (slideLeft && slideRight && filtersContainer) {
+            slideLeft.onclick = () => {
+                filtersContainer.scrollBy({ left: -300, behavior: 'smooth' });
+            };
+            
+            slideRight.onclick = () => {
+                filtersContainer.scrollBy({ left: 300, behavior: 'smooth' });
+            };
         }
     </script>
 </body>
