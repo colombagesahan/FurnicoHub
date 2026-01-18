@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FurnicoHub - Premium Furniture & Interiors</title>
+    <meta name="description" content="Premium furniture store in Sri Lanka. Custom sofas, beds, dining sets and interior design solutions.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛋️</text></svg>">
+
+    <!-- AOS Library CSS (For Scroll Animations) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:wght@400;600;800&family=Abhaya+Libre:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+    /* --- CSS VARIABLES & RESET --- */
+    :root {
+        /* FURNITURE THEME COLORS */
+        --primary-color: #2d3436; /* Charcoal / Deep Grey */
+        --primary-dark: #1e272e;
+        --accent-color: #d35400; /* Burnt Orange / Teak Wood Color */
+        --accent-hover: #e67e22;
+        --light-bg: #fdfbf7; /* Cream / Off-white */
+        --white: #ffffff;
+        --text-main: #2d3436;
+        --text-light: #636e72;
+        
+        --font-en: 'Lato', sans-serif;
+        --font-header: 'Playfair Display', serif; /* Elegant font for headings */
+        --font-si: 'Abhaya Libre', serif;
+        
+        --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        --gradient-overlay: linear-gradient(rgba(45, 52, 54, 0.7), rgba(45, 52, 54, 0.6));
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+
+    body {
+        font-family: var(--font-en);
+        color: var(--text-main);
+        line-height: 1.6;
+        background-color: var(--white);
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    h1, h2, h3 { font-family: var(--font-header); }
+
+    /* Sinhala Mode Class */
+    body.lang-si { font-family: var(--font-si); }
+    body.lang-si h1, body.lang-si h2, body.lang-si h3, body.lang-si .btn { font-weight: 800; font-family: var(--font-si); }
+
+    a { text-decoration: none; color: inherit; transition: 0.3s; }
+    ul { list-style: none; }
+    img { max-width: 100%; display: block; }
+
+    /* --- LOADER --- */
+    #loader {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: var(--white); z-index: 9999;
+        display: flex; justify-content: center; align-items: center;
+        transition: opacity 0.5s ease-out, visibility 0.5s;
+    }
+    .spinner {
+        width: 50px; height: 50px; border: 5px solid #f3f3f3;
+        border-top: 5px solid var(--accent-color); border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* --- PROMO BAR --- */
+    .promo-bar {
+        background: var(--primary-color); color: white;
+        text-align: center; padding: 8px 10px;
+        font-size: 0.9rem; font-weight: 600;
+        position: relative; z-index: 1002;
+        min-height: 38px;
+        display: flex; align-items: center; justify-content: center;
+        letter-spacing: 1px;
+    }
+
+    /* --- HEADER & NAV --- */
+    header {
+        background-color: var(--white);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        position: fixed; width: 100%; top: 38px; z-index: 1000;
+        transition: top 0.1s;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    .navbar {
+        display: flex; justify-content: space-between; align-items: center; height: 80px;
+    }
+
+    .logo {
+        font-size: 1.5rem; font-weight: 900; color: var(--primary-color);
+        text-transform: uppercase; line-height: 1.1;
+        display: flex; align-items: center; gap: 10px;
+        font-family: var(--font-header);
+    }
+    .logo i { color: var(--accent-color); font-size: 1.8rem; }
+    .logo span { color: var(--text-light); font-size: 0.6em; display: block; font-weight: 600; font-family: var(--font-en); letter-spacing: 2px;}
+
+    .nav-links { display: flex; gap: 25px; align-items: center; }
+    .nav-links a { font-weight: 600; color: var(--primary-color); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .nav-links a:hover { color: var(--accent-color); }
+
+    .lang-btn {
+        border: 1px solid var(--primary-color);
+        padding: 5px 15px; border-radius: 2px;
+        font-size: 0.8rem; font-weight: 700;
+        cursor: pointer; background: transparent;
+        color: var(--primary-color); transition: 0.3s;
+        display: flex; align-items: center; gap: 5px;
+    }
+    .lang-btn:hover { background: var(--primary-color); color: white; }
+
+    .btn-contact {
+        background: var(--accent-color); color: white !important;
+        padding: 10px 25px !important; border-radius: 2px;
+        transition: 0.3s !important;
+    }
+    .btn-contact:hover { background: var(--primary-color); transform: translateY(-2px); }
+
+    .menu-toggle { display: none; font-size: 1.8rem; color: var(--primary-color); cursor: pointer; }
+
+    /* --- HERO SECTION --- */
+    .hero {
+        background-color: var(--primary-color);
+        background-size: cover; background-position: center;
+        height: 90vh; display: flex; align-items: center;
+        text-align: center; color: var(--white); padding-top: 118px;
+        position: relative;
+        transition: background-image 1s ease-in-out;
+    }
+    
+    .hero::before {
+        content: '';
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.4); 
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative; z-index: 2;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    .hero-content h1 {
+        font-size: 4rem; margin-bottom: 20px;
+        line-height: 1.1; text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        font-style: italic;
+    }
+    .hero-content p {
+        font-size: 1.3rem; margin-bottom: 35px;
+        font-weight: 300; max-width: 700px; margin-left: auto; margin-right: auto;
+        color: #ecf0f1; text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .hero-btns { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+    
+    .btn {
+        padding: 15px 35px; font-size: 1rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 1px;
+        border-radius: 2px; border: 2px solid transparent; cursor: pointer;
+        transition: 0.3s; display: inline-block;
+    }
+    .btn-primary { background: var(--accent-color); color: white; }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-3px); }
+    .btn-outline { border-color: white; color: white; background: transparent; }
+    .btn-outline:hover { background: white; color: var(--primary-color); }
+
+    /* --- SECTIONS --- */
+    section { padding: 80px 0; }
+    .bg-light { background-color: var(--light-bg); }
+
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header h2 {
+        font-size: 2.5rem; color: var(--primary-color); margin-bottom: 15px;
+    }
+    .section-header .line {
+        width: 80px; height: 3px; background: var(--accent-color);
+        margin: 0 auto; 
+    }
+
+    /* --- SERVICES GRID --- */
+    .services-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px; padding: 0 10px;
+    }
+    .service-card {
+        background: white; padding: 40px 25px; text-align: center;
+        border-radius: 4px; box-shadow: var(--shadow);
+        transition: 0.3s; border-bottom: 4px solid transparent;
+        height: 100%;
+    }
+    .service-card:hover { transform: translateY(-10px); border-bottom-color: var(--accent-color); }
+    .service-icon {
+        font-size: 3rem; color: var(--primary-color); margin-bottom: 25px;
+    }
+
+    /* --- PRODUCT GRID --- */
+    .product-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;
+    }
+    .product-item {
+        position: relative; border-radius: 4px; overflow: hidden; box-shadow: var(--shadow); background: white;
+    }
+    .product-item img { width: 100%; height: 300px; object-fit: cover; transition: transform 0.5s; }
+    .product-item:hover img { transform: scale(1.05); }
+    .product-info { padding: 25px; text-align: center; }
+    .product-info h3 { color: var(--primary-color); margin-bottom: 10px; font-size: 1.4rem; }
+    .product-info p { color: #666; font-size: 0.95rem; font-family: var(--font-en); }
+    .price-badge { display: inline-block; background: var(--light-bg); color: var(--primary-color); padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-top: 10px; font-size: 0.9rem; }
+
+    /* --- MASONRY GALLERY --- */
+    .masonry-gallery {
+        column-count: 4; 
+        column-gap: 20px;
+    }
+    .gallery-item {
+        break-inside: avoid; margin-bottom: 20px;
+        border-radius: 4px; overflow: hidden; position: relative;
+        box-shadow: var(--shadow); transition: transform 0.3s ease;
+    }
+    .gallery-item img { width: 100%; display: block; }
+    .gallery-item:hover { transform: translateY(-5px); z-index: 2; }
+
+    /* --- CONTACT --- */
+    .contact-section { background: var(--primary-color); color: white; }
+    .contact-section h2 { color: white; }
+    .contact-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 50px;
+    }
+    .info-box h3 { color: var(--accent-color); margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; display: inline-block;}
+    .info-item { display: flex; gap: 15px; margin-bottom: 20px; font-size: 1.1rem; }
+    .info-item i { color: var(--accent-color); margin-top: 5px; flex-shrink: 0; }
+    .info-item a { color: #ccc; word-break: break-all; } .info-item a:hover { color: white; }
+    
+    .map-wrapper { 
+        height: 100%; 
+        min-height: 350px; 
+        border-radius: 4px; 
+        overflow: hidden; 
+        opacity: 0.9; 
+    }
+
+    /* --- FOOTER --- */
+    .footer-title {
+        color: white; font-size: 1.2rem; font-weight: 700;
+        margin-bottom: 25px; position: relative; padding-bottom: 10px;
+    }
+    .footer-links { list-style: none; padding: 0; }
+    .footer-links li { margin-bottom: 12px; }
+    .footer-links a { color: #a0aab5; transition: 0.3s; display: inline-flex; align-items: center; }
+    .footer-links a:hover { color: white; padding-left: 5px; }
+
+    #backToTop {
+        display: none; position: fixed; bottom: 30px; left: 30px; z-index: 99;
+        font-size: 1.2rem; border: none; outline: none;
+        background-color: var(--accent-color); color: white;
+        cursor: pointer; padding: 12px 15px; border-radius: 2px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+        transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+    #backToTop:hover { background-color: var(--primary-color); transform: translateY(-3px); }
+
+    /* --- WIDGETS --- */
+    .chat-widget { 
+        position: fixed; bottom: 30px; right: 30px; z-index: 2000; 
+        transition: transform 0.4s ease, opacity 0.4s ease;
+        transform: translateY(150px); opacity: 0; pointer-events: none;
+    }
+    .chat-bubble {
+        background: #25D366; color: white; width: 60px; height: 60px;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-size: 28px; cursor: pointer; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.4);
+        transition: 0.3s; animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
+    
+    .book-float {
+        position: fixed; bottom: 110px; right: 30px;
+        background: var(--primary-color); color: white;
+        padding: 12px 25px; border-radius: 50px; font-weight: 700;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1999;
+        display: flex; gap: 8px; align-items: center; border: 2px solid white;
+        transition: transform 0.4s ease, opacity 0.4s ease;
+        transform: translateY(150px); opacity: 0; pointer-events: none;
+    }
+    .book-float:hover { transform: scale(1.05); background: var(--accent-color); }
+
+    .widget-visible { transform: translateY(0) !important; opacity: 1 !important; pointer-events: auto !important; }
+
+    /* --- MODAL --- */
+    .modal {
+        display: none; position: fixed; z-index: 3000; left: 0; top: 0;
+        width: 100%; height: 100%; background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(5px); justify-content: center; align-items: center;
+    }
+    .modal-content {
+        background: white; width: 90%; max-width: 450px; border-radius: 8px;
+        overflow: hidden; animation: zoomIn 0.3s;
+    }
+    @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-header { background: var(--primary-color); color: white; padding: 20px; text-align: center; position: relative; }
+    .close-modal { position: absolute; top: 15px; right: 20px; cursor: pointer; font-size: 1.5rem; }
+    .modal-body { padding: 25px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
+    .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; }
+    .btn-wa { background: #25D366; color: white; border: none; width: 100%; padding: 15px; font-weight: 700; border-radius: 4px; cursor: pointer; font-size: 1rem; display: flex; justify-content: center; gap: 10px; }
+    .btn-wa:hover { background: #128C7E; }
+
+    /* --- Custom Feature Card --- */
+    .const-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 30px 20px; border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: 0.3s; text-align: center;
+    }
+    .const-card:hover { transform: translateY(-10px); border-color: var(--accent-color); background: rgba(255, 255, 255, 0.08); }
+    .icon-box {
+        width: 70px; height: 70px; background: var(--accent-color); color: white;
+        font-size: 1.8rem; display: flex; align-items: center; justify-content: center;
+        border-radius: 50%; margin: 0 auto 20px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) { .masonry-gallery { column-count: 3; } }
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none; flex-direction: column; position: absolute;
+            top: 100%; left: 0; width: 100%; background: white; padding: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-top: 1px solid #eee;
+        }
+        .nav-links.active { display: flex; }
+        .menu-toggle { display: block; }
+        .hero-content h1 { font-size: 2.5rem; }
+        .hero { padding-top: 140px; }
+    }
+    @media (max-width: 600px) { .masonry-gallery { column-count: 2; column-gap: 15px; } }
+    
+    /* --- EXTREME SMALL SCREEN (250px-350px) --- */
+    @media (max-width: 350px) {
+        /* General Container Fixes */
+        .container { padding-left: 10px !important; padding-right: 10px !important; width: 100% !important; }
+        section { padding: 40px 0 !important; } /* Reduced padding to remove large spaces */
+        
+        /* Grid Fixes */
+        .highlight-grid, .product-grid, .contact-grid, .services-grid, .slab-grid, .construction-grid { display: block !important; }
+        .highlight-item { margin-bottom: 0; border: none !important; border-bottom: 1px solid rgba(255,255,255,0.1) !important; padding: 30px 15px !important; }
+        
+        /* Map Fix for Empty Space */
+        .map-wrapper { 
+            height: 300px !important; 
+            min-height: unset !important; 
+            margin-top: 30px; 
+            width: 100%;
+        }
+        
+        /* Component Stack Fixes */
+        .product-item, .const-card { margin-bottom: 25px; width: 100%; }
+        .slab-image { margin-bottom: 25px !important; width: 100% !important; }
+        
+        /* Hero Fixes */
+        .hero { height: auto; min-height: 100vh; padding-top: 150px; }
+        .hero-content h1 { font-size: 2rem !important; margin-bottom: 15px; }
+        .hero-btns { flex-direction: column !important; width: 100% !important; }
+        .hero-btns .btn { width: 100% !important; margin: 5px 0 !important; }
+        
+        /* Header Fixes */
+        .logo { font-size: 1rem !important; flex-direction: column; align-items: flex-start; }
+        
+        /* Gallery Fixes */
+        .masonry-gallery { display: block !important; column-count: 1 !important; }
+        .gallery-item { width: 100% !important; margin-bottom: 15px !important; }
+        
+        /* Widget Fixes */
+        .book-float { right: 10px; bottom: 80px; padding: 8px 15px; font-size: 0.8rem; }
+        .chat-widget { right: 10px; bottom: 10px; transform: scale(0.8); transform-origin: bottom right; }
+        
+        /* Footer Fixes */
+        footer { padding: 30px 0 10px !important; }
+    }
+</style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div id="loader"><div class="spinner"></div></div>
+
+    <!-- PROMO BAR -->
+    <div class="promo-bar" data-en="Summer Sale: Up to 30% OFF | Call: 077 123 4567" data-si="ගිම්හාන දීමනාව: 30% වට්ටම් | අමතන්න: 077 123 4567">
+        Summer Sale: Up to 30% OFF | Call: 077 123 4567
+    </div>
+
+    <!-- HEADER -->
+    <header id="header">
+        <div class="container navbar">
+            <div class="logo">
+                <i class="fas fa-couch"></i>
+                <div>FurnicoHub<br><span>PREMIUM INTERIORS</span></div>
+            </div>
+            
+            <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+            
+            <nav class="nav-links" id="navLinks">
+                <a href="#home" data-en="Home" data-si="මුල් පිටුව">Home</a>
+                <a href="#collections" data-en="Collections" data-si="එකතුව">Collections</a>
+                <a href="#services" data-en="Services" data-si="සේවාවන්">Services</a>
+                <a href="#gallery" data-en="Gallery" data-si="ගැලරිය">Gallery</a>
+                
+                <!-- Language Switcher -->
+                <button class="lang-btn" onclick="toggleLanguage()">
+                    <i class="fas fa-globe"></i> <span id="langText">SINHALA</span>
+                </button>
+
+                <a href="#contact" class="btn-contact" data-en="Contact" data-si="අමතන්න">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="hero">
+        <div class="container hero-content" data-aos="fade-up">
+            <h1 id="hero-title">Elevate Your Living Space</h1>
+            <p id="hero-desc">Handcrafted furniture designed for comfort, style, and durability.</p>
+            <div class="hero-btns">
+                <a href="#collections" class="btn btn-primary" data-en="Shop Now" data-si="දැන් මිලදී ගන්න">Shop Now</a>
+                <a href="#services" class="btn btn-outline" data-en="Custom Design" data-si="නිර්මාණ සැලසුම්">Custom Design</a>
+            </div>
+        </div>
+    </section>
+	
+	<!-- HIGHLIGHTS SECTION -->
+    <section id="highlights" style="position: relative; z-index: 50; margin-top: -80px; padding-bottom: 0;">
+        <div class="container">
+            <div class="highlight-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0; box-shadow: 0 15px 40px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden;">
+                <div class="highlight-item" data-aos="fade-up" data-aos-delay="0" style="background: var(--primary-color); padding: 40px 30px; text-align: center; color: white; border-right: 1px solid rgba(255,255,255,0.1);">
+                    <i class="fas fa-tree" style="font-size: 2.5rem; color: var(--accent-color); margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 10px;" data-en="Solid Wood" data-si="තේක්ක දැව">Solid Wood</h3>
+                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7);" data-en="Premium Teak, Mahogany and Jak wood guarantees lifetime durability." data-si="උසස්ම තත්වයේ තේක්ක සහ මහෝගනී දැව පමණක් භාවිතා කරයි.">Premium Teak, Mahogany and Jak wood guarantees lifetime durability.</p>
+                </div>
+                <div class="highlight-item" data-aos="fade-up" data-aos-delay="100" style="background: var(--accent-color); padding: 40px 30px; text-align: center; color: white; position: relative; transform: scaleY(1.05); z-index: 2; box-shadow: 0 0 20px rgba(0,0,0,0.1);">
+                    <i class="fas fa-shipping-fast" style="font-size: 2.5rem; color: white; margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 10px;" data-en="Islandwide Delivery" data-si="දිවයින පුරා බෙදාහැරීම">Islandwide Delivery</h3>
+                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.9);" data-en="Safe and fast delivery to your doorstep within 3-5 days." data-si="දින 3-5ක් ඇතුලත ඔබගේ නිවසටම ආරක්ෂිතව ගෙන්වා ගත හැක.">Safe and fast delivery to your doorstep within 3-5 days.</p>
+                </div>
+                <div class="highlight-item" data-aos="fade-up" data-aos-delay="200" style="background: var(--primary-color); padding: 40px 30px; text-align: center; color: white; border-left: 1px solid rgba(255,255,255,0.1);">
+                    <i class="fas fa-pencil-ruler" style="font-size: 2.5rem; color: var(--accent-color); margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 10px;" data-en="Customization" data-si="ඔබට අවශ්‍ය පරිදි">Customization</h3>
+                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7);" data-en="Choose your fabric, color, and dimensions. We make it yours." data-si="වර්ණය, ප්‍රමාණය සහ හැඩය ඔබට අවශ්‍ය පරිදි සකසා ගත හැක.">Choose your fabric, color, and dimensions. We make it yours.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCTS SECTION -->
+    <section id="collections" class="bg-light">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 data-en="Our Collections" data-si="අපගේ එකතුව">Our Collections</h2>
+                <div class="line"></div>
+                <p data-en="Discover luxury furniture for every room in your home." data-si="ඔබේ නිවසේ සෑම කාමරයකටම අවශ්‍ය ගෘහ භාණ්ඩ සොයාගන්න.">Discover luxury furniture for every room in your home.</p>
+            </div>
+            
+            <div class="product-grid">
+                <!-- Living Room -->
+                <div class="product-item" data-aos="zoom-in">
+                    <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Living Room">
+                    <div class="product-info">
+                        <h3 data-en="Living Room" data-si="සාලය">Living Room</h3>
+                        <p data-en="Sofas, coffee tables, and TV units." data-si="සෝෆා, කෝපි මේස සහ TV ඒකක.">Sofas, coffee tables, and TV units.</p>
+                        <a href="#contact" class="price-badge">View Details</a>
+                    </div>
+                </div>
+                
+                <!-- Bedroom -->
+                <div class="product-item" data-aos="zoom-in" data-aos-delay="100">
+                    <img src="https://images.unsplash.com/photo-1505693375583-ae5694834710?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Bedroom">
+                    <div class="product-info">
+                        <h3 data-en="Bedroom" data-si="නිදන කාමරය">Bedroom</h3>
+                        <p data-en="Luxury beds, wardrobes and dressers." data-si="ඇඳන්, අල්මාරි සහ ඩ්‍රෙසින් ටේබල්.">Luxury beds, wardrobes and dressers.</p>
+                        <a href="#contact" class="price-badge">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Dining -->
+                 <div class="product-item" data-aos="zoom-in" data-aos-delay="200">
+                    <img src="https://images.unsplash.com/photo-1617806118233-18e1de247200?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Dining">
+                    <div class="product-info">
+                        <h3 data-en="Dining" data-si="කෑම කාමරය">Dining</h3>
+                        <p data-en="6-8 seater tables and chairs." data-si="පුටු 6-8 කෑම මේස.">6-8 seater tables and chairs.</p>
+                        <a href="#contact" class="price-badge">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Office -->
+                <div class="product-item" data-aos="zoom-in" data-aos-delay="300">
+                   <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Office">
+                   <div class="product-info">
+                       <h3 data-en="Home Office" data-si="කාර්යාලය">Home Office</h3>
+                       <p data-en="Ergonomic chairs and desks." data-si="පුටු සහ මේස.">Ergonomic chairs and desks.</p>
+                       <a href="#contact" class="price-badge">View Details</a>
+                   </div>
+               </div>
+            </div>
+        </div>
+    </section>
+
+	<!-- FEATURE FEATURE (SLAB STYLE) -->
+    <section id="custom-work" style="background-color: #fff; border-top: 1px solid #eee;">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 data-en="The Art of Upholstery" data-si="සෝෆා නිමාව">The Art of Upholstery</h2>
+                <div class="line"></div>
+                <p data-en="We bring old furniture back to life with premium fabrics." data-si="පැරණි ගෘහ භාණ්ඩ වලට නව ජීවයක්.">We bring old furniture back to life with premium fabrics.</p>
+            </div>
+            
+            <div class="slab-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 50px; align-items: center;">
+                
+                <!-- Image Side -->
+                <div class="slab-image" data-aos="fade-right" style="position: relative;">
+                    <div style="position: absolute; top: 20px; left: 20px; background: var(--accent-color); color: white; padding: 5px 15px; font-weight: bold; border-radius: 4px; z-index: 2;">
+                        <i class="fas fa-star"></i> Best Seller
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Sofa Work" style="width: 100%; border-radius: 4px; box-shadow: var(--shadow); border-bottom: 5px solid var(--primary-color);">
+                </div>
+
+                <!-- Text Side -->
+                <div class="slab-content" data-aos="fade-left">
+                    <h3 style="color: var(--primary-color); font-size: 1.8rem; margin-bottom: 20px; line-height: 1.3;" data-en="Custom Made for Your Comfort" data-si="ඔබේ පහසුව සඳහාම නිපදවන ලදී">Custom Made for Your Comfort</h3>
+                    
+                    <p style="color: var(--text-light); margin-bottom: 25px; text-align: justify;" data-en="Don't settle for showroom standards. We customize the foam density, fabric texture, and wood finish to match your specific taste and interior decor requirements." data-si="ඔබට අවශ්‍ය වර්ණයෙන්, රෙදි වර්ගයෙන් සහ මෝස්තරයෙන් සෝෆා නිෂ්පාදනය කරනු ලැබේ.">
+                        Don't settle for showroom standards. We customize the foam density, fabric texture, and wood finish to match your specific taste.
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check-circle" style="color: var(--accent-color); font-size: 1.2rem;"></i>
+                            <span style="font-weight: 700; color: var(--primary-color);">5 Year Warranty</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check-circle" style="color: var(--accent-color); font-size: 1.2rem;"></i>
+                            <span style="font-weight: 700; color: var(--primary-color);">Waterproof Fabric</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check-circle" style="color: var(--accent-color); font-size: 1.2rem;"></i>
+                            <span style="font-weight: 700; color: var(--primary-color);">High Density Foam</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check-circle" style="color: var(--accent-color); font-size: 1.2rem;"></i>
+                            <span style="font-weight: 700; color: var(--primary-color);">Teak Frame</span>
+                        </div>
+                    </div>
+
+                    <a href="#contact" class="btn btn-primary" style="padding: 12px 30px; text-decoration: none;" data-en="Get a Quote" data-si="මිල ගණන් ලබාගන්න">Get a Quote</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+	<!-- FULL SERVICES SECTION -->
+    <section id="services" style="background-color: var(--primary-color); color: white; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; border: 20px solid rgba(255,255,255,0.05); border-radius: 50%;"></div>
+        
+        <div class="container" style="position: relative; z-index: 2;">
+            <div class="section-header" data-aos="fade-up">
+                <h2 style="color: white;" data-en="Our Services" data-si="අපගේ සේවාවන්">Our Services</h2>
+                <div class="line" style="background-color: var(--accent-color);"></div>
+                <p style="color: #bdc3c7;" data-en="More than just a furniture shop." data-si="ගෘහ භාණ්ඩ අලෙවියට අමතරව.">More than just a furniture shop.</p>
+            </div>
+
+            <div class="construction-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px;">
+                
+                <div class="const-card" data-aos="fade-up" data-aos-delay="0">
+                    <div class="icon-box"><i class="fas fa-swatchbook"></i></div>
+                    <h3 data-en="Interior Design" data-si="අභ්‍යන්තර නිර්මාණ">Interior Design</h3>
+                    <p data-en="Consultation for color schemes, furniture layout, and lighting." data-si="වර්ණ සංයෝජනය සහ ගෘහ භාණ්ඩ ස්ථානගත කිරීමේ උපදෙස්.">Consultation for color schemes, furniture layout, and lighting.</p>
+                </div>
+
+                <div class="const-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="icon-box"><i class="fas fa-tools"></i></div>
+                    <h3 data-en="Furniture Repair" data-si="අලුත්වැඩියා කිරීම">Furniture Repair</h3>
+                    <p data-en="Re-upholstery of old sofas, polishing wood, and fixing joints." data-si="පැරණි සෝෆා රෙදි මාරු කිරීම සහ පොලිෂ් කිරීම.">Re-upholstery of old sofas, polishing wood, and fixing joints.</p>
+                </div>
+
+                <div class="const-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="icon-box"><i class="fas fa-building"></i></div>
+                    <h3 data-en="Corporate Fitouts" data-si="ආයතනික ගෘහ භාණ්ඩ">Corporate Fitouts</h3>
+                    <p data-en="Complete furnishing solutions for hotels, offices, and restaurants." data-si="හෝටල් සහ කාර්යාල සඳහා ගෘහ භාණ්ඩ සැපයීම.">Complete furnishing solutions for hotels, offices, and restaurants.</p>
+                </div>
+
+                <div class="const-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="icon-box"><i class="fas fa-paint-roller"></i></div>
+                    <h3 data-en="Wood Finishing" data-si="දැව ඔප දැමීම">Wood Finishing</h3>
+                    <p data-en="Spray polishing, water-base coating and antique finishes." data-si="ස්ප්‍රේ පොලිෂ් සහ ඇන්ටික් පෙනුම ලබා දීම.">Spray polishing, water-base coating and antique finishes.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+	
+    <!-- GALLERY SECTION -->
+    <section id="gallery" style="background-color: #f8f9fa;">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 style="color: var(--primary-color);" data-en="Inspiration Gallery" data-si="ඡායාරූප ගැලරිය">Inspiration Gallery</h2>
+                <div class="line" style="background-color: var(--accent-color);"></div>
+            </div>
+
+            <div class="masonry-gallery" data-aos="fade-up">
+                <!-- Unsplash Placeholders -->
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1567016432779-09406852b8f9?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Chair"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Living"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1540574163026-643ea20ade25?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Sofa"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Wall"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1517705008128-361805f42e86?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Bed"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1532323544230-ac8d5ce69d91?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Clock"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Details"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Office"></div>
+            </div>
+        </div>
+    </section>
+
+	<!-- TEAM/OWNER SECTION -->
+    <section id="team" style="background-color: var(--light-bg);">
+        <div class="container">
+            <div style="text-align: center;">
+                <div class="team-card" data-aos="zoom-in" style="background: white; padding: 30px; border-radius: 10px; display: inline-block; box-shadow: var(--shadow);">
+                    <div style="width: 150px; height: 150px; margin: 0 auto 20px; overflow: hidden; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-user-tie" style="font-size: 80px; color: #aaa;"></i>
+                    </div>
+                    <h3 style="color: var(--primary-color); font-size: 1.5rem;">Mr. Aruna Silva</h3>
+                    <p style="color: var(--accent-color); font-weight: 700; text-transform: uppercase;">Founder & Lead Designer</p>
+                    <p style="color: #666; margin-top: 10px;">Creating timeless furniture for over 15 years in Sri Lanka.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+	
+	<!-- WHATSAPP QUOTE FORM -->
+    <section id="quote-form" style="background: linear-gradient(rgba(45, 52, 54, 0.9), rgba(45, 52, 54, 0.9)), url('https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover fixed; padding: 80px 0;">
+        <div class="container">
+            <div class="form-wrapper" data-aos="zoom-in" style="background: white; max-width: 800px; margin: 0 auto; border-radius: 10px; overflow: hidden;">
+                <div class="form-header" style="background: var(--accent-color); color: white; padding: 30px; text-align: center;">
+                    <h2 data-en="Request a Quote" data-si="මිල ගණන් විමසන්න">Request a Quote</h2>
+                    <p data-en="Send us your requirements. We reply instantly." data-si="ඔබගේ අවශ්‍යතාවය අප වෙත එවන්න.">Send us your requirements. We reply instantly.</p>
+                </div>
+                <form onsubmit="submitWhatsappForm(event)" style="padding: 40px;">
+                    <div class="form-group"><label data-en="Your Name" data-si="ඔබගේ නම">Your Name</label><input type="text" id="w-name" required></div>
+                    <div class="form-group"><label data-en="Furniture Item" data-si="භාණ්ඩ වර්ගය">Furniture Item</label><select id="w-product"><option value="Sofa Set">Sofa Set</option><option value="Bedroom Set">Bedroom Set</option><option value="Dining Table">Dining Table</option><option value="Custom Order">Custom Order</option></select></div>
+                    <div class="form-group"><label data-en="Details" data-si="විස්තර">Details</label><input type="text" id="w-details" placeholder="Ex: L-Shape Sofa in Grey fabric" required></div>
+                    <button type="submit" class="btn-wa"><i class="fab fa-whatsapp"></i> <span data-en="Send Inquiry" data-si="විමසන්න">Send Inquiry</span></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 data-en="Visit Showroom" data-si="අපගේ ප්‍රදර්ශනාගාරය">Visit Showroom</h2>
+                <div class="line" style="background: white;"></div>
+            </div>
+            <div class="contact-grid">
+                <div class="info-box" data-aos="fade-right">
+                    <h3 data-en="Contact Info" data-si="සම්බන්ධ වීමට">Contact Info</h3>
+                    <div class="info-item"><i class="fas fa-map-marker-alt"></i><div><strong data-en="Address" data-si="ලිපිනය">Address</strong><br><span>123, High Level Road,<br>Nugegoda, Colombo.</span></div></div>
+                    <div class="info-item"><i class="fas fa-phone-alt"></i><div><strong data-en="Hotline" data-si="දුරකථන">Hotline</strong><br><a href="tel:0112123456">0112 123 456</a></div></div>
+                    <div class="info-item"><i class="fas fa-mobile-alt"></i><div><strong data-en="Mobile/WhatsApp" data-si="ජංගම දුරකථන">Mobile/WhatsApp</strong><br><a href="tel:0771234567">077 123 4567</a></div></div>
+                    <div class="info-item"><i class="fas fa-envelope"></i><div><strong data-en="Email" data-si="විද්‍යුත් තැපෑල">Email</strong><br><a href="mailto:info@furnicohub.com">info@furnicohub.com</a></div></div>
+                </div>
+                <div class="map-wrapper" data-aos="fade-left">
+                    <!-- Embedded Google Map -->
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63371.803921763!2d79.8211859!3d6.9270786!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae253d10f7a7003%3A0x320b2e4d32d3838d!2sColombo!5e0!3m2!1sen!2slk!4v1600000000000!5m2!1sen!2slk" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="main-footer" style="background-color: #1e272e; color: #fff; padding: 50px 0 20px;">
+        <div class="container">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 30px;">
+                <div style="max-width: 400px;">
+                    <div class="logo" style="margin-bottom: 15px; color: white;">
+                        <i class="fas fa-couch" style="color: var(--accent-color);"></i>
+                        <div>FurnicoHub<br><span style="color: #ccc; letter-spacing: 2px;">INTERIORS</span></div>
+                    </div>
+                    <p style="color: #a0aab5;">Your trusted partner for high-quality furniture and interior solutions in Sri Lanka.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 15px; color: var(--accent-color);">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#collections">Collections</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px; color: #7f8c8d; font-size: 0.9rem;">
+                &copy; 2026 FurnicoHub. All Rights Reserved.
+            </div>
+        </div>
+        <button id="backToTop" onclick="scrollToTop()"><i class="fas fa-arrow-up"></i></button>
+    </footer>
+
+    <!-- WIDGETS -->
+    <div class="book-float" onclick="openModal()"><i class="fas fa-file-invoice"></i> <span data-en="Get Catalog" data-si="නාමාවලිය ලබාගන්න">Get Catalog</span></div>
+    
+    <div class="chat-widget">
+        <a href="https://wa.me/94771234567" target="_blank" style="text-decoration: none;">
+            <div class="chat-bubble"><i class="fab fa-whatsapp"></i></div>
+        </a>
+    </div>
+
+    <!-- MODAL -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><span class="close-modal" onclick="closeModal()">&times;</span><h3 data-en="Request Catalog" data-si="නාමාවලිය ඉල්ලුම් කරන්න">Request Catalog</h3></div>
+            <div class="modal-body">
+                <form onsubmit="submitWhatsappFormModal(event)">
+                    <div class="form-group"><label>Name</label><input type="text" id="m_name" required></div>
+                    <div class="form-group"><label>Interest</label><input type="text" id="m_req" placeholder="Ex: Bedroom Furniture" required></div>
+                    <button type="submit" class="btn-wa"><i class="fab fa-whatsapp"></i> Send on WhatsApp</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ offset: 50, duration: 800, once: true });
+
+        window.onload = function() {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => { loader.style.visibility = 'hidden'; }, 500);
+            startHeroSlider();
+            adjustHeaderTop(); 
+        };
+
+        // --- HERO SLIDER ---
+        const heroSlides = [
+            {
+                img: 'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80',
+                en_title: 'FurnicoHub Interiors', en_desc: 'Modern designs for contemporary living.',
+                si_title: 'ෆර්නිකෝ හබ්', si_desc: 'නවීන ජීවන රටාවට ගැලපෙන අගනා ගෘහ භාණ්ඩ.'
+            },
+            {
+                img: 'https://images.unsplash.com/photo-1505693416388-c03dc090d8f0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80',
+                en_title: 'Luxury Bedrooms', en_desc: 'Sleep in comfort and style.',
+                si_title: 'සුවපහසු නිදන කාමර', si_desc: 'සුවපහසුව සහ අලංකාරය එකට කැටිවූ නිදන කාමර කට්ටල.'
+            },
+            {
+                img: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80',
+                en_title: 'Elegant Dining', en_desc: 'Create memories around our tables.',
+                si_title: 'කෑම මේස', si_desc: 'ඔබේ පවුලේ අය සමඟ සතුටින් කාලය ගත කරන්න.'
+            }
+        ];
+
+        let currentSlideIndex = 0;
+
+        function startHeroSlider() {
+            updateHeroContent();
+            setInterval(() => {
+                currentSlideIndex = (currentSlideIndex + 1) % heroSlides.length;
+                updateHeroContent();
+            }, 5000);
+        }
+
+        function updateHeroContent() {
+            const heroSection = document.getElementById('home');
+            const titleEl = document.getElementById('hero-title');
+            const descEl = document.getElementById('hero-desc');
+            const slide = heroSlides[currentSlideIndex];
+            
+            heroSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.4)), url('${slide.img}')`;
+            
+            titleEl.style.opacity = 0; descEl.style.opacity = 0;
+            setTimeout(() => {
+                if (currentLang === 'si') {
+                    titleEl.innerText = slide.si_title;
+                    descEl.innerText = slide.si_desc;
+                } else {
+                    titleEl.innerText = slide.en_title;
+                    descEl.innerText = slide.en_desc;
+                }
+                titleEl.style.opacity = 1; descEl.style.opacity = 1;
+            }, 500);
+        }
+
+        // --- LANGUAGE LOGIC ---
+        let currentLang = 'en';
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'si' : 'en';
+            if(window.innerWidth <= 768) { document.getElementById('navLinks').classList.remove('active'); }
+            
+            if(currentLang === 'si') { 
+                document.body.classList.add('lang-si'); 
+                document.getElementById('langText').innerText = "ENGLISH"; 
+            } else { 
+                document.body.classList.remove('lang-si'); 
+                document.getElementById('langText').innerText = "SINHALA"; 
+            }
+
+            const elements = document.querySelectorAll(`[data-${currentLang}]`);
+            elements.forEach(el => { el.innerText = el.getAttribute(`data-${currentLang}`); });
+            updateHeroContent();
+        }
+
+        function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
+        
+        function adjustHeaderTop() {
+            const header = document.getElementById("header");
+            const promoBar = document.querySelector('.promo-bar');
+            const promoHeight = promoBar.offsetHeight;
+            if (window.scrollY > 50) { header.style.top = "0"; } else { header.style.top = promoHeight + "px"; }
+        }
+        window.addEventListener("scroll", adjustHeaderTop);
+        window.addEventListener("resize", adjustHeaderTop);
+        
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById("backToTop");
+            const widgets = document.querySelectorAll('.chat-widget, .book-float');
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = scrollTop / docHeight;
+
+            if (scrollPercent >= 0.10 && scrollPercent <= 0.80) {
+                widgets.forEach(w => {
+                    w.classList.remove('widget-hidden');
+                    w.classList.add('widget-visible');
+                });
+            } else {
+                widgets.forEach(w => {
+                    w.classList.remove('widget-visible');
+                    w.classList.add('widget-hidden');
+                });
+            }
+
+            if (window.scrollY > 300) { backToTop.style.display = "block"; } else { backToTop.style.display = "none"; }
+            adjustHeaderTop();
+        });
+
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: "smooth" }); }
+        function openModal() { document.getElementById('bookingModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('bookingModal').style.display = 'none'; }
+        window.onclick = function(event) { if (event.target == document.getElementById('bookingModal')) closeModal(); }
+
+        function submitWhatsappForm(e) {
+            e.preventDefault();
+            const name = document.getElementById('w-name').value;
+            const product = document.getElementById('w-product').value;
+            const details = document.getElementById('w-details').value;
+            const message = `*Hi FurnicoHub,*%0A%0A👤 Name: ${name}%0A🛋 Product: ${product}%0A📝 Details: ${details}%0A%0APlease send me a price quote.`;
+            window.open(`https://wa.me/94771234567?text=${message}`, '_blank');
+        }
+
+        function submitWhatsappFormModal(e) {
+            e.preventDefault();
+            const name = document.getElementById('m_name').value;
+            const req = document.getElementById('m_req').value;
+            const message = `*Inquiry from Website*%0A%0AName: ${name}%0AInterest: ${req}%0A%0APlease send catalog.`;
+            window.open(`https://wa.me/94771234567?text=${message}`, '_blank');
+            closeModal();
+        }
+    </script>
+</body>
+</html>
