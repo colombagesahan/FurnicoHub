@@ -750,6 +750,17 @@
             setTimeout(() => { loader.style.visibility = 'hidden'; }, 500);
             startHeroSlider();
             adjustHeaderTop(); 
+            
+            // NEW FIX: Add event listeners to navigation links to close menu on click
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const navMenu = document.getElementById('navLinks');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) { // Only on mobile
+                        navMenu.classList.remove('active');
+                    }
+                });
+            });
         };
 
         // --- HERO SLIDER ---
